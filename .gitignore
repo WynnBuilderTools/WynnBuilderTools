@@ -1,0 +1,7 @@
+/.git
+/target
+/db
+/config
+/perf.data
+/perf.data.old
+/flamegraph
