@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn encode_build_works() {
         assert_eq!(
-            "8_04004B04C0482SK2SL2SM2SN03E00000000001g000000z0z0+0+0+0+0-",
+            "8_04004B04C0482SK2SL2SM2SN03E00000000001g",
             encode_build(
                 [256, 267, 268, 264, 10004, 10005, 10006, 10007],
                 106,

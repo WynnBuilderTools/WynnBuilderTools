@@ -1,4 +1,7 @@
-use std::str::FromStr;
+use std::{
+    ops::{AddAssign, Div, Mul, Sub},
+    str::FromStr,
+};
 
 #[derive(Clone, Debug, Default)]
 pub struct Range {
@@ -33,6 +36,49 @@ impl FromStr for Range {
 }
 impl PartialEq for Range {
     fn eq(&self, other: &Self) -> bool {
-        self.min.floor() == other.min.floor() && self.max.floor() == other.max.floor()
+        const THRESHOLD: f64 = 0.01;
+        (self.min - other.min).abs() < THRESHOLD && (self.max - other.max).abs() < THRESHOLD
+    }
+}
+impl AddAssign<&Range> for Range {
+    fn add_assign(&mut self, rhs: &Range) {
+        self.min += rhs.min;
+        self.max += rhs.max;
+    }
+}
+impl Mul<f64> for &Range {
+    type Output = Range;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Range {
+            min: self.min * rhs,
+            max: self.max * rhs,
+        }
+    }
+}
+impl std::ops::MulAssign<f64> for Range {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.min *= rhs;
+        self.max *= rhs;
+    }
+}
+impl Sub<&Range> for &Range {
+    type Output = Range;
+
+    fn sub(self, rhs: &Range) -> Self::Output {
+        Range {
+            min: self.min - rhs.min,
+            max: self.max - rhs.max,
+        }
+    }
+}
+impl Div<&Range> for &Range {
+    type Output = Range;
+
+    fn div(self, rhs: &Range) -> Self::Output {
+        Range {
+            min: self.min / rhs.min,
+            max: self.max / rhs.max,
+        }
     }
 }
