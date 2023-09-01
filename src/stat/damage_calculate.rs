@@ -3,7 +3,7 @@ use crate::*;
 struct Statistics {
     // "nConvBase:4.Ice Snake Damage"
     // "wConvBase:4.Ice Snake Damage"
-    skill_dam_convert: DamagesConvert,
+    ability_dam_convert: DamagesConvert,
     // "nConvBase"
     // "wConvBase"
     dam_convert: DamagesConvert,
@@ -47,13 +47,11 @@ struct Weapon {
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/damage_calc.js#L31
-fn damage_calcuate(
+fn damage_calculate(
     stats: &Statistics,
     weapon: &Weapon,
     dam_convert: &DamagesConvert,
 ) -> (Damages, Damages) {
-    // TODO: Roll all the loops together maybe
-
     // 1. Get weapon damage (with powders).
 
     // 2. Conversions.
@@ -61,7 +59,7 @@ fn damage_calcuate(
 
     let mut conversions = dam_convert.clone();
 
-    conversions += &stats.skill_dam_convert;
+    conversions += &stats.ability_dam_convert;
     conversions += &stats.dam_convert;
 
     // 2.1. First, apply neutral conversion (scale weapon damage). Keep track of total weapon damage here.
@@ -72,7 +70,7 @@ fn damage_calcuate(
 
     // 2.2. Next, apply elemental conversions using damage computed in step 1.1.
     conversions = conversions.only_positive();
-    damages += &(&Damages::splat(&total_damages).only_elem() * &conversions);
+    damages += &(&Damages::splat(&total_damages).only_rainbow() * &conversions);
 
     // 3. Apply attack speed multiplier. Ignored for melee single hit
     damages *= weapon.atk_spd.speed_mult();
@@ -86,9 +84,8 @@ fn damage_calcuate(
 
     damages += &present.select(&stats.dam_add);
 
-    let no_boots_dam: Damages = damages.clone();
-    let no_boots_total_dam = damages.total();
-    let no_boots_elem_total_dam = damages.only_elem().total();
+    let each_weight = &damages / &damages.total();
+    let rainbow_each_weight = &damages.only_rainbow() / &damages.only_rainbow().total();
 
     // 5. ID bonus.
 
@@ -104,38 +101,37 @@ fn damage_calcuate(
         skill_points_to_percentage(stats.skill_point[5]),
     ]) * &skill_point_damage_convert;
 
-    let mut damage_boosts = DamagesConvert::splat(1.0);
-    damage_boosts += &skill_boost;
-    damage_boosts += stats.sd_pct + stats.dam_pct;
-    damage_boosts += &stats.sd_pct_s;
-    damage_boosts += &stats.dam_pct_s;
-    damage_boosts += &DamagesConvert::splat(stats.r_sd_pct + stats.r_dam_pct).only_elem();
+    let mut damage_pct_s = DamagesConvert::splat(1.0);
+    damage_pct_s += &skill_boost;
+    damage_pct_s += stats.sd_pct + stats.dam_pct;
+    damage_pct_s += &stats.sd_pct_s;
+    damage_pct_s += &stats.dam_pct_s;
+    damage_pct_s += &DamagesConvert::splat(stats.r_sd_pct + stats.r_dam_pct).only_rainbow();
 
-    damages *= &damage_boosts;
+    damages *= &damage_pct_s;
 
     // 5.2: Raw application.
 
-    let raw_boosts = present.select(
-        &DamagesConvert::from_slice([
-            stats.sd_raw_s[0] as f64 + stats.dam_raw_s[0] as f64,
-            stats.sd_raw_s[1] as f64 + stats.dam_raw_s[1] as f64,
-            stats.sd_raw_s[2] as f64 + stats.dam_raw_s[2] as f64,
-            stats.sd_raw_s[3] as f64 + stats.dam_raw_s[3] as f64,
-            stats.sd_raw_s[4] as f64 + stats.dam_raw_s[4] as f64,
-            stats.sd_raw_s[5] as f64 + stats.dam_raw_s[5] as f64,
-        ])
-        .only_elem(),
+    let mut raws: Damages = Damages::from(
+        &present.select(
+            &DamagesConvert::from_slice([
+                stats.sd_raw_s[0] as f64 + stats.dam_raw_s[0] as f64,
+                stats.sd_raw_s[1] as f64 + stats.dam_raw_s[1] as f64,
+                stats.sd_raw_s[2] as f64 + stats.dam_raw_s[2] as f64,
+                stats.sd_raw_s[3] as f64 + stats.dam_raw_s[3] as f64,
+                stats.sd_raw_s[4] as f64 + stats.dam_raw_s[4] as f64,
+                stats.sd_raw_s[5] as f64 + stats.dam_raw_s[5] as f64,
+            ])
+            .only_rainbow(),
+        ),
     );
-    let mut boosts_damages: Damages = Damages::from(&raw_boosts);
-    let weight = &no_boots_dam / &no_boots_total_dam;
-    let prop_raw = stats.sd_raw + stats.dam_raw;
-    boosts_damages += &(&weight * prop_raw as f64);
-    let weight = &no_boots_dam.only_elem() / &no_boots_elem_total_dam;
+    let dam_raw = stats.sd_raw + stats.dam_raw;
+    raws += &(&each_weight * dam_raw as f64);
     let rainbow_raw = stats.r_sd_raw + stats.r_dam_raw;
-    boosts_damages += &(&weight * rainbow_raw as f64);
-    boosts_damages *= conversions.total();
+    raws += &(&rainbow_each_weight * rainbow_raw as f64);
+    raws *= conversions.total();
 
-    damages += &boosts_damages;
+    damages += &raws;
 
     // 6. Strength boosters
     let str_boost = 1.0 + skill_boost.e();
@@ -167,9 +163,9 @@ mod tests {
     #[test]
     fn calculate_damage_works() {
         // test case use: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00010039I1004fI0z0z0+0+0+0+0---hOsKbv3 (Remix, original by RawFish)
-        let (normal_damage, crit_damage) = damage_calcuate(
+        let (normal_damage, crit_damage) = damage_calculate(
             &Statistics {
-                skill_dam_convert: Default::default(),
+                ability_dam_convert: Default::default(),
                 dam_convert: Default::default(),
                 skill_point: [0, 25, 40, 146, 90, 40],
                 sd_pct: 0.16,

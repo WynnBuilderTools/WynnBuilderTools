@@ -28,7 +28,7 @@ impl Damages {
             max: max_sum,
         }
     }
-    pub fn only_elem(&self) -> Self {
+    pub fn only_rainbow(&self) -> Self {
         Self::from_slice([
             Range { min: 0.0, max: 0.0 },
             self.inner[1].clone(),
@@ -160,7 +160,7 @@ impl DamagesConvert {
     pub fn splat(item: f64) -> Self {
         Self::from_slice([item, item, item, item, item, item])
     }
-    pub fn only_elem(&self) -> Self {
+    pub fn only_rainbow(&self) -> Self {
         Self::from_slice([
             0.0,
             self.inner[1],

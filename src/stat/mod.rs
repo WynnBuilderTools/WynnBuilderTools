@@ -4,7 +4,7 @@ mod encode;
 mod hp;
 mod rolls;
 mod skill_point;
-mod damage_calcuate;
+mod damage_calculate;
 
 pub use dam::*;
 pub use def::*;
@@ -12,7 +12,7 @@ pub use encode::*;
 pub use hp::*;
 pub use rolls::*;
 pub use skill_point::*;
-pub use damage_calcuate::*;
+pub use damage_calculate::*;
 
 use crate::*;
 use std::fs;
