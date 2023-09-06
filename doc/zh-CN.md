@@ -1,26 +1,30 @@
-# WynnCraft build 批量生成工具
+# WynnCraft build 工具包
 
 ## 简介
 
 本工具是MC服务器[WynnCraft](https://wynncraft.com/)的第三方辅助工具，用于批量生成游戏中的build组合，以找到属性最合适的build。
+
+当前的工具包包含两部分：build批量生成工具与装备筛选工具。
 
 ## 功能
 
 - [x] 根据设置的装备列表遍历组合出所有build，找出所有合法的build储存至数据库
 - [x] 设置合法性检查的条件，例如最低属性要求，对不合格的build进行过滤
 - [x] 常规属性(hp、ehp、hpr、元素防御、属性点、魔力偷取、魔力恢复、生命偷取、生命恢复、走路速度)计算
-- [x] 将build转换为[hppeng-wynn](https://hppeng-wynn.github.io/builder) URL
+- [x] 将build转换为[WynnBuilder](https://hppeng-wynn.github.io/builder) URL
 - [ ] 更多的属性计算
 - [ ] 添加Hive装备合法性检查
 - [ ] 伤害计算
   - [ ] 技能计算
   - [ ] tomes计算
   - [ ] powders计算
-- [ ] 装备筛选工具，从wynn所有装备中筛选出符合要求的装备，方便编写装备列表
+- [x] 装备筛选工具，从wynn所有装备中筛选出符合要求的装备，方便编写装备列表
 
-## 使用指南
+## 批量生成工具使用指南
 
-本工具包含一个可执行程序和一份配置文件，交互全部依靠配置文件完成，配置文件示例如下：
+批量生成工具包含一个build生成器(builder.exe)、一份配置文件(config.toml)、一份WynnCraft物品数据文件(items.json)、一份数据库文件(data.db)；
+物品数据文件来自于[hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data);
+交互全部依靠配置文件完成，配置文件示例如下：
 
 ```toml
 # 配置文件主要提供了两部分功能：
@@ -109,3 +113,67 @@ done
 
 build生成后会立即放入数据库，之后可以通过数据库直接进行筛选。
 如果对数据库不熟悉，可以使用[DB Browser for SQLite (DB4S)](https://github.com/sqlitebrowser/sqlitebrowser)进行浏览与筛选。
+
+## 装备筛选工具使用指南
+
+装备筛选工具是一个命令行工具，主要功能是筛选出某些属性排序靠前的装备并打印出来，可以将打印结果复制到批量生成工具的配置文件中使用。
+
+--help:
+
+``` txt
+Usage: search_item [OPTIONS] --sort-by <SORT_BY>
+
+Options:
+  -t, --type <TYPE>
+          Apparel type
+          
+          [possible values: helmets, chest-plate, leggings, boots, ring, bracelet, necklace]
+
+  -l, --limit <LIMIT>
+          A limit on the number of results, auto-inflated if the last item has the same value as multiple items
+          
+          [default: 10]
+
+  -o, --order-by <ORDER_BY>
+          [default: desc]
+
+          Possible values:
+          - asc:  Sort the results in ascending order, arrange them from smallest to largest
+          - desc: Sort the results in descending order, arrange them from largest to smallest
+
+  -s, --sort-by <SORT_BY>
+          Possible values:
+          - lvl:     Level
+          - hpb:     Hp bonus(max)
+          - hpr-raw: Hp regain raw(max)
+          - hpr-pct: Hp regain pct(max)
+          - sp-add:  Skill point add total
+          - sp-req:  Skill point request total
+          - sd-raw:  Spell damage raw(max)
+          - sd-pct:  Spell damage pct(max)
+          - mr:      Mana regain(max)
+          - spd:     Walk speed bonus(max)
+          - ls:      Life steal(max)
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+```
+
+使用示例：
+
+```txt
+# InPut:
+.\search_item.ext -s lvl
+
+# OutPut:
+Helmets:   "Dissociation","Aquamarine","Dissonance","Anima-Infused Helmet","Obsidian-Framed Helmet","Keratoconus","Ornate Shadow Cowl","Pisces","Nonexistence","Morph-Stardust"
+ChestPlat: "Dondasch","Brilliant Diamond Chestplate","Atakebune","Gaping Cavity","Far Cosmos","Gravity","Boreal-Patterned Aegis","Elysium-Engraved Aegis","Twilight-Gilded Cloak","Empyreal Emberplate","Medeis","Inhibitor֎","Ornate Shadow Garb","Roridula","Wanderlust"
+Leggings : "Anxiolytic","Anaerobic","Atomizer","Writhing Growth","Abyss-Imbued Leggings","Chaos-Woven Greaves","Hephaestus-Forged Greaves","Pyrrhic Respite","Ornate Shadow Cover","Neutrino","Aleph Null"
+Boots:     "Capricorn","Curador Boots","Skidbladnir","Expedition's End","Fermion","Gaea-Hewn Boots","Hephaestus-Forged Sabatons","Kickback","Cytotoxic Striders","Revenant","Ornate Shadow Cloud","Wasteland Azalea"
+Ring:      "Acid","Facile","Intensity","Azeotrope","Prism","Dispersion","Obstinance","Forbearance","Ingress","Tranquility"
+Bracelet:  "Privateer","Enmity","Prowess","Knucklebones","Gravitron","Misalignment","Anya's Penumbra","Nebulous","Pandemonium","Compliance","Succession","Breakthrough","Detachment"
+Necklace:  "Xebec","Ambivalence","Grafted Eyestalk","Contrast","Legendary Medallion","Planet Healer","Abrasion","Recalcitrance","Exhibition","Simulacrum","Reborn"
+```

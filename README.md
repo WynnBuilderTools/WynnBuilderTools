@@ -1,4 +1,4 @@
-# WynnCraft Build Batch Generation Tool
+# WynnCraft Build Tools
 
 [中文版简介](./doc/zh-CN.md)
 
@@ -6,23 +6,27 @@
 
 This tool is a third-party utility for the Minecraft server [WynnCraft](https://wynncraft.com/), designed to generate build combinations in bulk within the game, aiming to discover the most suitable builds with optimal attributes.
 
+The current toolkit consists of two main components: the build batch generation tool and the equipment filtering tool.
+
 ## Features
 
 - [x] Traverse and combine builds based on the provided equipment list, identifying valid builds and storing them in a database.
 - [x] Set conditions for validity checks, such as minimum attribute requirements, to filter out ineligible builds.
 - [x]  Calculate basic attributes (hp, ehp, hpr, elemental defenses, attribute points, mana steal, mana regen, life steal, life regen, walk speed).
-- [x] Convert builds into [hppeng-wynn](https://hppeng-wynn.github.io/builder) URLs.
+- [x] Convert builds into [WynnBuilder](https://hppeng-wynn.github.io/builder) URLs.
 - [ ] Additional attribute calculations.
 - [ ] Implement legality checks for Hive equipment.
 - [ ] Damage calculations.
   - [ ] Skill calculations.
   - [ ] Tomes calculations.
   - [ ] Powders calculations.
-- [ ] Equipment filtering tool to extract fitting equipment from all WynnCraft equipment, facilitating the creation of equipment lists.
+- [x] Equipment filtering tool to extract fitting equipment from all WynnCraft equipment, facilitating the creation of equipment lists.
 
-## User Guide
+## Batch Generation Tool User Guide
 
-This tool includes an executable program and a configuration file. All interactions are handled through the configuration file. The configuration file is outlined as follows:
+The batch generation tool includes a build generator (builder.exe), a configuration file (config.toml), a WynnCraft item data file (items.json), and a database file (data.db).
+The item data file is sourced from [hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data).
+All interactions are handled through the configuration file, as shown below:
 
 ```toml
 # The configuration file primarily serves two functions:
@@ -109,3 +113,67 @@ done
 ```
 
 Generated builds are immediately stored in the database, allowing direct filtering through the database. If you're unfamiliar with databases, you can use [DB Browser for SQLite (DB4S)](https://github.com/sqlitebrowser/sqlitebrowser) to browse and filter the results.
+
+## Equipment Filtering Tool User Guide
+
+The equipment filtering tool is a command-line utility designed to filter out equipment with specific attributes that rank high. It can print the results, which can then be copied into the batch generation tool's configuration file.
+
+--help:
+
+```txt
+Usage: search_item [OPTIONS] --sort-by <SORT_BY>
+
+Options:
+  -t, --type <TYPE>
+          Apparel type
+          
+          [possible values: helmets, chest-plate, leggings, boots, ring, bracelet, necklace]
+
+  -l, --limit <LIMIT>
+          A limit on the number of results, auto-inflated if the last item has the same value as multiple items
+          
+          [default: 10]
+
+  -o, --order-by <ORDER_BY>
+          [default: desc]
+
+          Possible values:
+          - asc:  Sort the results in ascending order, arrange them from smallest to largest
+          - desc: Sort the results in descending order, arrange them from largest to smallest
+
+  -s, --sort-by <SORT_BY>
+          Possible values:
+          - lvl:     Level
+          - hpb:     Hp bonus(max)
+          - hpr-raw: Hp regain raw(max)
+          - hpr-pct: Hp regain pct(max)
+          - sp-add:  Skill point add total
+          - sp-req:  Skill point request total
+          - sd-raw:  Spell damage raw(max)
+          - sd-pct:  Spell damage pct(max)
+          - mr:      Mana regain(max)
+          - spd:     Walk speed bonus(max)
+          - ls:      Life steal(max)
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+```
+
+example:
+
+```txt
+# InPut:
+.\search_item.ext -s lvl
+
+# OutPut:
+Helmets:   "Dissociation","Aquamarine","Dissonance","Anima-Infused Helmet","Obsidian-Framed Helmet","Keratoconus","Ornate Shadow Cowl","Pisces","Nonexistence","Morph-Stardust"
+ChestPlat: "Dondasch","Brilliant Diamond Chestplate","Atakebune","Gaping Cavity","Far Cosmos","Gravity","Boreal-Patterned Aegis","Elysium-Engraved Aegis","Twilight-Gilded Cloak","Empyreal Emberplate","Medeis","Inhibitor֎","Ornate Shadow Garb","Roridula","Wanderlust"
+Leggings : "Anxiolytic","Anaerobic","Atomizer","Writhing Growth","Abyss-Imbued Leggings","Chaos-Woven Greaves","Hephaestus-Forged Greaves","Pyrrhic Respite","Ornate Shadow Cover","Neutrino","Aleph Null"
+Boots:     "Capricorn","Curador Boots","Skidbladnir","Expedition's End","Fermion","Gaea-Hewn Boots","Hephaestus-Forged Sabatons","Kickback","Cytotoxic Striders","Revenant","Ornate Shadow Cloud","Wasteland Azalea"
+Ring:      "Acid","Facile","Intensity","Azeotrope","Prism","Dispersion","Obstinance","Forbearance","Ingress","Tranquility"
+Bracelet:  "Privateer","Enmity","Prowess","Knucklebones","Gravitron","Misalignment","Anya's Penumbra","Nebulous","Pandemonium","Compliance","Succession","Breakthrough","Detachment"
+Necklace:  "Xebec","Ambivalence","Grafted Eyestalk","Contrast","Legendary Medallion","Planet Healer","Abrasion","Recalcitrance","Exhibition","Simulacrum","Reborn"
+```

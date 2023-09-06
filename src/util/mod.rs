@@ -23,25 +23,30 @@ where
         value.sort_by(&compare);
     }
 }
-pub fn get_min_threshold<F, K, T, const LEN: usize>(
+pub fn get_threshold<F, K, T, const LEN: usize>(
     arrays: &[Vec<T>; LEN],
     limit_index: usize,
+    reverse: bool,
     f: F,
 ) -> [K; LEN]
 where
     F: Fn(&T) -> K,
-    K: Ord + Default + Copy,
+    K: Ord,
 {
-    let mut threshold: [K; LEN] = [Default::default(); LEN];
+    let mut threshold: [K; LEN] = unsafe { std::mem::zeroed() };
 
     for (index, value) in arrays.iter().enumerate() {
-        let mut value: Vec<&T> = value.iter().collect();
-        value.sort_by_key(|v| Reverse(f(v)));
-        threshold[index] = f(if limit_index >= value.len() {
-            value.last().unwrap()
+        let mut sorted_values: Vec<&T> = value.iter().collect();
+        if reverse {
+            sorted_values.sort_by_key(|v| Reverse(f(v)));
         } else {
-            value.get(limit_index).unwrap()
-        });
+            sorted_values.sort_by_key(|v| f(v));
+        }
+
+        threshold[index] = match sorted_values.get(limit_index) {
+            Some(value) => f(value),
+            None => f(sorted_values.last().unwrap()),
+        };
     }
 
     threshold
@@ -58,7 +63,7 @@ mod tests {
             vec![1, 2, 3, -4],
             vec![1, 2, 3],
         ];
-        let a = get_min_threshold(&array, 2, |v| v.abs());
+        let a = get_threshold(&array, 2, true, |v| v.abs());
         let b = [6, 2, 1];
         assert_eq!(a, b);
     }

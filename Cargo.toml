@@ -1,6 +1,6 @@
 [package]
 name = "wynn_build_tools"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 [lib]
@@ -27,10 +27,14 @@ criterion = { version = "0.4", features = ["html_reports"] }
 num = "0.4.0"
 serde = "1.0.160"
 toml = "0.7.6"
+clap = { version = "4.4.2", features = ["derive"] }
 
 [[bin]]
 name = "builder"
-path = "src/main.rs"
+path = "src/builder.rs"
+[[bin]]
+name = "search_item"
+path = "src/search_item.rs"
 
 [[bench]]
 name = "skill_points"
