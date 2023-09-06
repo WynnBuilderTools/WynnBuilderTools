@@ -1,5 +1,5 @@
 mod config;
-use config::*;
+use config::build_config::*;
 mod db;
 
 use std::{
@@ -16,21 +16,24 @@ use wynn_build_tools::*;
 
 #[tokio::main]
 async fn main() {
-    let config = load_config("config/config.toml").await;
+    let config = load_config("config/config.toml").await.unwrap();
 
     let (apparels, weapons) = load_from_json("config/items.json");
-    let weapon = weapons.iter().find(|v| v.name == config.weapon).unwrap();
+    let weapon = weapons
+        .iter()
+        .find(|v| v.name == config.items.weapon)
+        .unwrap();
     let no_ring_apparels: [&[&Apparel]; 6] = [
-        &find(&apparels[0], &config.helmets).unwrap(),
-        &find(&apparels[1], &config.chestplates).unwrap(),
-        &find(&apparels[2], &config.leggings).unwrap(),
-        &find(&apparels[3], &config.boots).unwrap(),
-        &find(&apparels[5], &config.bracelets).unwrap(),
-        &find(&apparels[6], &config.necklaces).unwrap(),
+        &find(&apparels[0], &config.items.helmets).unwrap(),
+        &find(&apparels[1], &config.items.chestplates).unwrap(),
+        &find(&apparels[2], &config.items.leggings).unwrap(),
+        &find(&apparels[3], &config.items.boots).unwrap(),
+        &find(&apparels[5], &config.items.bracelets).unwrap(),
+        &find(&apparels[6], &config.items.necklaces).unwrap(),
     ];
     let rings: [&[&Apparel]; 2] = [
-        &find(&apparels[4], &config.rings).unwrap(),
-        &find(&apparels[4], &config.rings).unwrap(),
+        &find(&apparels[4], &config.items.rings).unwrap(),
+        &find(&apparels[4], &config.items.rings).unwrap(),
     ];
     let ring_combinations = generate_no_order_combinations(rings[0].len());
 
@@ -72,7 +75,7 @@ async fn main() {
                             combination[6].id,
                             combination[7].id,
                         ],
-                        config.lvl,
+                        config.player.lvl,
                         weapon.id,
                         [
                             stat.skill_point.original.e() as i32,
@@ -83,7 +86,10 @@ async fn main() {
                         ],
                     );
 
-                    let url = format!("{}{}{}", config.url_refix, code, config.url_suffix);
+                    let url = format!(
+                        "{}{}{}",
+                        config.hppeng.url_refix, code, config.hppeng.url_suffix
+                    );
                     println!("{}", url);
                     println!("{}", stat);
 
@@ -149,44 +155,84 @@ impl std::fmt::Display for Status {
     }
 }
 
+const MIN_16: i16 = i16::MIN / 2;
 fn calculate_stats(
     config: &Config,
     combination: &[&Apparel; 8],
     weapon: &Weapon,
 ) -> Result<Status, String> {
-    let max_hp = sum_hp_max(combination, weapon) + config.base_hp;
-    if max_hp < config.threshold_hp {
-        return Err(format!(""));
+    let max_hp = sum_hp_max(combination, weapon) + config.player.base_hp;
+    if let Some(threshold) = &config.threshold_first {
+        if let Some(v) = threshold.min_hp {
+            if max_hp < v {
+                return Err(format!(""));
+            }
+        }
     }
 
     let max_stat = CommonStat::sum_max_stats(combination.as_slice(), weapon);
-    if max_stat.any_lt(&config.threshold_stat) {
-        return Err(format!(""));
-    }
-
     let max_hpr = max_stat.hpr();
-    if max_hpr < config.threshold_hpr {
-        return Err(format!(""));
+    if let Some(threshold) = &config.threshold_second {
+        let hpr_raw = threshold.min_hpr_raw.unwrap_or(MIN_16);
+        let hpr_pct = threshold.min_hpr_pct.unwrap_or(MIN_16);
+        let mr = threshold.min_mr.unwrap_or(MIN_16);
+        let ls = threshold.min_ls.unwrap_or(MIN_16);
+        let ms = threshold.min_ms.unwrap_or(MIN_16);
+        let spd = threshold.min_spd.unwrap_or(MIN_16);
+        let sd_raw = threshold.min_sd_raw.unwrap_or(MIN_16);
+        let sd_pct = threshold.min_sd_pct.unwrap_or(MIN_16);
+
+        if max_stat.any_lt(&CommonStat::new(
+            hpr_raw, hpr_pct, mr, ls, ms, spd, sd_raw, sd_pct,
+        )) {
+            return Err(format!(""));
+        }
+        if let Some(v) = threshold.min_hpr {
+            if max_hpr < v {
+                return Err(format!(""));
+            }
+        }
     }
 
     let max_def = sum_def_max(combination.as_slice(), weapon);
-    if max_def.any_lt(&config.threshold_def) {
-        return Err(format!(""));
+    if let Some(threshold) = &config.threshold_third {
+        let e = threshold.min_earth_defense.unwrap_or(MIN_16);
+        let t = threshold.min_thunder_defense.unwrap_or(MIN_16);
+        let w = threshold.min_water_defense.unwrap_or(MIN_16);
+        let f = threshold.min_fire_defense.unwrap_or(MIN_16);
+        let a = threshold.min_air_defense.unwrap_or(MIN_16);
+
+        if max_def.any_lt(&Point::new(e, t, w, f, a)) {
+            return Err(format!(""));
+        }
     }
 
-    if SkillPoints::fast_gap(&combination) < -config.available_point {
+    if SkillPoints::fast_gap(&combination) < -config.player.available_point {
         return Err(format!(""));
     }
     let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);
     skill_point.add_weapon(weapon);
-    skill_point.assign(&config.threshold_point);
-    if !skill_point.check(config.available_point) {
+
+    if let Some(threshold) = &config.threshold_fourth {
+        let e = threshold.min_earth_point.unwrap_or(MIN_16);
+        let t = threshold.min_thunder_point.unwrap_or(MIN_16);
+        let w = threshold.min_water_point.unwrap_or(MIN_16);
+        let f = threshold.min_fire_point.unwrap_or(MIN_16);
+        let a = threshold.min_air_point.unwrap_or(MIN_16);
+        skill_point.assign(&Point::new(e, t, w, f, a));
+    }
+
+    if !skill_point.check(config.player.available_point) {
         return Err(format!(""));
     }
 
     let ehp = ehp(&skill_point, max_hp, &weapon.class);
-    if config.threshold_ehp > ehp {
-        return Err(format!(""));
+    if let Some(threshold) = &config.threshold_fourth {
+        if let Some(v) = threshold.min_ehp {
+            if ehp < v {
+                return Err(format!(""));
+            }
+        }
     }
 
     return Ok(Status {
