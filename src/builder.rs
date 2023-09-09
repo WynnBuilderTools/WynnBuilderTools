@@ -253,10 +253,10 @@ fn calculate_stats(
         return Err(format!(""));
     }
 
-    let ehp = ehp(&skill_point, max_hp, &weapon.class);
+    let max_ehp = ehp(&skill_point, max_hp, &weapon.class);
     if let Some(threshold) = &config.threshold_fifth {
         if let Some(v) = threshold.min_ehp {
-            if ehp < v {
+            if max_ehp < v {
                 return Err(format!(""));
             }
         }
@@ -268,7 +268,7 @@ fn calculate_stats(
         max_hp,
         max_def,
         skill_point,
-        max_ehp: ehp,
+        max_ehp,
         max_dam_pct,
     });
 }
