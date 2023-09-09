@@ -228,6 +228,12 @@ fn calculate_stats(
         }
     }
 
+    if let Some(illegal_combinations) = &config.items.illegal_combinations {
+        if is_illegal_combination(&combination, illegal_combinations.as_slice()) {
+            return Err(format!(""));
+        }
+    }
+
     if SkillPoints::fast_gap(&combination) < -config.player.available_point {
         return Err(format!(""));
     }
@@ -265,4 +271,23 @@ fn calculate_stats(
         max_ehp: ehp,
         max_dam_pct,
     });
+}
+
+fn is_illegal_combination(
+    combination: &[&Apparel; 8],
+    illegal_combinations: &[Vec<String>],
+) -> bool {
+    let names = combination.map(|v| &v.name);
+    for illegal_combination in illegal_combinations {
+        let mut count = 0;
+        for name in names {
+            if illegal_combination.contains(name) {
+                count += 1;
+            }
+            if count > 1 {
+                return true;
+            }
+        }
+    }
+    return false;
 }

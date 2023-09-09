@@ -17,7 +17,7 @@ The current toolkit consists of two main components: the build batch generation 
 - [ ] Additional attribute calculations.
   - [x] dam_pct
   - [ ] cost
-- [ ] Implement legality checks for Hive equipment.
+- [x] Implement legality checks for Hive equipment.
 - [ ] Damage calculations.
   - [ ] Skill calculations.
   - [ ] Tomes calculations.
@@ -96,6 +96,80 @@ rings = ["Diamond Hydro Ring", "Moon Pool Circlet"]
 bracelets = ["Prowess"]
 necklaces = ["Diamond Fusion Necklace"]
 weapon = "Idol"
+
+illegal_combinations = [ # Illegal equipment combination inspections are used to check the equipment that cannot exist at the same time, such as Hive
+    [
+        "Abyss-Imbued Leggings",
+        "Boreal-Patterned Crown",
+        "Anima-Infused Cuirass",
+        "Chaos-Woven Greaves",
+        "Elysium-Engraved Aegis",
+        "Eden-Blessed Guards",
+        "Gaea-Hewn Boots",
+        "Hephaestus-Forged Sabatons",
+        "Obsidian-Framed Helmet",
+        "Twilight-Gilded Cloak",
+        "Infused Hive Relik",
+        "Infused Hive Wand",
+        "Infused Hive Spear",
+        "Infused Hive Dagger",
+        "Infused Hive Bow",
+        "Contrast",
+        "Prowess",
+        "Intensity",
+    ],
+    [
+        "Sparkling Visor",
+        "Insulated Plate Mail",
+        "Static-Charged Leggings",
+        "Thunderous Step",
+        "Bottled Thunderstorm",
+        "Lightning Flash",
+    ],
+    [
+        "Pride of the Aerie",
+        "Gale's Freedom",
+        "Turbine Greaves",
+        "Flashstep",
+        "Breezehands",
+        "Vortex Bracer",
+    ],
+    [
+        "Ambertoise Shell",
+        "Beetle Aegis",
+        "Elder Oak Roots",
+        "Humbark Moccasins",
+        "Subur Clip",
+        "Golemlus Core",
+    ],
+    [
+        "Whitecap Crown",
+        "Stillwater Blue",
+        "Trench Scourer",
+        "Silt of the Seafloor",
+        "Coral Ring",
+        "Moon Pool Circlet",
+    ],
+    [
+        "Sparkweaver",
+        "Soulflare",
+        "Cinderchain",
+        "Mantlewalkers",
+        "Clockwork",
+        "Dupliblaze",
+    ],
+    [
+        "Ornate Shadow Cowl",
+        "Ornate Shadow Garb",
+        "Ornate Shadow Cover",
+        "Ornate Shadow Cloud",
+    ],
+    [
+        "Dragon's Eye Bracelet",
+        "Draoi Fair",
+        "Renda Langit",
+    ],
+]
 ```
 
 Once the configuration file is set up, running the executable program will generate builds. Valid builds will be printed during the process, similar to the following:

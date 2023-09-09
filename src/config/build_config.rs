@@ -23,6 +23,7 @@ pub struct Items {
     pub bracelets: Vec<String>,
     pub necklaces: Vec<String>,
     pub weapon: String,
+    pub illegal_combinations: Option<Vec<Vec<String>>>,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct Player {

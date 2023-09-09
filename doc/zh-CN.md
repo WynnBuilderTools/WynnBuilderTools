@@ -95,6 +95,80 @@ rings = ["Diamond Hydro Ring", "Moon Pool Circlet"]
 bracelets = ["Prowess"]
 necklaces = ["Diamond Fusion Necklace"]
 weapon = "Idol"
+
+illegal_combinations = [ # 非法装备组合检查，用于检查不能多个同时存在的装备，例如Hive
+    [
+        "Abyss-Imbued Leggings",
+        "Boreal-Patterned Crown",
+        "Anima-Infused Cuirass",
+        "Chaos-Woven Greaves",
+        "Elysium-Engraved Aegis",
+        "Eden-Blessed Guards",
+        "Gaea-Hewn Boots",
+        "Hephaestus-Forged Sabatons",
+        "Obsidian-Framed Helmet",
+        "Twilight-Gilded Cloak",
+        "Infused Hive Relik",
+        "Infused Hive Wand",
+        "Infused Hive Spear",
+        "Infused Hive Dagger",
+        "Infused Hive Bow",
+        "Contrast",
+        "Prowess",
+        "Intensity",
+    ],
+    [
+        "Sparkling Visor",
+        "Insulated Plate Mail",
+        "Static-Charged Leggings",
+        "Thunderous Step",
+        "Bottled Thunderstorm",
+        "Lightning Flash",
+    ],
+    [
+        "Pride of the Aerie",
+        "Gale's Freedom",
+        "Turbine Greaves",
+        "Flashstep",
+        "Breezehands",
+        "Vortex Bracer",
+    ],
+    [
+        "Ambertoise Shell",
+        "Beetle Aegis",
+        "Elder Oak Roots",
+        "Humbark Moccasins",
+        "Subur Clip",
+        "Golemlus Core",
+    ],
+    [
+        "Whitecap Crown",
+        "Stillwater Blue",
+        "Trench Scourer",
+        "Silt of the Seafloor",
+        "Coral Ring",
+        "Moon Pool Circlet",
+    ],
+    [
+        "Sparkweaver",
+        "Soulflare",
+        "Cinderchain",
+        "Mantlewalkers",
+        "Clockwork",
+        "Dupliblaze",
+    ],
+    [
+        "Ornate Shadow Cowl",
+        "Ornate Shadow Garb",
+        "Ornate Shadow Cover",
+        "Ornate Shadow Cloud",
+    ],
+    [
+        "Dragon's Eye Bracelet",
+        "Draoi Fair",
+        "Renda Langit",
+    ],
+]
 ```
 
 设置好配置文件后，运行可执行程序即可生成build，期间会打印输出合法的build，类似下面这样：
