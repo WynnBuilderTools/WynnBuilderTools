@@ -18,6 +18,7 @@ async fn main() {
         .sort_by
     {
         SortBy::LVL => v.lvl,
+        SortBy::HP => v.hp,
         SortBy::HPB => v.hp_bonus_max,
         SortBy::HPRRaw => v.stat_max.hpr_raw() as i32,
         SortBy::HPRPct => v.stat_max.hpr_pct() as i32,
@@ -32,6 +33,7 @@ async fn main() {
 
     filter_2d_vector(&mut apparels, |array_index, v| match args.sort_by {
         SortBy::LVL => v.lvl < thresholds[array_index],
+        SortBy::HP => v.hp < thresholds[array_index],
         SortBy::HPB => v.hp_bonus_max < thresholds[array_index],
         SortBy::HPRRaw => (v.stat_max.hpr_raw() as i32) < thresholds[array_index],
         SortBy::HPRPct => (v.stat_max.hpr_pct() as i32) < thresholds[array_index],

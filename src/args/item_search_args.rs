@@ -49,6 +49,8 @@ impl ToString for OrderBy {
 pub enum SortBy {
     /// Level
     LVL,
+    /// Hp
+    HP,
     /// Hp bonus(max)
     HPB,
     /// Hp regain raw(max)
