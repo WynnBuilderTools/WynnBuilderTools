@@ -54,7 +54,7 @@ pub async fn save_build(
             INSERT INTO build (
             	url,
 		        helmet,
-		        chestplate,
+		        chest_plate,
 		        leggings,
 		        boots,
 		        ring_1,

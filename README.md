@@ -89,7 +89,7 @@ url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated
 
 [items] # Equipment list; multiple items can be specified for all slots except weapon
 helmets = ["Cumulonimbus"]
-chestplates = ["Soulflare"]
+chest_plates = ["Soulflare"]
 leggings = ["Vaward"]
 boots = ["Resurgence"]
 rings = ["Diamond Hydro Ring", "Moon Pool Circlet"]

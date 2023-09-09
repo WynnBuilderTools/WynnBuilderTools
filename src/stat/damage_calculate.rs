@@ -136,7 +136,7 @@ fn damage_calculate(
     // 6. Strength boosters
     let str_boost = 1.0 + skill_boost.e();
     // let mult_map = stats.dam_mult;
-    let damage_mult = 1;
+    // let damage_mult = 1;
     // for (const [k, v] of mult_map.entries()) {
     //     if (k.includes(':')) {
     //         // TODO: fragile... checking for specific part multipliers.
@@ -150,8 +150,8 @@ fn damage_calculate(
 
     let crit_mult = 1.0 + stats.crit_dam_pct;
 
-    let normal_damage = &damages * (str_boost * damage_mult as f64);
-    let crit_damage = &damages * ((str_boost + crit_mult) * damage_mult as f64);
+    let normal_damage = &damages * (str_boost as f64);
+    let crit_damage = &damages * ((str_boost + crit_mult) as f64);
 
     return (normal_damage, crit_damage);
 }

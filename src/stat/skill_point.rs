@@ -16,7 +16,7 @@ impl SkillPoints {
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
         let zero = i16x8::splat(0);
         let mut put_perm: [&Apparel; LEN] = items.clone();
-        let mut bset_put_perm: [&Apparel; LEN] = put_perm;
+        let mut best_put_perm: [&Apparel; LEN] = put_perm;
         let mut best_assign: Point = Point::new(i16::MAX, i16::MAX, i16::MAX, i16::MAX, i16::MAX);
         let mut best_original: Point = Default::default();
 
@@ -36,7 +36,7 @@ impl SkillPoints {
             if assign.all() < best_assign.all() {
                 best_assign = assign;
                 best_original = original;
-                bset_put_perm = put_perm;
+                best_put_perm = put_perm;
             }
         }
 
@@ -45,7 +45,7 @@ impl SkillPoints {
                 assign: best_assign,
                 original: best_original,
             },
-            bset_put_perm,
+            best_put_perm,
         )
     }
     pub fn full_put_calculate<'a, const LEN: usize>(
@@ -69,7 +69,7 @@ impl SkillPoints {
         // - add is 0
         let zero = i16x8::splat(0);
 
-        let mut bset_perm: [&Apparel; LEN] = items.clone();
+        let mut best_perm: [&Apparel; LEN] = items.clone();
         let mut best_assign: Point = Point::new(i16::MAX, i16::MAX, i16::MAX, i16::MAX, i16::MAX);
         let mut best_original: Point = Default::default();
 
@@ -85,7 +85,7 @@ impl SkillPoints {
                 original.inner += v.add.inner;
             }
             if assign.all() < best_assign.all() {
-                bset_perm = put_perm;
+                best_perm = put_perm;
                 best_assign = assign;
                 best_original = original;
             }
@@ -99,7 +99,7 @@ impl SkillPoints {
                 assign: best_assign,
                 original: best_original,
             },
-            bset_perm,
+            best_perm,
         )
     }
     pub fn fast_gap<const LEN: usize>(items: &[&Apparel; LEN]) -> i16 {
@@ -242,7 +242,7 @@ mod tests {
         );
     }
     #[test]
-    fn assgin_works() {
+    fn assign_works() {
         assert_eq!(
             SkillPoints {
                 assign: Point::new(100, 0, 0, 0, 0),

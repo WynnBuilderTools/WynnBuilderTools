@@ -88,7 +88,7 @@ url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # 生成的URL后缀�
 
 [items] # 装备列表；除了武器外都可以指定多个
 helmets = ["Cumulonimbus"]
-chestplates = ["Soulflare"]
+chest_plates = ["Soulflare"]
 leggings = ["Vaward"]
 boots = ["Resurgence"]
 rings = ["Diamond Hydro Ring", "Moon Pool Circlet"]

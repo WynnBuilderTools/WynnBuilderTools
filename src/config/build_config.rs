@@ -16,7 +16,7 @@ pub struct Config {
 #[derive(Debug, Deserialize, Clone)]
 pub struct Items {
     pub helmets: Vec<String>,
-    pub chestplates: Vec<String>,
+    pub chest_plates: Vec<String>,
     pub leggings: Vec<String>,
     pub boots: Vec<String>,
     pub rings: Vec<String>,

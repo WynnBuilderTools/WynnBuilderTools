@@ -2,7 +2,7 @@ CREATE TABLE
 	IF NOT EXISTS build (
 		url TEXT NOT NULL,
 		helmet TEXT NOT NULL,
-		chestplate TEXT NOT NULL,
+		chest_plate TEXT NOT NULL,
 		leggings TEXT NOT NULL,
 		boots TEXT NOT NULL,
 		ring_1 TEXT NOT NULL,

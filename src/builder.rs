@@ -25,7 +25,7 @@ async fn main() {
         .unwrap();
     let no_ring_apparels: [&[&Apparel]; 6] = [
         &find(&apparels[0], &config.items.helmets).unwrap(),
-        &find(&apparels[1], &config.items.chestplates).unwrap(),
+        &find(&apparels[1], &config.items.chest_plates).unwrap(),
         &find(&apparels[2], &config.items.leggings).unwrap(),
         &find(&apparels[3], &config.items.boots).unwrap(),
         &find(&apparels[5], &config.items.bracelets).unwrap(),
