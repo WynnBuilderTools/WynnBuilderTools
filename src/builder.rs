@@ -144,13 +144,20 @@ pub struct Status {
     pub max_ehp: i32,
     pub max_def: Point,
     pub skill_point: SkillPoints,
+    pub max_dam_pct: Dam,
 }
 impl std::fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}",
-            self.max_stat, self.max_hpr, self.max_hp, self.max_ehp, self.skill_point, self.max_def
+            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}",
+            self.max_stat,
+            self.max_hpr,
+            self.max_hp,
+            self.max_ehp,
+            self.skill_point,
+            self.max_def,
+            self.max_dam_pct,
         )
     }
 }
@@ -170,7 +177,7 @@ fn calculate_stats(
         }
     }
 
-    let max_stat = CommonStat::sum_max_stats(combination.as_slice(), weapon);
+    let max_stat = CommonStat::sum_max_stats(combination, weapon);
     let max_hpr = max_stat.hpr();
     if let Some(threshold) = &config.threshold_second {
         let hpr_raw = threshold.min_hpr_raw.unwrap_or(MIN_16);
@@ -194,7 +201,7 @@ fn calculate_stats(
         }
     }
 
-    let max_def = sum_def_max(combination.as_slice(), weapon);
+    let max_def = sum_def_max(combination, weapon);
     if let Some(threshold) = &config.threshold_third {
         let e = threshold.min_earth_defense.unwrap_or(MIN_16);
         let t = threshold.min_thunder_defense.unwrap_or(MIN_16);
@@ -207,13 +214,27 @@ fn calculate_stats(
         }
     }
 
+    let max_dam_pct = sum_dam_pct_max(combination, weapon);
+    if let Some(threshold) = &config.threshold_fourth {
+        let n = threshold.min_neutral_dam_pct.unwrap_or(MIN_16);
+        let e = threshold.min_earth_dam_pct.unwrap_or(MIN_16);
+        let t = threshold.min_thunder_dam_pct.unwrap_or(MIN_16);
+        let w = threshold.min_water_dam_pct.unwrap_or(MIN_16);
+        let f = threshold.min_fire_dam_pct.unwrap_or(MIN_16);
+        let a = threshold.min_air_dam_pct.unwrap_or(MIN_16);
+
+        if max_dam_pct.any_lt(&Dam::new(n, e, t, w, f, a)) {
+            return Err(format!(""));
+        }
+    }
+
     if SkillPoints::fast_gap(&combination) < -config.player.available_point {
         return Err(format!(""));
     }
     let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);
     skill_point.add_weapon(weapon);
 
-    if let Some(threshold) = &config.threshold_fourth {
+    if let Some(threshold) = &config.threshold_fifth {
         let e = threshold.min_earth_point.unwrap_or(MIN_16);
         let t = threshold.min_thunder_point.unwrap_or(MIN_16);
         let w = threshold.min_water_point.unwrap_or(MIN_16);
@@ -227,7 +248,7 @@ fn calculate_stats(
     }
 
     let ehp = ehp(&skill_point, max_hp, &weapon.class);
-    if let Some(threshold) = &config.threshold_fourth {
+    if let Some(threshold) = &config.threshold_fifth {
         if let Some(v) = threshold.min_ehp {
             if ehp < v {
                 return Err(format!(""));
@@ -242,5 +263,6 @@ fn calculate_stats(
         max_def,
         skill_point,
         max_ehp: ehp,
+        max_dam_pct,
     });
 }

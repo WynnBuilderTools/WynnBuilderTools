@@ -34,5 +34,11 @@ CREATE TABLE
 		max_sd_pct INTEGER NOT NULL,
 		max_ehp INTEGER NOT NULL,
 		max_hp INTEGER NOT NULL,
-		max_hpr INTEGER NOT NULL
+		max_hpr INTEGER NOT NULL,
+		max_neutral_dam_pct INTEGER NOT NULL,
+		max_earth_dam_pct INTEGER NOT NULL,
+		max_thunder_dam_pct INTEGER NOT NULL,
+		max_water_dam_pct INTEGER NOT NULL,
+		max_fire_dam_pct INTEGER NOT NULL,
+		max_air_dam_pct INTEGER NOT NULL
 	);

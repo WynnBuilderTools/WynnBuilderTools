@@ -11,6 +11,7 @@ pub struct Config {
     pub threshold_second: Option<ThresholdSecond>,
     pub threshold_third: Option<ThresholdThird>,
     pub threshold_fourth: Option<ThresholdFourth>,
+    pub threshold_fifth: Option<ThresholdFifth>,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct Items {
@@ -61,6 +62,15 @@ pub struct ThresholdThird {
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct ThresholdFourth {
+    pub min_neutral_dam_pct: Option<i16>,
+    pub min_earth_dam_pct: Option<i16>,
+    pub min_thunder_dam_pct: Option<i16>,
+    pub min_water_dam_pct: Option<i16>,
+    pub min_fire_dam_pct: Option<i16>,
+    pub min_air_dam_pct: Option<i16>,
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThresholdFifth {
     pub min_earth_point: Option<i16>,
     pub min_thunder_point: Option<i16>,
     pub min_water_point: Option<i16>,

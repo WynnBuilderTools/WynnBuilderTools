@@ -42,6 +42,13 @@ pub async fn save_build(
     let arg20 = status.max_stat.hpr_pct();
     let arg21 = status.max_stat.sd_raw();
     let arg22 = status.max_stat.sd_pct();
+
+    let arg23 = status.max_dam_pct.n();
+    let arg24 = status.max_dam_pct.e();
+    let arg25 = status.max_dam_pct.t();
+    let arg26 = status.max_dam_pct.w();
+    let arg27 = status.max_dam_pct.f();
+    let arg28 = status.max_dam_pct.a();
     sqlx::query!(
                 r#"
             INSERT INTO build (
@@ -79,8 +86,14 @@ pub async fn save_build(
 		        max_sd_pct,
 		        max_ehp,
 		        max_hp,
-		        max_hpr
-            ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28,?29,?30,?31,?32,?33,?34,?35);
+		        max_hpr,
+                max_neutral_dam_pct,
+		        max_earth_dam_pct,
+		        max_thunder_dam_pct,
+		        max_water_dam_pct,
+		        max_fire_dam_pct,
+		        max_air_dam_pct
+            ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28,?29,?30,?31,?32,?33,?34,?35,?36,?37,?38,?39,?40,?41);
             "#,
                 url,
                 combination[2].name,
@@ -117,7 +130,12 @@ pub async fn save_build(
                 status.max_ehp,
                 status.max_hp,
                 status.max_hpr,
-
+                arg23,
+                arg24,
+                arg25,
+                arg26,
+                arg28,
+                arg27
             )
             .execute(&pool)
             .await

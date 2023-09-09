@@ -13,6 +13,8 @@
 - [x] 常规属性(hp、ehp、hpr、元素防御、属性点、魔力偷取、魔力恢复、生命偷取、生命恢复、走路速度)计算
 - [x] 将build转换为[WynnBuilder](https://hppeng-wynn.github.io/builder) URL
 - [ ] 更多的属性计算
+  - [x] dam_pct
+  - [ ] cost
 - [ ] 添加Hive装备合法性检查
 - [ ] 伤害计算
   - [ ] 技能计算
@@ -69,6 +71,14 @@ url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # 生成的URL后缀�
 # min_air_defense = 0
 
 [threshold_fourth]
+# min_neutral_dam_pct = 0
+# min_earth_dam_pct = 0
+# min_thunder_dam_pct = 0
+# min_water_dam_pct = 0
+# min_fire_dam_pct = 0
+# min_air_dam_pct = 0
+
+[threshold_fifth]
 # min_earth_point = 0
 # min_thunder_point = 0
 # min_water_point = 0

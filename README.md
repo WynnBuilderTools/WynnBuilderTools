@@ -15,6 +15,8 @@ The current toolkit consists of two main components: the build batch generation 
 - [x]  Calculate basic attributes (hp, ehp, hpr, elemental defenses, attribute points, mana steal, mana regen, life steal, life regen, walk speed).
 - [x] Convert builds into [WynnBuilder](https://hppeng-wynn.github.io/builder) URLs.
 - [ ] Additional attribute calculations.
+  - [x] dam_pct
+  - [ ] cost
 - [ ] Implement legality checks for Hive equipment.
 - [ ] Damage calculations.
   - [ ] Skill calculations.
@@ -70,6 +72,14 @@ url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated
 # min_air_defense = 0
 
 [threshold_fourth]
+# min_neutral_dam_pct = 0
+# min_earth_dam_pct = 0
+# min_thunder_dam_pct = 0
+# min_water_dam_pct = 0
+# min_fire_dam_pct = 0
+# min_air_dam_pct = 0
+
+[threshold_fifth]
 # min_earth_point = 0
 # min_thunder_point = 0
 # min_water_point = 0

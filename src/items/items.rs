@@ -96,30 +96,30 @@ impl Item {
     }
     pub fn as_def(&self) -> Point {
         Point::new(
-            self.a_def.map_or(0, |v| v as i16),
-            self.f_def.map_or(0, |v| v as i16),
-            self.t_def.map_or(0, |v| v as i16),
             self.e_def.map_or(0, |v| v as i16),
+            self.t_def.map_or(0, |v| v as i16),
             self.w_def.map_or(0, |v| v as i16),
+            self.f_def.map_or(0, |v| v as i16),
+            self.a_def.map_or(0, |v| v as i16),
         )
     }
     pub fn as_def_pct(&self) -> Point {
         Point::new(
-            self.a_def_pct.map_or(0, |v| v as i16),
-            self.f_def_pct.map_or(0, |v| v as i16),
-            self.t_def_pct.map_or(0, |v| v as i16),
             self.e_def_pct.map_or(0, |v| v as i16),
+            self.t_def_pct.map_or(0, |v| v as i16),
             self.w_def_pct.map_or(0, |v| v as i16),
+            self.f_def_pct.map_or(0, |v| v as i16),
+            self.a_def_pct.map_or(0, |v| v as i16),
         )
     }
     pub fn as_dam_pct(&self) -> Dam {
         Dam::new(
             self.n_dam_pct.map_or(0, |v| v as i16),
-            self.a_dam_pct.map_or(0, |v| v as i16),
-            self.f_dam_pct.map_or(0, |v| v as i16),
-            self.t_dam_pct.map_or(0, |v| v as i16),
             self.e_dam_pct.map_or(0, |v| v as i16),
+            self.t_dam_pct.map_or(0, |v| v as i16),
             self.w_dam_pct.map_or(0, |v| v as i16),
+            self.f_dam_pct.map_or(0, |v| v as i16),
+            self.a_dam_pct.map_or(0, |v| v as i16),
         )
     }
     pub fn as_fix_id(&self) -> bool {
