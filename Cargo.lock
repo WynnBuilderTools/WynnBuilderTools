@@ -2386,7 +2386,7 @@ dependencies = [
 
 [[package]]
 name = "wynn_build_tools"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "clap 4.4.2",
  "criterion",

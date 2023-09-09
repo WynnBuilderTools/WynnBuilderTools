@@ -35,7 +35,7 @@ impl CommonStat {
         self.inner[1]
     }
     pub fn hpr(&self) -> i32 {
-        (100 + self.hpr_pct() as i32) * self.hpr_raw() as i32 / 100
+        self.hpr_raw() as i32 + self.hpr_pct() as i32 * self.hpr_raw().abs() as i32 / 100
     }
     pub fn mr(&self) -> i16 {
         self.inner[2]
@@ -109,5 +109,12 @@ mod tests {
             CommonStat::sum_max_stats(apparels.as_slice(), &Default::default()),
             CommonStat::new(130, 30, 77, 214, -8, 16, 621, 77)
         )
+    }
+
+    #[test]
+    fn hpr_works() {
+        assert_eq!(CommonStat::new(100, 10, 0, 0, 0, 0, 0, 0).hpr(), 110);
+        assert_eq!(CommonStat::new(100, -10, 0, 0, 0, 0, 0, 0).hpr(), 90);
+        assert_eq!(CommonStat::new(-100, -10, 0, 0, 0, 0, 0, 0).hpr(), -110);
     }
 }
