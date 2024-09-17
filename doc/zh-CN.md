@@ -44,7 +44,7 @@ available_point = 200 # 可用的属性点；这里为了兼容tome增加的属�
 base_hp = 500 # 基础生命值；一般都是500
 
 [hppeng] # hppeng相关设置
-url_refix = "https://hppeng-wynn.github.io/builder/?v=4#" # 生成的URL前缀
+url_prefix = "https://hppeng-wynn.github.io/builder/?v=4#" # 生成的URL前缀
 url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # 生成的URL后缀；包含了powders、tomes 和技能，以后如果支持了这些部分的计算，就不再需要人工填写了
 # 运行此配置文件最终生成的URL会是这样: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
 

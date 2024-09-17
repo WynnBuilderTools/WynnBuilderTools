@@ -88,7 +88,7 @@ async fn main() {
 
                     let url = format!(
                         "{}{}{}",
-                        config.hppeng.url_refix, code, config.hppeng.url_suffix
+                        config.hppeng.url_prefix, code, config.hppeng.url_suffix
                     );
                     println!("{}", url);
                     println!("{}", stat);

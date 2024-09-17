@@ -33,7 +33,7 @@ pub struct Player {
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct Hppeng {
-    pub url_refix: String,
+    pub url_prefix: String,
     pub url_suffix: String,
 }
 #[derive(Debug, Deserialize, Clone)]
