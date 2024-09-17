@@ -6,4 +6,6 @@
 /perf.data.old
 /flamegraph
 /.cargo
+/.xwin-cache
+/win-sdk
 .vscode
