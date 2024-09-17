@@ -48,9 +48,11 @@ async fn main() {
     println!("total combinations: {}", total_combinations);
 
     let counter = Arc::new(AtomicUsize::new(0));
+    let remaining_builds = Arc::new(AtomicUsize::new(total_combinations));
     let last_10_speeds = Arc::new(Mutex::new(VecDeque::with_capacity(10)));
     spawn_speed_watcher(
         counter.clone(),
+        remaining_builds.clone(),
         ring_combinations.len(),
         last_10_speeds,
         total_combinations,
@@ -111,6 +113,7 @@ async fn main() {
 
 fn spawn_speed_watcher(
     counter: Arc<AtomicUsize>,
+    remaining_builds: Arc<AtomicUsize>,
     coefficient: usize,
     mut last_10_speeds: Arc<Mutex<VecDeque<usize>>>,
     combinations: usize,
@@ -119,8 +122,10 @@ fn spawn_speed_watcher(
         loop {
             sleep(Duration::from_secs(1)).await;
 
+            let counter_val = counter.load(Ordering::Acquire);
+
             // Keep track of past 10 speeds and calculate the avg
-            let speed = counter.load(Ordering::Acquire) * coefficient;
+            let speed = counter_val * coefficient;
             let mut last_10_speeds = last_10_speeds.borrow_mut().lock().await;
 
             // Remove 1 from 10 to see if we're nearly at capacity, then pop the last value
@@ -137,8 +142,12 @@ fn spawn_speed_watcher(
                 }
             }
 
+            let remaining_builds_val = remaining_builds.load(Ordering::Acquire) - counter_val;
+            remaining_builds.store(remaining_builds_val, Ordering::Release);
+
             println!("speed: {}/builds per second", speed);
             println!("remaining time: {}h left", remaining_time / 3600);
+            println!("remaining builds: {}", remaining_builds_val);
             counter.store(0, Ordering::Release);
         }
     });
