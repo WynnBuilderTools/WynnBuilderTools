@@ -23,6 +23,7 @@ The current toolkit consists of two main components: the build batch generation 
   - [ ] Tomes calculations.
   - [ ] Powders calculations.
 - [x] Equipment filtering tool to extract fitting equipment from all WynnCraft equipment, facilitating the creation of equipment lists.
+- [x] Remaining time based on moving average of last ten speeds
 
 ## Batch Generation Tool User Guide
 
