@@ -22,6 +22,28 @@ pub use weapon::*;
 
 use std::{fs::File, io::BufReader, path::Path};
 
+/// Load items from a JSON file
+/// 
+/// # Arguments
+/// 
+/// - `path` - A path to the JSON file
+/// 
+/// # Returns
+/// 
+/// A tuple containing a list of gear and weapons
+/// 
+/// # Example
+/// 
+/// ```rust
+/// use std::path::Path;
+/// use items::load_from_json;
+/// 
+/// let (apparels, weapons) = load_from_json(Path::new("items.json"));
+/// ```
+/// 
+/// # Panics
+/// 
+/// This function will panic if the file cannot be opened or if the JSON file is invalid
 pub fn load_from_json<P>(path: P) -> ([Vec<Apparel>; 7], Vec<Weapon>)
 where
     P: AsRef<Path>,
