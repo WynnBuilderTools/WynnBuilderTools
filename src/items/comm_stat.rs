@@ -1,9 +1,6 @@
-use std::{
-    ops::Add,
-    simd::i16x8,
-};
 use std::simd::cmp::SimdPartialEq;
 use std::simd::cmp::SimdPartialOrd;
+use std::{ops::Add, simd::i16x8};
 
 use crate::*;
 

@@ -1,10 +1,10 @@
+use std::simd::cmp::SimdPartialOrd;
+use std::simd::num::SimdInt;
 use std::{
     fmt,
     ops::{Add, AddAssign, Sub},
     simd::i16x8,
 };
-use std::simd::num::SimdInt;
-use std::simd::cmp::SimdPartialOrd;
 /// 0:e 1:t 2:w 3:f 4:a
 #[derive(Clone, Debug, PartialEq, Default, Hash)]
 pub struct Point {

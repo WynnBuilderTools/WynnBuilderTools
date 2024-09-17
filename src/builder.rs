@@ -1,8 +1,9 @@
 mod config;
 use config::build_config::*;
 mod db;
-
 use std::{
+    borrow::BorrowMut,
+    collections::VecDeque,
     fmt,
     sync::{
         atomic::{AtomicUsize, Ordering},
@@ -10,6 +11,7 @@ use std::{
     },
     time::Duration,
 };
+use tokio::sync::Mutex;
 
 use tokio::{runtime::Runtime, spawn, time::sleep};
 use wynn_build_tools::*;
@@ -36,18 +38,23 @@ async fn main() {
         &find(&apparels[4], &config.items.rings).unwrap(),
     ];
     let ring_combinations = generate_no_order_combinations(rings[0].len());
+    let total_combinations =
+        no_ring_apparels.map(|f| f.len()).iter().product::<usize>() * ring_combinations.len();
 
     no_ring_apparels
         .iter()
         .for_each(|v| println!("{}:{}", v.first().unwrap().r#type, v.len()));
     println!("rings:{}", rings.first().unwrap().len());
-    println!(
-        "total combinations: {}",
-        no_ring_apparels.map(|f| f.len()).iter().product::<usize>() * ring_combinations.len()
-    );
+    println!("total combinations: {}", total_combinations);
 
     let counter = Arc::new(AtomicUsize::new(0));
-    spawn_speed_watcher(counter.clone(), ring_combinations.len());
+    let last_10_speeds = Arc::new(Mutex::new(VecDeque::with_capacity(10)));
+    spawn_speed_watcher(
+        counter.clone(),
+        ring_combinations.len(),
+        last_10_speeds,
+        total_combinations,
+    );
 
     let db_pool = db::init().await;
     generate_full_combinations_with_random(
@@ -102,11 +109,36 @@ async fn main() {
     println!("done");
 }
 
-fn spawn_speed_watcher(counter: Arc<AtomicUsize>, coefficient: usize) {
+fn spawn_speed_watcher(
+    counter: Arc<AtomicUsize>,
+    coefficient: usize,
+    mut last_10_speeds: Arc<Mutex<VecDeque<usize>>>,
+    combinations: usize,
+) {
     spawn(async move {
         loop {
             sleep(Duration::from_secs(1)).await;
-            println!("speed:{}", counter.load(Ordering::Acquire) * coefficient);
+
+            // Keep track of past 10 speeds and calculate the avg
+            let speed = counter.load(Ordering::Acquire) * coefficient;
+            let mut last_10_speeds = last_10_speeds.borrow_mut().lock().await;
+
+            // Remove 1 from 10 to see if we're nearly at capacity, then pop the last value
+            if last_10_speeds.get(10 - 1).is_some() {
+                last_10_speeds.pop_back();
+            }
+            last_10_speeds.push_front(speed);
+
+            let mut remaining_time = usize::MAX;
+            if last_10_speeds.get(0).is_some() {
+                let avg_speed = last_10_speeds.iter().sum::<usize>() / last_10_speeds.len();
+                if avg_speed > 0 {
+                    remaining_time = combinations / avg_speed;
+                }
+            }
+
+            println!("speed: {}/builds per second", speed);
+            println!("remaining time: {}h left", remaining_time / 3600);
             counter.store(0, Ordering::Release);
         }
     });

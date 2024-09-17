@@ -1,10 +1,10 @@
 mod dam;
+mod damage_calculate;
 mod def;
 mod encode;
 mod hp;
 mod rolls;
 mod skill_point;
-mod damage_calculate;
 
 pub use dam::*;
 pub use def::*;

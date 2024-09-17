@@ -69,7 +69,7 @@ pub fn next_permutation<T: Ord>(arr: &mut [T]) -> bool {
 
 pub fn next_permutation_ptr<T: ?Sized>(arr: &mut [&T]) -> bool {
     let mut i = arr.len() - 1;
-    while i > 0 && arr[i - 1] as *const _ >= arr[i] as *const _ {
+    while i > 0 && !std::ptr::eq(arr[i - 1], arr[i]) {
         i -= 1;
     }
     if i == 0 {
@@ -77,7 +77,7 @@ pub fn next_permutation_ptr<T: ?Sized>(arr: &mut [&T]) -> bool {
     }
 
     let mut j = arr.len() - 1;
-    while arr[j] as *const _ <= arr[i - 1] as *const _ {
+    while !std::ptr::eq(arr[i - 1], arr[i]) {
         j -= 1;
     }
 
