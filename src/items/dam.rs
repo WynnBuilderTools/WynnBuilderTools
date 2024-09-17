@@ -1,7 +1,10 @@
 use std::{
     ops::AddAssign,
-    simd::{i16x8, SimdPartialOrd},
+    simd::i16x8,
 };
+
+use std::simd::cmp::SimdPartialOrd;
+
 
 #[derive(Clone, Debug, Default)]
 pub struct Dam {

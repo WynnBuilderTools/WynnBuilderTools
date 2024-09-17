@@ -134,8 +134,8 @@ pub async fn save_build(
                 arg24,
                 arg25,
                 arg26,
-                arg28,
-                arg27
+                arg27,
+                arg28
             )
             .execute(&pool)
             .await
