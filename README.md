@@ -28,8 +28,18 @@ The current toolkit consists of two main components: the build batch generation 
 
 ## Batch Generation Tool User Guide
 
-The batch generation tool includes a build generator (builder.exe), a configuration file (config.toml), a WynnCraft item data file (items.json), and a database file (data.db).
+The batch generation tool includes a build generator (builder.exe), a configuration file (config.toml) in the config folder, a WynnCraft item data file (items.json) again in the config folder, and a database file (data.db) in the db folder.
 The item data file is sourced from [hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data).
+
+The final directory structure should look something like this:
+binaries/
+├── builder.exe
+├── config/
+│   ├── config.toml
+│   └── items.json
+└── db/
+    └── data.db
+
 All interactions are handled through the configuration file, as shown below:
 
 ```toml
