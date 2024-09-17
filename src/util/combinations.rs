@@ -174,7 +174,7 @@ pub fn generate_no_order_combinations<const LEN: usize>(space: usize) -> Vec<[us
             result.push(l);
         } else {
             for i in start..n {
-                let mut new_l = l.clone();
+                let mut new_l = l;
 
                 new_l[pos] = i;
                 combrep(n, pos + 1, i, new_l, result);

@@ -1,8 +1,7 @@
-use std::simd::{f32x8, i16x8};
 use std::simd::cmp::SimdPartialOrd;
-use std::simd::num::SimdInt;
 use std::simd::num::SimdFloat;
-
+use std::simd::num::SimdInt;
+use std::simd::{f32x8, i16x8};
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/build_utils.js#L187
 pub fn max_rolls(stat: &i16x8) -> i16x8 {

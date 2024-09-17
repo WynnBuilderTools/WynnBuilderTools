@@ -1,7 +1,4 @@
-use std::{
-    fmt,
-    simd::i16x8,
-};
+use std::{fmt, simd::i16x8};
 
 use std::simd::cmp::SimdPartialOrd;
 use std::simd::num::SimdInt;
