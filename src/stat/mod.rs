@@ -12,7 +12,6 @@ pub use encode::*;
 pub use hp::*;
 pub use rolls::*;
 pub use skill_point::*;
-pub use damage_calculate::*;
 
 use crate::*;
 use std::fs;
