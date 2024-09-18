@@ -34,7 +34,7 @@ async fn main() {
         &find(&apparels[5], &config.items.bracelets).unwrap(),
         &find(&apparels[6], &config.items.necklaces).unwrap(),
     ];
-    
+
     let rings: [&[&Apparel]; 2] = [
         &find(&apparels[4], &config.items.rings).unwrap(),
         &find(&apparels[4], &config.items.rings).unwrap(),
@@ -101,8 +101,10 @@ async fn main() {
                         "{}{}{}",
                         config.hppeng.url_prefix, code, config.hppeng.url_suffix
                     );
-                    println!("{}", url);
-                    println!("{}", stat);
+                    if config.hppeng.log_builds {
+                        println!("{}", url);
+                        println!("{}", stat);
+                    }
 
                     let rt = Runtime::new().unwrap();
                     rt.block_on(db::save_build(db_pool.clone(), url, stat, combination));

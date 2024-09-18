@@ -35,6 +35,7 @@ pub struct Player {
 pub struct Hppeng {
     pub url_prefix: String,
     pub url_suffix: String,
+    pub log_builds: bool,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct ThresholdFirst {
