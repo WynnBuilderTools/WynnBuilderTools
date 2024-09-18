@@ -1,7 +1,7 @@
 pub fn encode_build(
     apparel_ids: [i32; 8],
     lvl: i32,
-    weapen_id: i32,
+    weapon_id: i32,
     skillpoints: [i32; 5],
 ) -> String {
     let mut build_string = String::from("");
@@ -12,11 +12,11 @@ pub fn encode_build(
     for id in apparel_ids {
         build_string = format!("{}{}", build_string, from_int_n(id, 3));
     }
-    // weapen
-    build_string = format!("{}{}", build_string, from_int_n(weapen_id, 3));
+    // weapon
+    build_string = format!("{}{}", build_string, from_int_n(weapon_id, 3));
     // skillpoints
-    for skp in skillpoints {
-        build_string = format!("{}{}", build_string, from_int_n(skp, 2));
+    for skillpoint in skillpoints {
+        build_string = format!("{}{}", build_string, from_int_n(skillpoint, 2));
     }
     // lvl
     build_string = format!("{}{}", build_string, from_int_n(lvl, 2));
