@@ -54,6 +54,7 @@ pub fn generate_full_combinations_with_random<T, TR, F, const LEN: usize>(
     count: Arc<AtomicUsize>,
     arrays: &[&[TR]; LEN],
     func: F,
+    combinations_counter: Option<Arc<AtomicUsize>>,
 ) where
     TR: Sync + AsRef<T>,
     F: Fn([&T; LEN]) + Sync,
@@ -61,12 +62,17 @@ pub fn generate_full_combinations_with_random<T, TR, F, const LEN: usize>(
     let max_indexes: [usize; LEN] = arrays.map(|f| f.len());
     let total_combinations = max_indexes.iter().product::<usize>();
 
-    segmented_random_numbers(total_combinations, segment_size, count)
-        .par_bridge()
-        .for_each(|i| {
-            let index_combinations = map_to_index_space(&max_indexes, i);
-            func(unsafe { select_from_arrays(&index_combinations, arrays) });
-        })
+    segmented_random_numbers(
+        total_combinations,
+        segment_size,
+        count,
+        combinations_counter,
+    )
+    .par_bridge()
+    .for_each(|i| {
+        let index_combinations = map_to_index_space(&max_indexes, i);
+        func(unsafe { select_from_arrays(&index_combinations, arrays) });
+    })
 }
 
 /// Selects elements from multiple arrays based on provided indexes.
@@ -184,11 +190,11 @@ pub fn map_to_index_space<const LEN: usize>(
     result
 }
 
-
 pub fn segmented_random_numbers(
     max: usize,
     segment_size: usize,
     count: Arc<AtomicUsize>,
+    combinations_counter: Option<Arc<AtomicUsize>>,
 ) -> impl Iterator<Item = usize> {
     /// A struct for generating segmented random numbers.
     ///
@@ -237,6 +243,7 @@ pub fn segmented_random_numbers(
         current_index: usize,
         count: Arc<AtomicUsize>,
         last_segments_size: Option<usize>,
+        combinations_counter: Option<Arc<AtomicUsize>>,
     }
 
     impl Iterator for SegmentedRandomNumbers {
@@ -244,6 +251,12 @@ pub fn segmented_random_numbers(
 
         fn next(&mut self) -> Option<Self::Item> {
             self.count.fetch_add(1, Ordering::AcqRel);
+            match &(self.combinations_counter) {
+                Some(counter) => {
+                    counter.fetch_sub(1, Ordering::AcqRel);
+                }
+                None => {}
+            }
 
             if let Some(last_size) = self.last_segments_size {
                 if self.current_index < last_size {
@@ -357,24 +370,25 @@ pub fn segmented_random_numbers(
         segment_size,
         current_index: 0,
         last_segments_size: if last == 0 { None } else { Some(last) },
+        combinations_counter,
     }
 }
 
 /// Generates random numbers in a specified range. The returned struct implements the `Iterator` trait.
 /// The random numbers are generated using the `fastrand` crate.
-/// 
+///
 /// # Parameters
 /// - `max`: The maximum value for the random numbers.
-/// 
+///
 /// # Returns
 /// An iterator that generates random numbers in the range `[0, max)`.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```rust
 /// let max = 10;
 /// let mut rng = random_numbers(max);
-/// 
+///
 /// for _ in 0..10 {
 ///    println!("{}", rng.next().unwrap());
 /// }
@@ -534,23 +548,23 @@ mod tests {
         let counter = Arc::new(AtomicUsize::new(0));
         let test_cases = vec![
             (
-                segmented_random_numbers(0, 2, counter.clone()).collect::<Vec<usize>>(),
+                segmented_random_numbers(0, 2, counter.clone(), None).collect::<Vec<usize>>(),
                 vec![0],
             ),
             (
-                segmented_random_numbers(1, 2, counter.clone()).collect::<Vec<usize>>(),
+                segmented_random_numbers(1, 2, counter.clone(), None).collect::<Vec<usize>>(),
                 vec![0, 1],
             ),
             (
-                segmented_random_numbers(5, 2, counter.clone()).collect::<Vec<usize>>(),
+                segmented_random_numbers(5, 2, counter.clone(), None).collect::<Vec<usize>>(),
                 vec![0, 1, 2, 3, 4, 5],
             ),
             (
-                segmented_random_numbers(5, 5, counter.clone()).collect::<Vec<usize>>(),
+                segmented_random_numbers(5, 5, counter.clone(), None).collect::<Vec<usize>>(),
                 vec![0, 1, 2, 3, 4, 5],
             ),
             (
-                segmented_random_numbers(7, 3, counter.clone()).collect::<Vec<usize>>(),
+                segmented_random_numbers(7, 3, counter.clone(), None).collect::<Vec<usize>>(),
                 vec![0, 1, 2, 3, 4, 5, 6, 7],
             ),
         ];

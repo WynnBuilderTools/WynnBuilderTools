@@ -109,6 +109,7 @@ async fn main() {
                 };
             }
         },
+        Option::Some(remaining_builds.clone()),
     );
     println!("done");
 }
@@ -144,8 +145,9 @@ fn spawn_speed_watcher(
                 }
             }
 
-            let remaining_builds_val = remaining_builds.load(Ordering::Acquire) - counter_val;
-            remaining_builds.store(remaining_builds_val, Ordering::Release);
+            // Uncommented because we're doing fetch_sub in SegmentedRandomNumbers's Iterator
+            let remaining_builds_val = remaining_builds.load(Ordering::Acquire)/* - counter_val */;
+            // remaining_builds.store(remaining_builds_val, Ordering::Release);
 
             println!("speed: {}/builds per second", speed);
             println!("remaining time: {}h left", remaining_time / 3600);
