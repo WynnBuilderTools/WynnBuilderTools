@@ -36,6 +36,8 @@ pub struct Hppeng {
     pub url_prefix: String,
     pub url_suffix: String,
     pub log_builds: bool,
+    pub log_db_errors: bool,
+    pub db_retry_count: u8,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct ThresholdFirst {
