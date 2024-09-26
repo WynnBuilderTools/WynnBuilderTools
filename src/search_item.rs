@@ -63,27 +63,41 @@ async fn main() {
     match args.r#type {
         Some(v) => {
             let apparels = match v {
-                Type::Helmets => &apparels[0],
-                Type::ChestPlate => &apparels[1],
-                Type::Leggings => &apparels[2],
-                Type::Boots => &apparels[3],
-                Type::Ring => &apparels[4],
-                Type::Bracelet => &apparels[5],
-                Type::Necklace => &apparels[6],
+            Type::Helmets => {
+                (&apparels[0], "Helmets")
+            },
+            Type::ChestPlate => {
+                (&apparels[1], "Chestplates")
+            },
+            Type::Leggings => {
+                (&apparels[2], "Leggings")
+            },
+            Type::Boots => {
+                (&apparels[3], "Boots")
+            },
+            Type::Ring => {
+                (&apparels[4], "Rings")
+            },
+            Type::Bracelet => {
+                (&apparels[5], "Bracelets")
+            },
+            Type::Necklace => {
+                (&apparels[6], "Necklaces")
+            },
             };
-            let apparels_str = apparels.iter().map(|v| format!("\"{}\"", v.name)).join(",");
-            println!("{}", apparels_str);
+            let apparels_str = apparels.0.iter().map(|v| format!("\"{}\"", v.name)).join(",");
+            println!("{}:\t{}", apparels.1, apparels_str);
         }
         None => {
             let apparels_str: [String; 7] =
                 apparels.map(|v| v.iter().map(|v| format!("\"{}\"", v.name)).join(","));
-            println!("Helmets:   {}", apparels_str[0]);
-            println!("ChestPlat: {}", apparels_str[1]);
-            println!("Leggings : {}", apparels_str[2]);
-            println!("Boots:     {}", apparels_str[3]);
-            println!("Ring:      {}", apparels_str[4]);
-            println!("Bracelet:  {}", apparels_str[5]);
-            println!("Necklace:  {}", apparels_str[6]);
+            println!("Helmets:\t{}", apparels_str[0]);
+            println!("Chestplate:\t{}", apparels_str[1]);
+            println!("Leggings:\t{}", apparels_str[2]);
+            println!("Boots:\t\t{}", apparels_str[3]);
+            println!("Ring:\t\t{}", apparels_str[4]);
+            println!("Bracelet:\t{}", apparels_str[5]);
+            println!("Necklace:\t{}", apparels_str[6]);
         }
     };
 }

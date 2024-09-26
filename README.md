@@ -214,6 +214,7 @@ skill_point:
 assign:         earth:10        thunder:15      water:52        fire:65 air:15
 original:       earth:25        thunder:40      water:146       fire:90 air:40
 max_def:        earth:85        thunder:290     water:-30       fire:15 air:79
+max_exp_bonus:  186
 ...
 done
 ```
@@ -240,7 +241,19 @@ Options:
           
           [default: 10]
 
+      --min-lvl <MIN_LVL>
+          Minimum level
+          
+          [default: 1]
+
+      --max-lvl <MAX_LVL>
+          Maximum level
+          
+          [default: 106]
+
   -o, --order-by <ORDER_BY>
+          Order the results in ascending or descending order
+          
           [default: desc]
 
           Possible values:
@@ -248,8 +261,11 @@ Options:
           - desc: Sort the results in descending order, arrange them from largest to smallest
 
   -s, --sort-by <SORT_BY>
+          Sort the results by a specific field
+
           Possible values:
           - lvl:     Level
+          - hp:      Hp
           - hpb:     Hp bonus(max)
           - hpr-raw: Hp regain raw(max)
           - hpr-pct: Hp regain pct(max)
@@ -260,6 +276,7 @@ Options:
           - mr:      Mana regain(max)
           - spd:     Walk speed bonus(max)
           - ls:      Life steal(max)
+          - expb:    Exp bonus(max)
 
   -h, --help
           Print help (see a summary with '-h')
@@ -268,18 +285,68 @@ Options:
           Print version
 ```
 
-example:
+examples:
 
 ```txt
 # Input:
 .\search_item.ext -s lvl
 
 # OutPut:
-Helmets:   "Dissociation","Aquamarine","Dissonance","Anima-Infused Helmet","Obsidian-Framed Helmet","Keratoconus","Ornate Shadow Cowl","Pisces","Nonexistence","Morph-Stardust"
-ChestPlat: "Dondasch","Brilliant Diamond Chestplate","Atakebune","Gaping Cavity","Far Cosmos","Gravity","Boreal-Patterned Aegis","Elysium-Engraved Aegis","Twilight-Gilded Cloak","Empyreal Emberplate","Medeis","Inhibitor֎","Ornate Shadow Garb","Roridula","Wanderlust"
-Leggings : "Anxiolytic","Anaerobic","Atomizer","Writhing Growth","Abyss-Imbued Leggings","Chaos-Woven Greaves","Hephaestus-Forged Greaves","Pyrrhic Respite","Ornate Shadow Cover","Neutrino","Aleph Null"
-Boots:     "Capricorn","Curador Boots","Skidbladnir","Expedition's End","Fermion","Gaea-Hewn Boots","Hephaestus-Forged Sabatons","Kickback","Cytotoxic Striders","Revenant","Ornate Shadow Cloud","Wasteland Azalea"
-Ring:      "Acid","Facile","Intensity","Azeotrope","Prism","Dispersion","Obstinance","Forbearance","Ingress","Tranquility"
-Bracelet:  "Privateer","Enmity","Prowess","Knucklebones","Gravitron","Misalignment","Anya's Penumbra","Nebulous","Pandemonium","Compliance","Succession","Breakthrough","Detachment"
-Necklace:  "Xebec","Ambivalence","Grafted Eyestalk","Contrast","Legendary Medallion","Planet Healer","Abrasion","Recalcitrance","Exhibition","Simulacrum","Reborn"
+Helmets:        "Nonexistence","Fool's Errand","Nuclear Emesis","Inconceivably Deranged Paper Mask of Legendary Victory","Mesmerizing Madness","Transplanted Psyche","Outlandish Replica Face Mask of Legendary Victory","Ornate Shadow Cowl","Dissonance","Treasured Diamond Mask of Legendary Victory"
+Chestplate:     "Null Plating","Roridula","Empyreal Emberplate","Ornate Shadow Garb","Wanderlust","Schadenfreude","Medeis","Dondasch","Twilight-Gilded Cloak","Elysium-Engraved Aegis","Atakebune","Brilliant Diamond Chestplate","Boreal-Patterned Aegis","Gravity","Far Cosmos","Gaping Cavity"
+Leggings:       "Aleph Null","Anaerobic","Ornate Shadow Cover","Atomizer","Pyrrhic Respite","Anxiolytic","Chaos-Woven Greaves","Hephaestus-Forged Greaves","Writhing Growth","Neutrino","Abyss-Imbued Leggings"
+Boots:          "Delusion","Ornate Shadow Cloud","Withstand","Acidosis","Expedition's End","Wasteland Azalea","Hephaestus-Forged Sabatons","Fermion","Gaea-Hewn Boots","Skidbladnir"
+Ring:           "Ingress","Forbearance","Azeotrope","Tranquility","Obstinance","Dispersion","Prism","Intensity","Acid","Facile"
+Bracelet:       "Detachment","Breakthrough","Misalignment","Black Space","Gravitron","Succession","Enmity","Anya's Penumbra","Compliance","Prowess"
+Necklace:       "Simulacrum","Exhibition","Swindler's Charm","Grafted Eyestalk","Contrast","Planet Healer","Legendary Medallion","Abrasion","Xebec","Recalcitrance","Ambivalence","Reborn"
+```
+
+```txt
+# Input:
+.\search_item.ext -t ring -s expb
+
+# Output:
+Rings:  "Summa","Bronze Basic Ring","Detective's Ring","Ring of Generosity","Draoi Fair","Lodestone","Living Slime","Precious","Decoder Ring","Law of the Jungle","Rarity"
+```
+
+```txt
+# Input:
+.\search_item.ext -s hpr-raw
+
+# Output:
+Helmets:        "Morph-Stardust","Aquamarine","Cancer֎","Ophiolite","Skyfloat","Snail Helm","Azure Halo","Phoenix Prince's Crown","Sano's Care","Grillface"
+Chestplate:     "Elysium-Engraved Aegis","Gravity","Sparkling Plate","Nether's Reach","Leo","Keeper of Souls","Darkiron Aegis","Dreamcloud","About-Face","Pristine Antiquity"
+Leggings:       "Hephaestus-Forged Greaves","Ration","Philophilia","The Golem","Mycelium Plating","Black Lily","Anti-Causality","Elder Oak Roots","Horizon","Greaves of the Veneer"
+Boots:          "Delusion","Withstand","Gaea-Hewn Boots","Curador Boots","Burnout","Crater Print","Boreal","Resurgence","Scorpio","Sempiternel"
+Ring:           "Iron Will","Diamond Solar Ring","Silver Solar Ring","Gold Solar Ring","Bloodborne","Archaic","Cacophony","Fuse","Recovery","Vital","Draoi Fair"
+Bracelet:       "Succession","Hamsey's Brilliance","Flashfire Gauntlet","Sacramentalia","Auric","Siwel's Guilt","Lazarus' Brace","Lasting","Great Brace","Ra"
+Necklace:       "Contrast","Antim","Gigabyte","Ambiguity","Pulse Starter","Golemlus Core","Alkali","Mech Core","Adder Stone","Amulet of Rejuvenation"
+```
+
+```txt
+# Input:
+.\search_item.ext -s lvl --min-lvl 50 --max-lvl 80
+
+# Output:
+Helmets:        "Cosmic Visor","Dragon Horned Helmet","Green Helmet","Gale's Sight","Centipede","Sparkling Visor","Tephra","Hollow Virtue","Toxin","Rust","Rinkaku","Breakbeat"
+Chestplate:     "Changeling's Chestplate","Bete Noire","Cosmic Vest","Traumerei","Reinforced Iron Chestplate","Screech","Future Shock Plating","Eleventh Hour","Pristine Antiquity","Endurance","Aura of Element","Marshmallow"
+Leggings:       "Air Sanctuary","Xyloid","Earth Sanctuary","Ringlets","Water Sanctuary","Cosmic Ward","Fire Sanctuary","Thunder Sanctuary","Rainbow Sanctuary","The Prisoner","Leggings of Haste","Reinforced Iron Leggings"
+Boots:          "Centennial","Ventus Tail","Missing","Cosmic Walkers","Dragulj Boots","Earthsky Eclipse","Sturdy","Black Sheep","Slipstream","Gert Boots","Reinforced Iron Boots","Determination","Scale of Sieryu","Corrupted Nii Mukluk","Lerteco"
+Ring:           "Athanasia","Ring of Power","Time Ring","Cacophony","Ring of Wisdom","Rainbow","Clockwork Ring","Puff","Soldier","Rubber","Ghost","Martyr"
+Bracelet:       "Auric","Veneration","Provenance","Tight Clamp","Flexing Chain","Lecade's Rank","Double Vision","Broken Gauntlet","Momentum","Example","Panic Attack"
+Necklace:       "Dancer","Altum Spatium","Adder Stone","Asbestos","Metamorphosis","Amulet of Rejuvenation","Sterling Silver","Rough Diamond","Reckoning","Tenuto"
+```
+
+```txt
+# Input:
+.\search_item.ext -s expb
+
+# Output:
+Helmets:        "Sano's Care","Facedown","Speaker","Cosmic Visor","Green Helmet","Gale's Sight","Sparkling Visor","Restored Ancient Helmet","Penance","Clearsight Spectacles","Upgraded Orc Mask","Blueberry","Illuminite","Venison","Hero's Mask","Bloodied Wreath","Aeolus","Faded","Santa Hat","Sound of Silence"
+Chestplate:     "Roridula","Diamond Dust","Tisaun's Valor","Dragon Hide Plate","Cosmic Vest","Aura of Element","Papyrus","The Jingling Jester","Matryoshka Shell","Geis"
+Leggings:       "Trench Scourer","Bantisu's Approach","Ringlets","Cosmic Ward","Helios Lux","Egression","The Oblivious","Greaves of Honor","Bridge of the Divide","Moisture","Chained Pixels"
+Boots:          "Memento","Ensa's Ideals","Cosmic Walkers","Champion Boots","Sodeta Boots","Bad Wolf","Durum's Journey","Seven-League Boots","Galloping Spurs","Prologue","Santa Boots","Snowtread Boots","Silken Slippers"
+Ring:           "Summa","Bronze Basic Ring","Detective's Ring","Ring of Generosity","Draoi Fair","Lodestone","Living Slime","Precious","Decoder Ring","Law of the Jungle","Rarity"
+Bracelet:       "Knucklebones","Follow The Wind","Synchro Core","Kayde","Jiandan Handwraps","Double Vision","Vanguard","Back-up Plan","Shackle of Shade","Rayshyroth's Knowledge","Dragon's Eye Bracelet","Homeorhesis","Binding Brace"
+Necklace:       "Ominous Wind","Overload Core","Altum Spatium","Adder Stone","Gospel","Ensa's Faith","Trainer's Pendant","Renda Langit","Hexed Amulet","Criistal","Constrict Collar","Durum's Serenity"
 ```
