@@ -40,5 +40,6 @@ CREATE TABLE
 		max_thunder_dam_pct INTEGER NOT NULL,
 		max_water_dam_pct INTEGER NOT NULL,
 		max_fire_dam_pct INTEGER NOT NULL,
-		max_air_dam_pct INTEGER NOT NULL
+		max_air_dam_pct INTEGER NOT NULL,
+		max_exp_bonus INTEGER NOT NULL
 	);

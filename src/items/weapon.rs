@@ -28,6 +28,9 @@ pub struct Weapon {
     pub dam_pct_max: Dam,
     pub dam_pct_min: Dam,
 
+    pub min_exp_bonus: i32,
+    pub max_exp_bonus: i32,
+
     pub fix_id: bool,
 }
 
@@ -40,6 +43,7 @@ impl TryFrom<&Item> for Weapon {
         let stat = value.as_comm_stat();
         let def_pct = value.as_def_pct();
         let dam_pct = value.as_dam_pct();
+        let exp_bonus = value.xpb.unwrap_or(0);
         let fix_id = value.as_fix_id();
 
         Ok(Self {
@@ -72,6 +76,8 @@ impl TryFrom<&Item> for Weapon {
                     .ok_or(format!("atkSpd is missing"))?
                     .as_str(),
             )?,
+            min_exp_bonus: min_roll(&exp_bonus, fix_id),
+            max_exp_bonus: max_roll(&exp_bonus, fix_id),
         })
     }
 }

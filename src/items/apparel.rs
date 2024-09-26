@@ -20,6 +20,9 @@ pub struct Apparel {
     pub dam_pct_max: Dam,
     pub dam_pct_min: Dam,
 
+    pub min_exp_bonus: i32,
+    pub max_exp_bonus: i32,
+
     pub stat_max: CommonStat,
     pub stat_min: CommonStat,
 
@@ -61,6 +64,8 @@ impl TryFrom<&Item> for Apparel {
             def_pct_min: min_roll(&def_pct, fix_id),
             dam_pct_max: max_roll(&dam_pct, fix_id),
             dam_pct_min: min_roll(&dam_pct, fix_id),
+            min_exp_bonus: min_roll(&value.xpb.unwrap_or(0), fix_id),
+            max_exp_bonus: max_roll(&value.xpb.unwrap_or(0), fix_id),
             stat_max: max_roll(&stat, fix_id),
             stat_min: min_roll(&stat, fix_id),
             fix_id,

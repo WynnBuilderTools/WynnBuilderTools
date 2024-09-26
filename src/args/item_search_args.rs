@@ -71,4 +71,6 @@ pub enum SortBy {
     SPD,
     /// Life steal(max)
     LS,
+    /// Exp bonus(max)
+    EXPB,
 }

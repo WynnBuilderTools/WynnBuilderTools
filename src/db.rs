@@ -57,6 +57,8 @@ pub async fn save_build(
     let max_dam_pct_f = status.max_dam_pct.f();
     let max_dam_pct_a = status.max_dam_pct.a();
 
+    let max_exp_bonus = status.max_exp_bonus;
+
     loop {
         let result = sqlx::query!(
             r#"
@@ -101,8 +103,9 @@ pub async fn save_build(
             max_thunder_dam_pct,
             max_water_dam_pct,
             max_fire_dam_pct,
-            max_air_dam_pct
-        ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28,?29,?30,?31,?32,?33,?34,?35,?36,?37,?38,?39,?40,?41);
+            max_air_dam_pct,
+            max_exp_bonus
+        ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28,?29,?30,?31,?32,?33,?34,?35,?36,?37,?38,?39,?40,?41, ?42);
         "#,
             url,
             combination[2].name,
@@ -144,7 +147,8 @@ pub async fn save_build(
             max_dam_pct_t,
             max_dam_pct_w,
             max_dam_pct_f,
-            max_dam_pct_a
+            max_dam_pct_a,
+            max_exp_bonus
         )
         .execute(&pool)
         .await;

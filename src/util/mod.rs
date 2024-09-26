@@ -6,6 +6,31 @@ pub use permutations::*;
 
 use std::cmp::{Ordering, Reverse};
 
+/// Filter a 2D vector
+///
+/// # Arguments
+///
+/// - `arrays` - A mutable reference to a 2D vector
+/// - `is_delete` - A closure that takes an index and a value and returns a boolean
+///
+/// # Example
+///
+/// ```rust
+/// use util::filter_2d_vector;
+///
+/// let mut a: [Vec<i32>; 3] = [
+///     vec![1, 2, 3, -4, 5, 6, 7, 8],
+///     vec![1, 2, 3, -4],
+///     vec![1, 2, 3],
+/// ];
+/// filter_2d_vector(&mut a, |_, v| v.abs() < 4);
+/// let b: [Vec<i32>; 3] = [vec![-4, 5, 6, 7, 8], vec![-4], vec![]];
+/// assert_eq!(a, b);
+/// ```
+/// 
+/// # Panics
+/// 
+/// This function will panic if the length of the 2D vector is zero
 pub fn filter_2d_vector<F, T>(arrays: &mut [Vec<T>], is_delete: F)
 where
     F: Fn(usize, &T) -> bool,
@@ -23,6 +48,38 @@ where
         value.sort_by(&compare);
     }
 }
+
+/// Get the threshold of a 2D vector
+/// 
+/// # Arguments
+/// 
+/// - `arrays` - A reference to a 2D vector
+/// - `limit_index` - The index of the threshold
+/// - `reverse` - A boolean to reverse the order
+/// - `f` - A closure that takes a value and returns a key
+/// 
+/// # Returns
+/// 
+/// An array of thresholds
+/// 
+/// # Example
+/// 
+/// ```rust
+/// use util::get_threshold;
+/// 
+/// let array: [Vec<i32>; 3] = [
+///     vec![1, 2, 3, -4, 5, 6, 7, 8],
+///     vec![1, 2, 3, -4],
+///     vec![1, 2, 3],
+/// ];
+/// let a = get_threshold(&array, 2, true, |v| v.abs());
+/// let b = [6, 2, 1];
+/// assert_eq!(a, b);
+/// ```
+/// 
+/// # Panics
+/// 
+/// This function will panic if the length of the 2D vector is zero
 pub fn get_threshold<F, K, T, const LEN: usize>(
     arrays: &[Vec<T>; LEN],
     limit_index: usize,

@@ -29,6 +29,7 @@ async fn main() {
         SortBy::MR => v.stat_max.mr() as i32,
         SortBy::SPD => v.stat_max.spd() as i32,
         SortBy::LS => v.stat_max.ls() as i32,
+        SortBy::EXPB => v.max_exp_bonus,
     });
 
     filter_2d_vector(&mut apparels, |array_index, v| match args.sort_by {
@@ -44,6 +45,7 @@ async fn main() {
         SortBy::MR => (v.stat_max.mr() as i32) < thresholds[array_index],
         SortBy::SPD => (v.stat_max.spd() as i32) < thresholds[array_index],
         SortBy::LS => (v.stat_max.ls() as i32) < thresholds[array_index],
+        SortBy::EXPB => v.max_exp_bonus < thresholds[array_index],
     });
 
     match args.r#type {

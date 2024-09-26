@@ -62,6 +62,7 @@ pub struct Item {
     pub w_dam_pct: Option<i32>,
     pub f_dam_pct: Option<i32>,
     pub a_dam_pct: Option<i32>,
+    pub xpb: Option<i32>,
 }
 impl Item {
     pub fn as_req(&self) -> Point {
@@ -183,7 +184,7 @@ impl Roll for Dam {
             self.clone()
         } else {
             Self {
-                inner: max_rolls(&self.inner),
+                inner: min_rolls(&self.inner),
             }
         }
     }
@@ -204,7 +205,7 @@ impl Roll for CommonStat {
             self.clone()
         } else {
             Self {
-                inner: max_rolls(&self.inner),
+                inner: min_rolls(&self.inner),
             }
         }
     }
@@ -228,7 +229,8 @@ mod tests {
 
     #[test]
     fn derivative_works() {
-        let file = File::open("config/items.json").expect("Failed to open file");
+        let file = File::open("config/items.json")
+            .expect("The file `items.json` should exist in the folder config.");
         let reader = BufReader::new(file);
 
         let _: Items = serde_json::from_reader(reader).unwrap();

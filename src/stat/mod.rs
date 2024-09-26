@@ -5,6 +5,7 @@ mod encode;
 mod hp;
 mod rolls;
 mod skill_point;
+mod exp;
 
 pub use dam::*;
 pub use def::*;
@@ -12,6 +13,7 @@ pub use encode::*;
 pub use hp::*;
 pub use rolls::*;
 pub use skill_point::*;
+pub use exp::*;
 
 use crate::*;
 use std::fs;

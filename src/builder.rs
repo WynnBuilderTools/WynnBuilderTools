@@ -192,12 +192,13 @@ pub struct Status {
     pub max_def: Point,
     pub skill_point: SkillPoints,
     pub max_dam_pct: Dam,
+    pub max_exp_bonus: i32,
 }
 impl std::fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}",
+            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}\nmax_exp_bonus:\t{}",
             self.max_stat,
             self.max_hpr,
             self.max_hp,
@@ -205,6 +206,7 @@ impl std::fmt::Display for Status {
             self.skill_point,
             self.max_def,
             self.max_dam_pct,
+            self.max_exp_bonus,
         )
     }
 }
@@ -309,6 +311,15 @@ fn calculate_stats(
         }
     }
 
+    let max_exp_bonus = sum_exp_bonus_max(combination, weapon);
+    if let Some(threshold) = &config.threshold_second {
+        if let Some(v) = threshold.min_exp_bonus {
+            if max_exp_bonus < v {
+                return Err(format!(""));
+            }
+        }
+    }
+
     return Ok(Status {
         max_stat,
         max_hpr,
@@ -317,6 +328,7 @@ fn calculate_stats(
         skill_point,
         max_ehp,
         max_dam_pct,
+        max_exp_bonus,
     });
 }
 

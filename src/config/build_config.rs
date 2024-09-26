@@ -53,6 +53,7 @@ pub struct ThresholdSecond {
     pub min_spd: Option<i16>,
     pub min_sd_raw: Option<i16>,
     pub min_sd_pct: Option<i16>,
+    pub min_exp_bonus: Option<i32>,
 
     pub min_hpr: Option<i32>,
 }
