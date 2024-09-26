@@ -11,9 +11,19 @@ pub struct ItemSearchArgs {
     #[arg(short, long, default_value_t = 10,value_parser = clap::value_parser!(u32).range(1..))]
     pub limit: u32,
 
+    /// Minimum level
+    #[arg(long, default_value_t = 1, value_parser = clap::value_parser!(u8).range(1..))]
+    pub min_lvl: u8,
+
+    /// Maximum level
+    #[arg(long, default_value_t = 106, value_parser = clap::value_parser!(u8).range(1..))]
+    pub max_lvl: u8,
+
+    /// Order the results in ascending or descending order
     #[arg(short, long, default_value_t = OrderBy::DESC)]
     pub order_by: OrderBy,
 
+    /// Sort the results by a specific field
     #[arg(short, long)]
     pub sort_by: SortBy,
 }

@@ -14,6 +14,18 @@ async fn main() {
         OrderBy::ASC => false,
         OrderBy::DESC => true,
     };
+
+    let min_lvl = args.min_lvl as i32;
+    let max_lvl = args.max_lvl as i32;
+
+    apparels.iter_mut().for_each(|v| {
+        v.retain(|v| v.lvl >= min_lvl);
+    });
+
+    apparels.iter_mut().for_each(|v| {
+        v.retain(|v| v.lvl <= max_lvl);
+    });
+
     let thresholds = get_threshold(&apparels, args.limit as usize - 1, reverse, |v| match args
         .sort_by
     {
