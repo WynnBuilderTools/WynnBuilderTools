@@ -66,8 +66,8 @@ base_hp = 500 # Base health points; typically 500
 [hppeng] # hppeng related settings
 url_prefix = "https://hppeng-wynn.github.io/builder/?v=8#" # Prefix for generated URLs
 url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
-log_builds = false # Whether to log builds to the console; useful for debugging
-log_db_errors = false # Whether to log database errors to the console; useful for debugging
+log_builds = true # Whether to log builds to the console; useful for debugging
+log_db_errors = true # Whether to log database errors to the console; useful for debugging
 db_retry_count = 10 # Number of retries for database operations
 # The final URL generated when running this configuration will look like this: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
 
@@ -85,6 +85,7 @@ db_retry_count = 10 # Number of retries for database operations
 # min_sd_raw = 0
 # min_sd_pct = 0
 # min_hpr = 0
+# min_exp_bonus = 0
 
 [threshold_third]
 # min_earth_defense = 0
@@ -205,16 +206,17 @@ bracelet:1
 necklace:1
 rings:2
 total combinations: 3
-https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
-max_stat:(mr:80, ms:14, spd:23, ls:440, hpr_raw:507, hpr_pct:20, sd_raw:343, sd_pct:15)
+https://hppeng-wynn.github.io/builder/?v=8#8_0690K70r50Qr0OK0OK0K40OH0Qf0Q0Q351Y0Q1g00001004fI0z0z0+0+0+0+0---hOsKbv3
+max_stat:(mr:74, ms:18, spd:-10, ls:440, hpr_raw:507, hpr_pct:20, sd_raw:343, sd_pct:-5)
 max_hpr:608
-max_hp:14975
-max_ehp:42217
+max_hp:12751
+max_ehp:34600
 skill_point:
-assign:         earth:10        thunder:15      water:52        fire:65 air:15
-original:       earth:25        thunder:40      water:146       fire:90 air:40
-max_def:        earth:85        thunder:290     water:-30       fire:15 air:79
-max_exp_bonus:  186
+assign:         earth:0 thunder:0       water:100       fire:62 air:0
+original:       earth:26        thunder:26      water:197       fire:98 air:26
+max_def:        earth:15        thunder:-82     water:72        fire:290        air:15
+max_dam_pct:    earth:0 thunder:0       water:20        fire:0  air:0   neutral:0
+max_exp_bonus:  0
 ...
 done
 ```
