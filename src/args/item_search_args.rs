@@ -24,8 +24,8 @@ pub struct ItemSearchArgs {
     pub order_by: OrderBy,
 
     /// Sort the results by a specific field
-    #[arg(short, long)]
-    pub sort_by: SortBy,
+    #[arg(short, long, num_args = 1..)]
+    pub sort_by: Vec<SortBy>,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -83,4 +83,16 @@ pub enum SortBy {
     LS,
     /// Exp bonus(max)
     EXPB,
+    /// Neutral damage
+    NDMG,
+    /// Earth damage
+    EDMG,
+    /// Thunder damage
+    TDMG,
+    /// Water damage
+    WDMG,
+    /// Fire damage
+    FDMG,
+    /// Air damage
+    ADMG,
 }

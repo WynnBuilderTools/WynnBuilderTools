@@ -15,84 +15,54 @@ async fn main() {
         OrderBy::DESC => true,
     };
 
-    let min_lvl = args.min_lvl as i32;
-    let max_lvl = args.max_lvl as i32;
+    // Sort apparels based on multiple sort_by criteria
+    for apparel_list in &mut apparels {
+        apparel_list.sort_by(|a, b| {
+            let mut ordering = std::cmp::Ordering::Equal;
+            for &sort_key in &args.sort_by {
+                ordering = compare_items(a, b, sort_key);
+                if ordering != std::cmp::Ordering::Equal {
+                    break;
+                }
+            }
+            if reverse {
+                ordering.reverse()
+            } else {
+                ordering
+            }
+        });
+    }
 
-    apparels.iter_mut().for_each(|v| {
-        v.retain(|v| v.lvl >= min_lvl);
-    });
+    // Apply the limit
+    let limit = args.limit as usize;
+    for apparel_list in &mut apparels {
+        if apparel_list.len() > limit {
+            apparel_list.truncate(limit);
+        }
+    }
 
-    apparels.iter_mut().for_each(|v| {
-        v.retain(|v| v.lvl <= max_lvl);
-    });
-
-    let thresholds = get_threshold(&apparels, args.limit as usize - 1, reverse, |v| match args
-        .sort_by
-    {
-        SortBy::LVL => v.lvl,
-        SortBy::HP => v.hp,
-        SortBy::HPB => v.hp_bonus_max,
-        SortBy::HPRRaw => v.stat_max.hpr_raw() as i32,
-        SortBy::HPRPct => v.stat_max.hpr_pct() as i32,
-        SortBy::SPAdd => v.add.all() as i32,
-        SortBy::SPReq => v.req.all() as i32,
-        SortBy::SDRaw => v.stat_max.sd_raw() as i32,
-        SortBy::SDPct => v.stat_max.sd_pct() as i32,
-        SortBy::MR => v.stat_max.mr() as i32,
-        SortBy::SPD => v.stat_max.spd() as i32,
-        SortBy::LS => v.stat_max.ls() as i32,
-        SortBy::EXPB => v.max_exp_bonus,
-    });
-
-    filter_2d_vector(&mut apparels, |array_index, v| match args.sort_by {
-        SortBy::LVL => v.lvl < thresholds[array_index],
-        SortBy::HP => v.hp < thresholds[array_index],
-        SortBy::HPB => v.hp_bonus_max < thresholds[array_index],
-        SortBy::HPRRaw => (v.stat_max.hpr_raw() as i32) < thresholds[array_index],
-        SortBy::HPRPct => (v.stat_max.hpr_pct() as i32) < thresholds[array_index],
-        SortBy::SPAdd => (v.add.all() as i32) < thresholds[array_index],
-        SortBy::SPReq => (v.req.all() as i32) < thresholds[array_index],
-        SortBy::SDRaw => (v.stat_max.sd_raw() as i32) < thresholds[array_index],
-        SortBy::SDPct => (v.stat_max.sd_pct() as i32) < thresholds[array_index],
-        SortBy::MR => (v.stat_max.mr() as i32) < thresholds[array_index],
-        SortBy::SPD => (v.stat_max.spd() as i32) < thresholds[array_index],
-        SortBy::LS => (v.stat_max.ls() as i32) < thresholds[array_index],
-        SortBy::EXPB => v.max_exp_bonus < thresholds[array_index],
-    });
-
+    // Print the results based on the type
     match args.r#type {
         Some(v) => {
             let apparels = match v {
-            Type::Helmets => {
-                (&apparels[0], "Helmets")
-            },
-            Type::ChestPlate => {
-                (&apparels[1], "Chestplates")
-            },
-            Type::Leggings => {
-                (&apparels[2], "Leggings")
-            },
-            Type::Boots => {
-                (&apparels[3], "Boots")
-            },
-            Type::Ring => {
-                (&apparels[4], "Rings")
-            },
-            Type::Bracelet => {
-                (&apparels[5], "Bracelets")
-            },
-            Type::Necklace => {
-                (&apparels[6], "Necklaces")
-            },
+            Type::Helmets => (&apparels[0], "Helmets"),
+            Type::ChestPlate => (&apparels[1], "Chestplates"),
+            Type::Leggings => (&apparels[2], "Leggings"),
+            Type::Boots => (&apparels[3], "Boots"),
+            Type::Ring => (&apparels[4], "Ring"),
+            Type::Bracelet => (&apparels[5], "Bracelet"),
+            Type::Necklace => (&apparels[6], "Necklace"),
             };
             let apparels_str = apparels.0.iter().map(|v| format!("\"{}\"", v.name)).join(",");
             println!("{}:\t{}", apparels.1, apparels_str);
-        }
+        },
         None => {
-            let apparels_str: [String; 7] =
-                apparels.map(|v| v.iter().map(|v| format!("\"{}\"", v.name)).join(","));
+            let apparels_str: Vec<String> = apparels
+                .iter()
+                .map(|v| v.iter().map(|v| format!("\"{}\"", v.name)).join(","))
+                .collect();
             println!("Helmets:\t{}", apparels_str[0]);
-            println!("Chestplate:\t{}", apparels_str[1]);
+            println!("Chestplates:\t{}", apparels_str[1]);
             println!("Leggings:\t{}", apparels_str[2]);
             println!("Boots:\t\t{}", apparels_str[3]);
             println!("Ring:\t\t{}", apparels_str[4]);
@@ -100,4 +70,29 @@ async fn main() {
             println!("Necklace:\t{}", apparels_str[6]);
         }
     };
+}
+
+// Function to compare two items based on a single SortBy criterion
+fn compare_items(a: &Apparel, b: &Apparel, sort_by: SortBy) -> std::cmp::Ordering {
+    match sort_by {
+        SortBy::LVL => a.lvl.cmp(&b.lvl),
+        SortBy::HP => a.hp.cmp(&b.hp),
+        SortBy::HPB => a.hp_bonus_max.cmp(&b.hp_bonus_max),
+        SortBy::HPRRaw => a.stat_max.hpr_raw().cmp(&b.stat_max.hpr_raw()),
+        SortBy::HPRPct => a.stat_max.hpr_pct().cmp(&b.stat_max.hpr_pct()),
+        SortBy::SPAdd => a.add.all().cmp(&b.add.all()),
+        SortBy::SPReq => a.req.all().cmp(&b.req.all()),
+        SortBy::SDRaw => a.stat_max.sd_raw().cmp(&b.stat_max.sd_raw()),
+        SortBy::SDPct => a.stat_max.sd_pct().cmp(&b.stat_max.sd_pct()),
+        SortBy::MR => a.stat_max.mr().cmp(&b.stat_max.mr()),
+        SortBy::SPD => a.stat_max.spd().cmp(&b.stat_max.spd()),
+        SortBy::LS => a.stat_max.ls().cmp(&b.stat_max.ls()),
+        SortBy::NDMG => a.dam_pct_max.n().cmp(&b.dam_pct_max.n()),
+        SortBy::EDMG => a.dam_pct_max.e().cmp(&b.dam_pct_max.e()),
+        SortBy::TDMG => a.dam_pct_max.t().cmp(&b.dam_pct_max.t()),
+        SortBy::WDMG => a.dam_pct_max.w().cmp(&b.dam_pct_max.w()),
+        SortBy::FDMG => a.dam_pct_max.f().cmp(&b.dam_pct_max.f()),
+        SortBy::ADMG => a.dam_pct_max.a().cmp(&b.dam_pct_max.a()),
+        SortBy::EXPB => a.max_exp_bonus.cmp(&b.max_exp_bonus),
+    }
 }
