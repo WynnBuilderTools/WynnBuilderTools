@@ -40,6 +40,37 @@ where
     }
 }
 
+/// Sort a 2D vector
+/// 
+/// # Arguments
+/// 
+/// - `arrays` - A mutable reference to a 2D vector
+/// - `compare` - A closure that takes two values and returns an ordering
+/// 
+/// # Example
+/// 
+/// ```rust
+/// use util::sort_2d_vector;
+/// 
+/// let mut a: [Vec<i32>; 3] = [
+///    vec![1, 2, 3, -4, 5, 6, 7, 8],
+///   vec![1, 2, 3, -4],
+///  vec![1, 2, 3],
+/// ];
+/// 
+/// sort_2d_vector(&mut a, |a, b| a.cmp(b));
+/// let b: [Vec<i32>; 3] = [
+///    vec![-4, 1, 2, 3, 5, 6, 7, 8],
+///   vec![-4, 1, 2, 3],
+/// vec![1, 2, 3],
+/// ];
+/// 
+/// assert_eq!(a, b);
+/// ```
+/// 
+/// # Panics
+/// 
+/// This function will panic if the length of the 2D vector is zero
 pub fn sort_2d_vector<F, T>(arrays: &mut [Vec<T>], compare: F)
 where
     F: Fn(&T, &T) -> Ordering,
