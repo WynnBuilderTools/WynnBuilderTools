@@ -40,6 +40,9 @@ The current toolkit consists of two main components: the build batch generation 
 9. You're all set! Open a command line and run the binaries! If you're unsure of how to do this, the Internet is your friend
     Remember, you can always use --help with the binaries to know what they need, especially search_item, as builder does not take any arguments.
 
+If these instructions do not work for you, feel free to [open a new issue](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/issues/new/choose),
+or if you think there's some changes to be made to the step-by-step guide, feel free to open a pull request!
+
 ## Batch Generation Tool User Guide
 
 The batch generation tool includes a build generator (builder.exe), a configuration file (config.toml) in the config folder, a WynnCraft item data file (items.json) again in the config folder, and a database file (data.db) in the db folder.
