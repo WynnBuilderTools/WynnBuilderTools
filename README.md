@@ -134,7 +134,7 @@ db_retry_count = 10                                         # Number of retries 
 # min_ehp = 0
 
 [items] # Equipment list; multiple items can be specified for all slots except weapon
-helmets = ["Cumulonimbus"]
+helmets = ["Blue Mask"]
 chest_plates = ["Soulflare"]
 leggings = ["Vaward"]
 boots = ["Resurgence"]
