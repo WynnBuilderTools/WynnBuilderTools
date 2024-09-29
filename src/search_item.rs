@@ -15,6 +15,10 @@ async fn main() {
         OrderBy::DESC => true,
     };
 
+    apparels.iter_mut().for_each(|v| {
+        v.retain(|item| item.lvl >= args.min_lvl.into() && item.lvl <= args.max_lvl.into());
+    });
+
     // Sort apparels based on multiple sort_by criteria
     for apparel_list in &mut apparels {
         apparel_list.sort_by(|a, b| {
@@ -45,17 +49,21 @@ async fn main() {
     match args.r#type {
         Some(v) => {
             let apparels = match v {
-            Type::Helmets => (&apparels[0], "Helmets"),
-            Type::ChestPlate => (&apparels[1], "Chestplates"),
-            Type::Leggings => (&apparels[2], "Leggings"),
-            Type::Boots => (&apparels[3], "Boots"),
-            Type::Ring => (&apparels[4], "Ring"),
-            Type::Bracelet => (&apparels[5], "Bracelet"),
-            Type::Necklace => (&apparels[6], "Necklace"),
+                Type::Helmets => (&apparels[0], "Helmets"),
+                Type::ChestPlate => (&apparels[1], "Chestplates"),
+                Type::Leggings => (&apparels[2], "Leggings"),
+                Type::Boots => (&apparels[3], "Boots"),
+                Type::Ring => (&apparels[4], "Ring"),
+                Type::Bracelet => (&apparels[5], "Bracelet"),
+                Type::Necklace => (&apparels[6], "Necklace"),
             };
-            let apparels_str = apparels.0.iter().map(|v| format!("\"{}\"", v.name)).join(",");
+            let apparels_str = apparels
+                .0
+                .iter()
+                .map(|v| format!("\"{}\"", v.name))
+                .join(",");
             println!("{}:\t{}", apparels.1, apparels_str);
-        },
+        }
         None => {
             let apparels_str: Vec<String> = apparels
                 .iter()
