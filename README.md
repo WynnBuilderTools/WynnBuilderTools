@@ -64,11 +64,12 @@ available_point = 200 # Available attribute points; not tied to the level here f
 base_hp = 500 # Base health points; typically 500
 
 [hppeng] # hppeng related settings
-url_prefix = "https://hppeng-wynn.github.io/builder/?v=8#" # Prefix for generated URLs
-url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
-log_builds = true # Whether to log builds to the console; useful for debugging
-log_db_errors = true # Whether to log database errors to the console; useful for debugging
-db_retry_count = 10 # Number of retries for database operations
+url_prefix = "https://hppeng-wynn.github.io/builder/?v=8#"  # Prefix for generated URLs
+url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"            # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
+db_path = "db/data.db"                                      # Database path
+log_builds = true                                           # Whether to log builds to the console; useful for debugging
+log_db_errors = true                                        # Whether to log database errors to the console; useful for debugging
+db_retry_count = 10                                         # Number of retries for database operations
 # The final URL generated when running this configuration will look like this: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
 
 [threshold_first] # First filtering threshold; attributes here are calculated first, and most builds can be filtered out here to improve speed

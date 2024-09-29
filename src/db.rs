@@ -5,10 +5,10 @@ use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
 
 use crate::*;
 
-pub async fn init() -> Pool<Sqlite> {
+pub async fn init(config: &Config) -> Pool<Sqlite> {
     SqlitePoolOptions::new()
         .max_connections(5)
-        .connect("sqlite:db/data.db")
+        .connect(format!("sqlite:{}", config.hppeng.db_path).as_str())
         .await
         .unwrap()
 }

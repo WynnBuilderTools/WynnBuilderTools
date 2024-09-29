@@ -60,7 +60,7 @@ async fn main() {
         total_combinations,
     );
 
-    let db_pool = db::init().await;
+    let db_pool = db::init(&config).await;
     generate_full_combinations_with_random(
         1000,
         counter,
