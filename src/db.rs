@@ -1,16 +1,59 @@
 use std::io::Write;
 
 use rand::Rng;
-use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
+use sqlx::{migrate::Migrator, sqlite::SqlitePoolOptions, Pool, Sqlite};
+use tokio::fs::metadata;
+use tokio::fs::{DirBuilder, File};
 
 use crate::*;
 
 pub async fn init(config: &Config) -> Pool<Sqlite> {
-    SqlitePoolOptions::new()
+    // Create the database file if it doesn't exist
+    if metadata(&config.hppeng.db_path).await.is_err() {
+        let dirbuilder = DirBuilder::new();
+        let db_folder_path = std::path::Path::new(&config.hppeng.db_path).parent().unwrap();
+
+        if !db_folder_path.exists() {
+            dirbuilder
+            .create(db_folder_path)
+            .await
+            .expect("tokio fs should be able to create missing db folder.");
+        }
+
+        File::create(&config.hppeng.db_path)
+            .await
+            .expect("tokio fs should be able to create missing data.db file.");
+
+        println!(
+            "Creating missing data.db file at path: {}",
+            &config.hppeng.db_path
+        );
+    }
+
+    // Connect to the database
+    let pool = SqlitePoolOptions::new()
         .max_connections(5)
-        .connect(format!("sqlite:{}", config.hppeng.db_path).as_str())
+        .connect(&format!("sqlite:{}", config.hppeng.db_path))
         .await
-        .unwrap()
+        .expect(
+            format!(
+                "Expected a database file to exist at path {}",
+                &config.hppeng.db_path
+            )
+            .as_str(),
+        );
+
+    // Run migrations
+    let migrator = Migrator::new(std::path::Path::new(&config.hppeng.migrations_path))
+        .await
+        .expect("migrations folder should exist and contain a valid first migration");
+    migrator.run(&pool).await.unwrap();
+
+    // Sleep a couple seconds to let the migrations finish
+    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+
+    // Return pool
+    pool
 }
 
 pub async fn save_build(
@@ -60,7 +103,7 @@ pub async fn save_build(
     let max_exp_bonus = status.max_exp_bonus;
 
     loop {
-        let result = sqlx::query!(
+        let query = sqlx::query(
             r#"
         INSERT INTO build (
             url,
@@ -105,53 +148,96 @@ pub async fn save_build(
             max_fire_dam_pct,
             max_air_dam_pct,
             max_exp_bonus
-        ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28,?29,?30,?31,?32,?33,?34,?35,?36,?37,?38,?39,?40,?41, ?42);
+        ) VALUES (
+                    $1,
+                    $2,
+                    $3,
+                    $4,
+                    $5,
+                    $6,
+                    $7,
+                    $8,
+                    $9,
+                    $10,
+                    $11,
+                    $12,
+                    $13,
+                    $14,
+                    $15,
+                    $16,
+                    $17,
+                    $18,
+                    $19,
+                    $20,
+                    $21,
+                    $22,
+                    $23,
+                    $24,
+                    $25,
+                    $26,
+                    $27,
+                    $28,
+                    $29,
+                    $30,
+                    $31,
+                    $32,
+                    $33,
+                    $34,
+                    $35,
+                    $36,
+                    $37,
+                    $38,
+                    $39,
+                    $40,
+                    $41,
+                    $42
+                );
         "#,
-            url,
-            combination[2].name,
-            combination[3].name,
-            combination[4].name,
-            combination[5].name,
-            combination[0].name,
-            combination[1].name,
-            combination[6].name,
-            combination[7].name,
-            assign_strength,
-            assign_dexterity,
-            assign_intelligence,
-            assign_defense,
-            assign_agility,
-            original_e,
-            original_t,
-            original_w,
-            original_f,
-            original_a,
-            max_def_e,
-            max_def_t,
-            max_def_w,
-            max_def_f,
-            max_def_a,
-            mr,
-            ms,
-            spd,
-            ls,
-            hpr_raw,
-            hpr_pct,
-            sd_raw,
-            sd_pct,
-            status.max_ehp,
-            status.max_hp,
-            status.max_hpr,
-            max_dam_pct_n,
-            max_dam_pct_e,
-            max_dam_pct_t,
-            max_dam_pct_w,
-            max_dam_pct_f,
-            max_dam_pct_a,
-            max_exp_bonus
         )
-        .execute(&pool)
-        .await;
+        .bind(url.clone())
+        .bind(combination[2].name.clone())
+        .bind(combination[3].name.clone())
+        .bind(combination[4].name.clone())
+        .bind(combination[5].name.clone())
+        .bind(combination[0].name.clone())
+        .bind(combination[1].name.clone())
+        .bind(combination[6].name.clone())
+        .bind(combination[7].name.clone())
+        .bind(assign_strength)
+        .bind(assign_dexterity)
+        .bind(assign_intelligence)
+        .bind(assign_defense)
+        .bind(assign_agility)
+        .bind(original_e)
+        .bind(original_t)
+        .bind(original_w)
+        .bind(original_f)
+        .bind(original_a)
+        .bind(max_def_e)
+        .bind(max_def_t)
+        .bind(max_def_w)
+        .bind(max_def_f)
+        .bind(max_def_a)
+        .bind(mr)
+        .bind(ms)
+        .bind(spd)
+        .bind(ls)
+        .bind(hpr_raw)
+        .bind(hpr_pct)
+        .bind(sd_raw)
+        .bind(sd_pct)
+        .bind(status.max_ehp)
+        .bind(status.max_hp)
+        .bind(status.max_hpr)
+        .bind(max_dam_pct_n)
+        .bind(max_dam_pct_e)
+        .bind(max_dam_pct_t)
+        .bind(max_dam_pct_w)
+        .bind(max_dam_pct_f)
+        .bind(max_dam_pct_a)
+        .bind(max_exp_bonus);
+
+        let result = query.execute(&pool).await;
 
         let mut retry_count = 0;
 
@@ -171,7 +257,7 @@ pub async fn save_build(
                 file.write_all(error.as_bytes()).unwrap();
 
                 if config.hppeng.log_db_errors {
-                    println!("error on SQL query, retrying...");
+                    println!("error on sql query: {}, retrying...", err);
                 }
 
                 retry_count += 1;

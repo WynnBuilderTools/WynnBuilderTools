@@ -4,7 +4,8 @@
 
 ## Introduction
 
-This tool is a third-party utility for the Minecraft server [WynnCraft](https://wynncraft.com/), designed to generate build combinations in bulk within the game, aiming to discover the most suitable builds with optimal attributes.
+This tool is a third-party utility for the Minecraft server [WynnCraft](https://wynncraft.com/), designed to generate build combinations in bulk within the game,
+aiming to discover the most suitable builds with optimal attributes.
 
 The current toolkit consists of two main components: the build batch generation tool and the equipment filtering tool.
 
@@ -16,6 +17,7 @@ The current toolkit consists of two main components: the build batch generation 
 - [x] Convert builds into [WynnBuilder](https://hppeng-wynn.github.io/builder) URLs.
 - [ ] Additional attribute calculations.
   - [x] dam_pct
+  - [x] exp_bonus
   - [ ] cost
 - [x] Implement legality checks for Hive equipment.
 - [ ] Damage calculations.
@@ -37,15 +39,19 @@ binaries/
 
 ├── builder.exe
 
+├── migrations/
+
+  │   └── 01_create_builds_table.sql
+
 ├── config/
   
   │   ├── config.toml
 
   │   └── items.json
 
-└── db/
+└── db/ (automatically generated from v0.5.0 onwards)
 
-  └── data.db
+  └── data.db (automatically generated from v0.5.0 onwards given a migrations folder at root)
 
 All interactions are handled through the configuration file, as shown below:
 
@@ -67,6 +73,7 @@ base_hp = 500 # Base health points; typically 500
 url_prefix = "https://hppeng-wynn.github.io/builder/?v=8#"  # Prefix for generated URLs
 url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"            # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
 db_path = "db/data.db"                                      # Database path
+migrations_path = "migrations"                           # Database migration path
 log_builds = true                                           # Whether to log builds to the console; useful for debugging
 log_db_errors = true                                        # Whether to log database errors to the console; useful for debugging
 db_retry_count = 10                                         # Number of retries for database operations
