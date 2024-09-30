@@ -8,7 +8,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("miscellaneous");
 
     let apparel = Apparel::default();
-    let apparels: Vec<&Apparel> = (0..8).into_iter().map(|_| &apparel).collect();
+    let apparels: Vec<&Apparel> = (0..8).map(|_| &apparel).collect();
     let weapon: Weapon = Default::default();
     group.bench_function("Statistics::new", |b| {
         b.iter(|| CommonStat::sum_max_stats(apparels.as_slice(), &weapon))

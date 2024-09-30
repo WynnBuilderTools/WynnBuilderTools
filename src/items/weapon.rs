@@ -73,7 +73,7 @@ impl TryFrom<&Item> for Weapon {
                 value
                     .atk_spd
                     .as_ref()
-                    .ok_or(format!("atkSpd is missing"))?
+                    .ok_or("atkSpd is missing".to_string())?
                     .as_str(),
             )?,
             min_exp_bonus: min_roll(&exp_bonus, fix_id),

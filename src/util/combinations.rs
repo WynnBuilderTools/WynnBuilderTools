@@ -251,11 +251,8 @@ pub fn segmented_random_numbers(
 
         fn next(&mut self) -> Option<Self::Item> {
             self.count.fetch_add(1, Ordering::AcqRel);
-            match &(self.combinations_counter) {
-                Some(counter) => {
-                    counter.fetch_sub(1, Ordering::AcqRel);
-                }
-                None => {}
+            if let Some(counter) = &(self.combinations_counter) {
+                counter.fetch_sub(1, Ordering::AcqRel);
             }
 
             if let Some(last_size) = self.last_segments_size {
@@ -352,10 +349,7 @@ pub fn segmented_random_numbers(
 
     let rng = fastrand::Rng::default();
     let segment_count = (max + 1) / segment_size;
-    let segments = (0..segment_count)
-        .into_iter()
-        .map(|v| v * segment_size)
-        .collect();
+    let segments = (0..segment_count).map(|v| v * segment_size).collect();
     let last = (max + 1) % segment_size;
 
     SegmentedRandomNumbers {
@@ -504,7 +498,7 @@ mod tests {
         }
         impl AsRef<TestStruct> for TestStruct {
             fn as_ref(&self) -> &TestStruct {
-                &self
+                self
             }
         }
         let arrays: [&[TestStruct]; 3] = [

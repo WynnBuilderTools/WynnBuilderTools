@@ -5,11 +5,12 @@ use std::{ops::Add, simd::i16x8};
 use crate::*;
 
 /// 0:hpr_raw 1:hpr_pct 2:mr 3:ls 4:ms 5:spd 6:sd_raw 7:sd_pct
-#[derive(Clone, Debug, Default, Hash)]
+#[derive(Clone, Debug, Default)]
 pub struct CommonStat {
     pub inner: i16x8,
 }
 impl CommonStat {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         hpr_raw: i16,
         hpr_pct: i16,
@@ -103,7 +104,7 @@ mod tests {
     #[test]
     fn sum_max_stats_works() {
         let apparels = gen_test_apparels();
-        let apparels: Vec<&Apparel> = apparels.iter().map(|v| v).collect();
+        let apparels: Vec<&Apparel> = apparels.iter().collect();
         assert_eq!(
             CommonStat::sum_max_stats(apparels.as_slice(), &Default::default()),
             CommonStat::new(130, 30, 77, 214, -8, 16, 621, 77)

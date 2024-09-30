@@ -11,21 +11,31 @@ pub async fn init(config: &Config) -> Pool<Sqlite> {
     // Create the database file if it doesn't exist
     if metadata(&config.hppeng.db_path).await.is_err() {
         let dirbuilder = DirBuilder::new();
-        let db_folder_path = std::path::Path::new(&config.hppeng.db_path).parent().unwrap();
+        let db_folder_path = std::path::Path::new(&config.hppeng.db_path)
+            .parent()
+            .unwrap();
 
         if !db_folder_path.exists() {
+            println!(
+                "trying to create missing db folder at path: {}",
+                db_folder_path.display()
+            );
             dirbuilder
-            .create(db_folder_path)
-            .await
-            .expect("tokio fs should be able to create missing db folder.");
+                .create(db_folder_path)
+                .await
+                .expect("tokio fs should be able to create missing db folder.");
         }
 
+        println!(
+            "trying to create missing data.db file at path: {}",
+            &config.hppeng.db_path
+        );
         File::create(&config.hppeng.db_path)
             .await
             .expect("tokio fs should be able to create missing data.db file.");
 
         println!(
-            "Creating missing data.db file at path: {}",
+            "Created missing data.db file at path: {}",
             &config.hppeng.db_path
         );
     }
@@ -35,13 +45,12 @@ pub async fn init(config: &Config) -> Pool<Sqlite> {
         .max_connections(5)
         .connect(&format!("sqlite:{}", config.hppeng.db_path))
         .await
-        .expect(
-            format!(
+        .unwrap_or_else(|_| {
+            panic!(
                 "Expected a database file to exist at path {}",
                 &config.hppeng.db_path
             )
-            .as_str(),
-        );
+        });
 
     // Run migrations
     let migrator = Migrator::new(std::path::Path::new(&config.hppeng.migrations_path))

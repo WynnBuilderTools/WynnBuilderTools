@@ -71,10 +71,10 @@ async fn main() {
             combination[2..].copy_from_slice(&no_rings_combination);
 
             for indexes in &ring_combinations {
-                let ring_combination = unsafe { select_from_arrays(&indexes, &rings) };
+                let ring_combination = unsafe { select_from_arrays(indexes, &rings) };
                 combination[..2].copy_from_slice(&ring_combination);
 
-                if let Ok(stat) = calculate_stats(&config, &combination, &weapon) {
+                if let Ok(stat) = calculate_stats(&config, &combination, weapon) {
                     let code = encode_build(
                         [
                             combination[2].id,
@@ -113,7 +113,8 @@ async fn main() {
         },
         Option::Some(remaining_builds.clone()),
     );
-    println!("done");
+
+    println!("done")
 }
 
 fn spawn_speed_watcher(
@@ -140,7 +141,7 @@ fn spawn_speed_watcher(
             last_10_speeds.push_front(speed);
 
             let mut remaining_time = usize::MAX;
-            if last_10_speeds.get(0).is_some() {
+            if last_10_speeds.front().is_some() {
                 let avg_speed = last_10_speeds.iter().sum::<usize>() / last_10_speeds.len();
                 if avg_speed > 0 {
                     remaining_time = combinations / avg_speed;
@@ -160,8 +161,8 @@ fn spawn_speed_watcher(
 }
 
 fn find<'a>(
-    apparels: &'a Vec<Apparel>,
-    names: &'a Vec<String>,
+    apparels: &'a [Apparel],
+    names: &'a [String],
 ) -> Result<Vec<&'a Apparel>, Vec<&'a String>> {
     let result = names
         .iter()
@@ -178,7 +179,7 @@ fn find<'a>(
     let ok_values: Vec<_> = oks.into_iter().map(Result::unwrap).collect();
     let err_values: Vec<_> = errs.into_iter().map(Result::unwrap_err).collect();
 
-    if err_values.len() > 0 {
+    if !err_values.is_empty() {
         Err(err_values)
     } else {
         Ok(ok_values)
@@ -221,7 +222,7 @@ fn calculate_stats(
     if let Some(threshold) = &config.threshold_first {
         if let Some(v) = threshold.min_hp {
             if max_hp < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
@@ -241,11 +242,11 @@ fn calculate_stats(
         if max_stat.any_lt(&CommonStat::new(
             hpr_raw, hpr_pct, mr, ls, ms, spd, sd_raw, sd_pct,
         )) {
-            return Err(format!(""));
+            return Err(String::new());
         }
         if let Some(v) = threshold.min_hpr {
             if max_hpr < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
@@ -259,7 +260,7 @@ fn calculate_stats(
         let a = threshold.min_air_defense.unwrap_or(MIN_16);
 
         if max_def.any_lt(&Point::new(e, t, w, f, a)) {
-            return Err(format!(""));
+            return Err(String::new());
         }
     }
 
@@ -273,18 +274,18 @@ fn calculate_stats(
         let a = threshold.min_air_dam_pct.unwrap_or(MIN_16);
 
         if max_dam_pct.any_lt(&Dam::new(n, e, t, w, f, a)) {
-            return Err(format!(""));
+            return Err(String::new());
         }
     }
 
     if let Some(illegal_combinations) = &config.items.illegal_combinations {
-        if is_illegal_combination(&combination, illegal_combinations.as_slice()) {
-            return Err(format!(""));
+        if is_illegal_combination(combination, illegal_combinations.as_slice()) {
+            return Err(String::new());
         }
     }
 
-    if SkillPoints::fast_gap(&combination) < -config.player.available_point {
-        return Err(format!(""));
+    if SkillPoints::fast_gap(combination) < -config.player.available_point {
+        return Err(String::new());
     }
     let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);
     skill_point.add_weapon(weapon);
@@ -299,14 +300,14 @@ fn calculate_stats(
     }
 
     if !skill_point.check(config.player.available_point) {
-        return Err(format!(""));
+        return Err(String::new());
     }
 
     let max_ehp = ehp(&skill_point, max_hp, &weapon.class);
     if let Some(threshold) = &config.threshold_fifth {
         if let Some(v) = threshold.min_ehp {
             if max_ehp < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
@@ -315,12 +316,12 @@ fn calculate_stats(
     if let Some(threshold) = &config.threshold_second {
         if let Some(v) = threshold.min_exp_bonus {
             if max_exp_bonus < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
 
-    return Ok(Status {
+    Ok(Status {
         max_stat,
         max_hpr,
         max_hp,
@@ -329,7 +330,7 @@ fn calculate_stats(
         max_ehp,
         max_dam_pct,
         max_exp_bonus,
-    });
+    })
 }
 
 fn is_illegal_combination(
@@ -348,5 +349,5 @@ fn is_illegal_combination(
             }
         }
     }
-    return false;
+    false
 }

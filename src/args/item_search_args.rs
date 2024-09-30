@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use clap::{Parser, ValueEnum};
 
 #[derive(Parser, Debug)]
@@ -20,7 +22,7 @@ pub struct ItemSearchArgs {
     pub max_lvl: u8,
 
     /// Order the results in ascending or descending order
-    #[arg(short, long, default_value_t = OrderBy::DESC)]
+    #[arg(short, long, default_value_t = OrderBy::Desc)]
     pub order_by: OrderBy,
 
     /// Sort the results by a specific field
@@ -42,15 +44,16 @@ pub enum r#Type {
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum OrderBy {
     /// Sort the results in ascending order, arrange them from smallest to largest
-    ASC,
+    Asc,
     /// Sort the results in descending order, arrange them from largest to smallest
-    DESC,
+    Desc,
 }
-impl ToString for OrderBy {
-    fn to_string(&self) -> String {
+
+impl Display for OrderBy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OrderBy::ASC => String::from("asc"),
-            OrderBy::DESC => String::from("desc"),
+            OrderBy::Asc => write!(f, "asc"),
+            OrderBy::Desc => write!(f, "desc"),
         }
     }
 }
@@ -58,15 +61,15 @@ impl ToString for OrderBy {
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum SortBy {
     /// Level
-    LVL,
+    Lvl,
     /// Hp
-    HP,
+    Hp,
     /// Hp bonus(max)
-    HPB,
+    Hpb,
     /// Hp regain raw(max)
-    HPRRaw,
+    HprRaw,
     /// Hp regain pct(max)
-    HPRPct,
+    HprPct,
     /// Skill point add total
     SPAdd,
     /// Skill point request total
@@ -76,23 +79,23 @@ pub enum SortBy {
     /// Spell damage pct(max)
     SDPct,
     /// Mana regain(max)
-    MR,
+    Mr,
     /// Walk speed bonus(max)
-    SPD,
+    Spd,
     /// Life steal(max)
-    LS,
+    Ls,
     /// Exp bonus(max)
-    EXPB,
+    ExpB,
     /// Neutral damage
-    NDMG,
+    Ndmg,
     /// Earth damage
-    EDMG,
+    Edmg,
     /// Thunder damage
-    TDMG,
+    Tdmg,
     /// Water damage
-    WDMG,
+    Wdmg,
     /// Fire damage
-    FDMG,
+    Fdmg,
     /// Air damage
-    ADMG,
+    Admg,
 }

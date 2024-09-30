@@ -153,10 +153,10 @@ fn damage_calculate(
 
     let crit_mult = 1.0 + stats.crit_dam_pct;
 
-    let normal_damage = &damages * (str_boost as f64);
-    let crit_damage = &damages * ((str_boost + crit_mult) as f64);
+    let normal_damage = &damages * str_boost;
+    let crit_damage = &damages * (str_boost + crit_mult);
 
-    return (normal_damage, crit_damage);
+    (normal_damage, crit_damage)
 }
 
 #[cfg(test)]

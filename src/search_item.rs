@@ -11,8 +11,8 @@ async fn main() {
     let (mut apparels, _) = load_from_json("config/items.json");
 
     let reverse = match args.order_by {
-        OrderBy::ASC => false,
-        OrderBy::DESC => true,
+        OrderBy::Asc => false,
+        OrderBy::Desc => true,
     };
 
     apparels.iter_mut().for_each(|v| {
@@ -63,7 +63,7 @@ async fn main() {
                 .map(|v| format!("\"{}\"", v.name))
                 .join(",");
             println!("{}:\t{}", apparels.1, apparels_str);
-        }
+        },
         None => {
             let apparels_str: Vec<String> = apparels
                 .iter()
@@ -83,24 +83,24 @@ async fn main() {
 // Function to compare two items based on a single SortBy criterion
 fn compare_items(a: &Apparel, b: &Apparel, sort_by: SortBy) -> std::cmp::Ordering {
     match sort_by {
-        SortBy::LVL => a.lvl.cmp(&b.lvl),
-        SortBy::HP => a.hp.cmp(&b.hp),
-        SortBy::HPB => a.hp_bonus_max.cmp(&b.hp_bonus_max),
-        SortBy::HPRRaw => a.stat_max.hpr_raw().cmp(&b.stat_max.hpr_raw()),
-        SortBy::HPRPct => a.stat_max.hpr_pct().cmp(&b.stat_max.hpr_pct()),
+        SortBy::Lvl => a.lvl.cmp(&b.lvl),
+        SortBy::Hp => a.hp.cmp(&b.hp),
+        SortBy::Hpb => a.hp_bonus_max.cmp(&b.hp_bonus_max),
+        SortBy::HprRaw => a.stat_max.hpr_raw().cmp(&b.stat_max.hpr_raw()),
+        SortBy::HprPct => a.stat_max.hpr_pct().cmp(&b.stat_max.hpr_pct()),
         SortBy::SPAdd => a.add.all().cmp(&b.add.all()),
         SortBy::SPReq => a.req.all().cmp(&b.req.all()),
         SortBy::SDRaw => a.stat_max.sd_raw().cmp(&b.stat_max.sd_raw()),
         SortBy::SDPct => a.stat_max.sd_pct().cmp(&b.stat_max.sd_pct()),
-        SortBy::MR => a.stat_max.mr().cmp(&b.stat_max.mr()),
-        SortBy::SPD => a.stat_max.spd().cmp(&b.stat_max.spd()),
-        SortBy::LS => a.stat_max.ls().cmp(&b.stat_max.ls()),
-        SortBy::NDMG => a.dam_pct_max.n().cmp(&b.dam_pct_max.n()),
-        SortBy::EDMG => a.dam_pct_max.e().cmp(&b.dam_pct_max.e()),
-        SortBy::TDMG => a.dam_pct_max.t().cmp(&b.dam_pct_max.t()),
-        SortBy::WDMG => a.dam_pct_max.w().cmp(&b.dam_pct_max.w()),
-        SortBy::FDMG => a.dam_pct_max.f().cmp(&b.dam_pct_max.f()),
-        SortBy::ADMG => a.dam_pct_max.a().cmp(&b.dam_pct_max.a()),
-        SortBy::EXPB => a.max_exp_bonus.cmp(&b.max_exp_bonus),
+        SortBy::Mr => a.stat_max.mr().cmp(&b.stat_max.mr()),
+        SortBy::Spd => a.stat_max.spd().cmp(&b.stat_max.spd()),
+        SortBy::Ls => a.stat_max.ls().cmp(&b.stat_max.ls()),
+        SortBy::Ndmg => a.dam_pct_max.n().cmp(&b.dam_pct_max.n()),
+        SortBy::Edmg => a.dam_pct_max.e().cmp(&b.dam_pct_max.e()),
+        SortBy::Tdmg => a.dam_pct_max.t().cmp(&b.dam_pct_max.t()),
+        SortBy::Wdmg => a.dam_pct_max.w().cmp(&b.dam_pct_max.w()),
+        SortBy::Fdmg => a.dam_pct_max.f().cmp(&b.dam_pct_max.f()),
+        SortBy::Admg => a.dam_pct_max.a().cmp(&b.dam_pct_max.a()),
+        SortBy::ExpB => a.max_exp_bonus.cmp(&b.max_exp_bonus),
     }
 }

@@ -31,7 +31,7 @@ pub struct Apparel {
 
 impl AsRef<Apparel> for Apparel {
     fn as_ref(&self) -> &Apparel {
-        &self
+        self
     }
 }
 

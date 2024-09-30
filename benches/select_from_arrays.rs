@@ -8,11 +8,9 @@ fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("select_from_arrays");
 
     let long_array = (0..1000)
-        .into_iter()
         .map(|_| TestStruct {})
         .collect::<Vec<TestStruct>>();
     let binding = (0..8)
-        .into_iter()
         .map(|_| long_array.as_slice())
         .collect::<Vec<&[TestStruct]>>();
     let long_arrays: &[&[TestStruct]; 8] = binding.as_slice().try_into().unwrap();
@@ -31,6 +29,6 @@ criterion_main!(benches);
 struct TestStruct {}
 impl AsRef<TestStruct> for TestStruct {
     fn as_ref(&self) -> &TestStruct {
-        &self
+        self
     }
 }
