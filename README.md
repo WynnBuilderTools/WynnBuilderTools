@@ -30,16 +30,10 @@ The current toolkit consists of two main components: the build batch generation 
 - [x] Remaining combinations to process
 
 ## Step-by-step Setup Guide (Windows)
-1. Make a new folder, the name isn't too important but make it easy for you to identify, we'll be using it later. Make it in a position that's easy to access, too, like your desktop.
-2. Download the latest release from [releases](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases), in the case of Windows it will be called windows_x64.zip
-3. Put the binaries (the .exe files) in the folder you made for the tool (For this example we'll be using `WynnBuilderTools-Rekindled`).
-4. Make a folder named `config` in the folder `WynnBuilderTools-Rekindled`.
-5. In the `config` folder, add the items.json found on the [hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data) GitHub page. Find the most up to date version and the contained items.json
-6. Download the `config.toml` from https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/blob/master/config/config.toml and place it in the `config` folder.
-7. Make a folder named `migrations` in the folder `WynnBuilderTools-Rekindled` and make sure the name you gave to the migrations folder matches with what you've defined in `config/config.toml`
-8. Ensure you've downloaded [the single migration](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/blob/master/migrations/01_create_builds_table.sql) needed to create the database, and put it in the `migrations` folder.
-9. You're all set! Open a command line and run the binaries! If you're unsure of how to do this, the Internet is your friend
-    Remember, you can always use --help with the binaries to know what they need, especially search_item, as builder does not take any arguments.
+1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
+2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
+3. Download the items.json from [hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data) (in the latest version you can find the items.json), and place it in the config folder in the folder where you extracted the tool.
+4. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `search_item -h` if you're having trouble with the search_item binary!
 
 If these instructions do not work for you, feel free to [open a new issue](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/issues/new/choose),
 or if you think there's some changes to be made to the step-by-step guide, feel free to open a pull request!

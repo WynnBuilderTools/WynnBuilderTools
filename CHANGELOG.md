@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.2] - TBA
 ### Added
 - More informational println calls to inform when the db folder and data.db file are being created.
+- CI/CD Integration with GitHub actions
+
+### Fixed
+- Formatting reported by Clippy and cargo fmt
+- Updated README.md for new use steps on Windows
+
+### Removed
+- A bunch of derive Hash that weren't needed
 
 ## [0.5.1] - TBA
 ### Fixed
