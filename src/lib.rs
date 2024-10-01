@@ -9,3 +9,4 @@ mod config;
 pub use items::*;
 pub use stat::*;
 pub use util::*;
+pub use config::*;

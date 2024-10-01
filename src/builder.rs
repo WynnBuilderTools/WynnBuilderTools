@@ -1,4 +1,3 @@
-use crate::config::build_config::*;
 mod db;
 use std::{
     borrow::BorrowMut,
@@ -10,6 +9,7 @@ use std::{
     },
     time::Duration,
 };
+use build_config::{load_config, Config};
 use tokio::sync::Mutex;
 
 use tokio::{runtime::Runtime, spawn, time::sleep};

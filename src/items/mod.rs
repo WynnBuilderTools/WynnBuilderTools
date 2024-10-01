@@ -20,9 +20,9 @@ pub use point::*;
 pub use range::*;
 pub use weapon::*;
 
+use crate::config::build_config::Config;
 use std::io::Write;
 use std::{fs::File, io::BufReader, path::Path};
-use crate::config::build_config::Config;
 
 /// Load items from a JSON file
 ///
@@ -46,7 +46,10 @@ use crate::config::build_config::Config;
 /// # Panics
 ///
 /// This function will panic if the file cannot be opened or if the JSON file is invalid
-pub fn load_from_json<P, T: AsRef<Path>>(path: T, config: &Config) -> ([Vec<Apparel>; 7], Vec<Weapon>) {
+pub fn load_from_json<P>(path: P, config: &Config) -> ([Vec<Apparel>; 7], Vec<Weapon>)
+where
+    P: AsRef<Path>,
+{
     let file = match File::open(&path) {
         Ok(ok) => ok,
         Err(_) => {
