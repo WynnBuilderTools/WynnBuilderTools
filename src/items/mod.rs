@@ -20,6 +20,7 @@ pub use point::*;
 pub use range::*;
 pub use weapon::*;
 
+use crate::build_config::Api;
 use crate::config::build_config::Config;
 use std::io::Write;
 use std::{fs::File, io::BufReader, path::Path};
@@ -53,11 +54,20 @@ where
     let file = match File::open(&path) {
         Ok(ok) => ok,
         Err(_) => {
+            let defaults = Api {
+                url: "https://api.wynncraft.com".to_string(),
+                version: "v3".to_string(),
+                module: "item".to_string(),
+                query: "database?fullResult".to_string(),
+            };
+
             let request_url = format!(
-                "https://api.wynncraft.com/{version}/{module}/{query}",
-                version = "v3",
-                module = "item",
-                query = "database?fullResult"
+                "{url}/{version}/{module}/{query}",
+                url = config.api.as_ref().unwrap_or_else(|| { &defaults }).url,
+                version = config.api.as_ref().unwrap_or_else(|| { &defaults }).version,
+                module = config.api.as_ref().unwrap_or_else(|| { &defaults }).module,
+                query = config.api.as_ref().unwrap_or_else(|| { &defaults }).query,
+
             );
 
             let response = reqwest::blocking::get(&request_url)

@@ -1,14 +1,18 @@
 mod args;
 
 use args::item_search_args::*;
+use build_config::load_config;
 use clap::Parser;
 use itertools::Itertools;
 use wynn_build_tools::*;
+use crate::load_from_json;
 
 #[tokio::main]
 async fn main() {
+    let config = load_config("config/config.toml").await.unwrap();
+
     let args = ItemSearchArgs::parse();
-    let (mut apparels, _) = load_from_json("config/items.json");
+    let (mut apparels, _) = load_from_json(&config.hppeng.items_file, &config);
 
     let reverse = match args.order_by {
         OrderBy::Asc => false,
