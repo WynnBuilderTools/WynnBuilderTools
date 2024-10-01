@@ -1,5 +1,4 @@
-mod config;
-use config::build_config::*;
+use crate::config::build_config::*;
 mod db;
 use std::{
     borrow::BorrowMut,
@@ -20,7 +19,7 @@ use wynn_build_tools::*;
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
 
-    let (apparels, weapons) = load_from_json("config/items.json");
+    let (apparels, weapons) = load_from_json(&config.hppeng.items_file, &config);
     let weapon = weapons
         .iter()
         .find(|v| v.name == config.items.weapon)

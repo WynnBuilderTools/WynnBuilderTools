@@ -4,6 +4,7 @@
 mod items;
 mod stat;
 mod util;
+mod config;
 
 pub use items::*;
 pub use stat::*;

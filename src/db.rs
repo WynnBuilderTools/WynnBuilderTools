@@ -6,6 +6,7 @@ use tokio::fs::metadata;
 use tokio::fs::{DirBuilder, File};
 
 use crate::*;
+use crate::config::build_config::Config;
 
 pub async fn init(config: &Config) -> Pool<Sqlite> {
     // Create the database file if it doesn't exist

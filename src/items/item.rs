@@ -4,12 +4,14 @@ use crate::*;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[derive(serde::Serialize)]
 pub struct Items {
     pub items: Vec<Item>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[derive(serde::Serialize)]
 pub struct Item {
     pub id: i32,
     pub name: String,

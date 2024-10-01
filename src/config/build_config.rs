@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::{path::Path, str};
 use tokio::{fs::File, io::AsyncReadExt};
 
@@ -7,13 +7,14 @@ pub struct Config {
     pub items: Items,
     pub player: Player,
     pub hppeng: Hppeng,
+    pub api: Option<Api>,
     pub threshold_first: Option<ThresholdFirst>,
     pub threshold_second: Option<ThresholdSecond>,
     pub threshold_third: Option<ThresholdThird>,
     pub threshold_fourth: Option<ThresholdFourth>,
     pub threshold_fifth: Option<ThresholdFifth>,
 }
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct Items {
     pub helmets: Vec<String>,
     pub chest_plates: Vec<String>,
@@ -38,8 +39,16 @@ pub struct Hppeng {
     pub log_builds: bool,
     pub db_path: String,
     pub migrations_path: String,
+    pub items_file: String,
     pub log_db_errors: bool,
     pub db_retry_count: u8,
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct Api {
+    pub url: String,
+    pub version: String,
+    pub module: String,
+    pub query: String,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct ThresholdFirst {

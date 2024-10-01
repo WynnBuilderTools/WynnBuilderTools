@@ -20,7 +20,9 @@ pub use point::*;
 pub use range::*;
 pub use weapon::*;
 
+use std::io::Write;
 use std::{fs::File, io::BufReader, path::Path};
+use crate::config::build_config::Config;
 
 /// Load items from a JSON file
 ///
@@ -44,11 +46,36 @@ use std::{fs::File, io::BufReader, path::Path};
 /// # Panics
 ///
 /// This function will panic if the file cannot be opened or if the JSON file is invalid
-pub fn load_from_json<P>(path: P) -> ([Vec<Apparel>; 7], Vec<Weapon>)
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(path).expect("Failed to open file");
+pub fn load_from_json<P, T: AsRef<Path>>(path: T, config: &Config) -> ([Vec<Apparel>; 7], Vec<Weapon>) {
+    let file = match File::open(&path) {
+        Ok(ok) => ok,
+        Err(_) => {
+            let request_url = format!(
+                "https://api.wynncraft.com/{version}/{module}/{query}",
+                version = "v3",
+                module = "item",
+                query = "database?fullResult"
+            );
+
+            let response = reqwest::blocking::get(&request_url)
+                .expect("reqwest should be able to contact the wynncraft api");
+            let items: Items = response.json().expect("the response should be valid json");
+
+            // Serialize items to JSON string
+            let json_string =
+                serde_json::to_string(&items).expect("Failed to serialize items to JSON");
+
+            // Open file for writing
+            let mut file = File::create(&path).expect("Failed to create file");
+
+            // Write JSON string to file
+            file.write_all(json_string.as_bytes())
+                .expect("Failed to write JSON to file");
+
+            file
+        }
+    };
+
     let reader = BufReader::new(file);
 
     let items: Items = serde_json::from_reader(reader).unwrap();

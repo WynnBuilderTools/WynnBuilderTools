@@ -28,6 +28,7 @@ num = "0.4.0"
 serde = "1.0.160"
 toml = "0.7.6"
 clap = { version = "4.4.2", features = ["derive"] }
+reqwest = { version = "0.12.8", features = ["blocking", "json"]}
 
 [[bin]]
 name = "builder"
