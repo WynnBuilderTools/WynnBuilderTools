@@ -1,7 +1,7 @@
 use serde_json::Value;
 use std::{fs::File, io::Write, path::Path};
 
-use crate::{build_config::Api, config::build_config::Config};
+use crate::{build_config::Api, config::build_config::Config, ApiItems};
 
 pub async fn fetch_json_from_config<P>(path: P, config: &Config) -> Result<impl AsRef<Path>, &str>
 where
@@ -34,8 +34,10 @@ where
         .await
         .unwrap();
 
-    let parsed_json: Value =
-        serde_json::from_str(&response_text).expect("failed to parse json response");
+    let parsed_json: ApiItems = match serde_json::from_str(&response_text) {
+        Ok(json) => json,
+        Err(err) => panic!("failed to parse json, error: {:?}", err),
+    };
 
     println!("{:#?}", parsed_json);
 
