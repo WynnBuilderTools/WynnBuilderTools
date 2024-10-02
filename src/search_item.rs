@@ -12,7 +12,10 @@ async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
 
     let args = ItemSearchArgs::parse();
-    let (mut apparels, _) = load_from_json(&config.hppeng.items_file, &config);
+    let (mut apparels, _) = match load_from_json(&config.hppeng.items_file) {
+        Ok(ok) => ok,
+        Err(_) => load_from_json(fetch_json_from_config(&config.hppeng.items_file, &config).await.unwrap()).unwrap(),
+    };
 
     let reverse = match args.order_by {
         OrderBy::Asc => false,

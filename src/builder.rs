@@ -1,4 +1,6 @@
 mod db;
+
+use build_config::{load_config, Config};
 use std::{
     borrow::BorrowMut,
     collections::VecDeque,
@@ -9,7 +11,6 @@ use std::{
     },
     time::Duration,
 };
-use build_config::{load_config, Config};
 use tokio::sync::Mutex;
 
 use tokio::{runtime::Runtime, spawn, time::sleep};
@@ -19,7 +20,15 @@ use wynn_build_tools::*;
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
 
-    let (apparels, weapons) = load_from_json(&config.hppeng.items_file, &config);
+    let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
+        Ok(v) => v,
+        Err(_) => load_from_json(
+            fetch_json_from_config(&config.hppeng.items_file, &config)
+                .await
+                .unwrap(),
+        )
+        .unwrap(),
+    };
     let weapon = weapons
         .iter()
         .find(|v| v.name == config.items.weapon)

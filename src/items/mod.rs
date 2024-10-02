@@ -8,6 +8,9 @@ mod item;
 mod point;
 mod range;
 mod weapon;
+mod api_items;
+
+use std::{fs::File, io::BufReader, path::Path};
 
 pub use apparel::*;
 pub use atk_spd::*;
@@ -19,11 +22,8 @@ pub use item::*;
 pub use point::*;
 pub use range::*;
 pub use weapon::*;
+pub use api_items::*;
 
-use crate::build_config::Api;
-use crate::config::build_config::Config;
-use std::io::Write;
-use std::{fs::File, io::BufReader, path::Path};
 
 /// Load items from a JSON file
 ///
@@ -47,69 +47,40 @@ use std::{fs::File, io::BufReader, path::Path};
 /// # Panics
 ///
 /// This function will panic if the file cannot be opened or if the JSON file is invalid
-pub fn load_from_json<P>(path: P, config: &Config) -> ([Vec<Apparel>; 7], Vec<Weapon>)
+pub fn load_from_json<P>(path: P) -> Result<([Vec<Apparel>; 7], Vec<Weapon>), String>
 where
     P: AsRef<Path>,
 {
-    let file = match File::open(&path) {
-        Ok(ok) => ok,
-        Err(_) => {
-            let defaults = Api {
-                url: "https://api.wynncraft.com".to_string(),
-                version: "v3".to_string(),
-                module: "item".to_string(),
-                query: "database?fullResult".to_string(),
-            };
-
-            let request_url = format!(
-                "{url}/{version}/{module}/{query}",
-                url = config.api.as_ref().unwrap_or_else(|| { &defaults }).url,
-                version = config.api.as_ref().unwrap_or_else(|| { &defaults }).version,
-                module = config.api.as_ref().unwrap_or_else(|| { &defaults }).module,
-                query = config.api.as_ref().unwrap_or_else(|| { &defaults }).query,
-
-            );
-
-            let response = reqwest::blocking::get(&request_url)
-                .expect("reqwest should be able to contact the wynncraft api");
-            let items: Items = response.json().expect("the response should be valid json");
-
-            // Serialize items to JSON string
-            let json_string =
-                serde_json::to_string(&items).expect("Failed to serialize items to JSON");
-
-            // Open file for writing
-            let mut file = File::create(&path).expect("Failed to create file");
-
-            // Write JSON string to file
-            file.write_all(json_string.as_bytes())
-                .expect("Failed to write JSON to file");
-
-            file
-        }
+    let file_result: Result<File, std::io::Error> = match File::open(&path) {
+        Ok(ok) => Ok(ok),
+        Err(err) => Err(err),
     };
 
-    let reader = BufReader::new(file);
+    if let Ok(file) = file_result {
+        let reader = BufReader::new(file);
 
-    let items: Items = serde_json::from_reader(reader).unwrap();
-    let mut apparels: [Vec<Apparel>; 7] = Default::default();
-    let mut weapons: Vec<Weapon> = Vec::new();
-    items
-        .items
-        .iter()
-        .for_each(|value| match value.r#type.as_str() {
-            "helmet" => apparels[0].push(Apparel::try_from(value).unwrap()),
-            "chestplate" => apparels[1].push(Apparel::try_from(value).unwrap()),
-            "leggings" => apparels[2].push(Apparel::try_from(value).unwrap()),
-            "boots" => apparels[3].push(Apparel::try_from(value).unwrap()),
-            "ring" => apparels[4].push(Apparel::try_from(value).unwrap()),
-            "bracelet" => apparels[5].push(Apparel::try_from(value).unwrap()),
-            "necklace" => apparels[6].push(Apparel::try_from(value).unwrap()),
-            "relik" | "bow" | "wand" | "dagger" | "spear" => {
-                weapons.push(Weapon::try_from(value).unwrap())
-            }
-            _ => (),
-        });
+        let items: Items = serde_json::from_reader(reader).unwrap();
+        let mut apparels: [Vec<Apparel>; 7] = Default::default();
+        let mut weapons: Vec<Weapon> = Vec::new();
+        items
+            .items
+            .iter()
+            .for_each(|value| match value.r#type.as_str() {
+                "helmet" => apparels[0].push(Apparel::try_from(value).unwrap()),
+                "chestplate" => apparels[1].push(Apparel::try_from(value).unwrap()),
+                "leggings" => apparels[2].push(Apparel::try_from(value).unwrap()),
+                "boots" => apparels[3].push(Apparel::try_from(value).unwrap()),
+                "ring" => apparels[4].push(Apparel::try_from(value).unwrap()),
+                "bracelet" => apparels[5].push(Apparel::try_from(value).unwrap()),
+                "necklace" => apparels[6].push(Apparel::try_from(value).unwrap()),
+                "relik" | "bow" | "wand" | "dagger" | "spear" => {
+                    weapons.push(Weapon::try_from(value).unwrap())
+                }
+                _ => (),
+            });
 
-    (apparels, weapons)
+        Ok((apparels, weapons))
+    } else {
+        Err("Could not open file".to_string())
+    }
 }
