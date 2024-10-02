@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Item {
-    internalName: String,
+    internal_name: String,
     #[serde(rename = "type")]
     type_field: String,
     weaponType: Option<String>,
