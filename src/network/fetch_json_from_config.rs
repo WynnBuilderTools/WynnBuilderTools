@@ -1,10 +1,7 @@
-use std::{fs::File, io::Write, path::Path};
 use serde_json::Value;
+use std::{fs::File, io::Write, path::Path};
 
-use crate::{
-    build_config::Api,
-    config::build_config::Config,
-};
+use crate::{build_config::Api, config::build_config::Config};
 
 pub async fn fetch_json_from_config<P>(path: P, config: &Config) -> Result<impl AsRef<Path>, &str>
 where
@@ -28,9 +25,7 @@ where
     let client = reqwest::Client::new();
     let response_text = client
         .post(request_url)
-        .body(
-            r#"{"type": ["weapon", "armour", "accessory"]}"#,
-        )
+        .body(r#"{"type": ["weapon", "armour", "accessory"]}"#)
         .header("Content-Type", "application/json")
         .send()
         .await
@@ -39,8 +34,8 @@ where
         .await
         .unwrap();
 
-    let parsed_json: Value = serde_json::from_str(&response_text)
-        .expect("failed to parse json response");
+    let parsed_json: Value =
+        serde_json::from_str(&response_text).expect("failed to parse json response");
 
     println!("{:#?}", parsed_json);
 

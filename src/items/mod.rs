@@ -1,3 +1,4 @@
+mod api_items;
 mod apparel;
 mod atk_spd;
 mod class;
@@ -8,10 +9,10 @@ mod item;
 mod point;
 mod range;
 mod weapon;
-mod api_items;
 
 use std::{fs::File, io::BufReader, path::Path};
 
+pub use api_items::*;
 pub use apparel::*;
 pub use atk_spd::*;
 pub use class::*;
@@ -22,8 +23,6 @@ pub use item::*;
 pub use point::*;
 pub use range::*;
 pub use weapon::*;
-pub use api_items::*;
-
 
 /// Load items from a JSON file
 ///

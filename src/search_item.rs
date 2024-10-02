@@ -1,11 +1,11 @@
 mod args;
 
+use crate::load_from_json;
 use args::item_search_args::*;
 use build_config::load_config;
 use clap::Parser;
 use itertools::Itertools;
 use wynn_build_tools::*;
-use crate::load_from_json;
 
 #[tokio::main]
 async fn main() {
@@ -14,7 +14,12 @@ async fn main() {
     let args = ItemSearchArgs::parse();
     let (mut apparels, _) = match load_from_json(&config.hppeng.items_file) {
         Ok(ok) => ok,
-        Err(_) => load_from_json(fetch_json_from_config(&config.hppeng.items_file, &config).await.unwrap()).unwrap(),
+        Err(_) => load_from_json(
+            fetch_json_from_config(&config.hppeng.items_file, &config)
+                .await
+                .unwrap(),
+        )
+        .unwrap(),
     };
 
     let reverse = match args.order_by {
@@ -70,7 +75,7 @@ async fn main() {
                 .map(|v| format!("\"{}\"", v.name))
                 .join(",");
             println!("{}:\t{}", apparels.1, apparels_str);
-        },
+        }
         None => {
             let apparels_str: Vec<String> = apparels
                 .iter()
