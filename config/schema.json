@@ -1,0 +1,710 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "object",
+    "additionalProperties": {
+        "$ref": "#/definitions/Welcome1Value"
+    },
+    "definitions": {
+        "Welcome1Value": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "internalName": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/Welcome1Type"
+                },
+                "weaponType": {
+                    "$ref": "#/definitions/WeaponType"
+                },
+                "attackSpeed": {
+                    "$ref": "#/definitions/AttackSpeed"
+                },
+                "averageDps": {
+                    "type": "integer"
+                },
+                "dropRestriction": {
+                    "$ref": "#/definitions/DropRestriction"
+                },
+                "requirements": {
+                    "$ref": "#/definitions/Requirements"
+                },
+                "powderSlots": {
+                    "type": "integer"
+                },
+                "lore": {
+                    "type": "string"
+                },
+                "dropMeta": {
+                    "$ref": "#/definitions/DropMeta"
+                },
+                "icon": {
+                    "$ref": "#/definitions/Icon"
+                },
+                "identifications": {
+                    "$ref": "#/definitions/Identifications"
+                },
+                "base": {
+                    "$ref": "#/definitions/Base"
+                },
+                "rarity": {
+                    "$ref": "#/definitions/Rarity"
+                },
+                "armourType": {
+                    "$ref": "#/definitions/ArmourType"
+                },
+                "armourMaterial": {
+                    "$ref": "#/definitions/ArmourMaterial"
+                },
+                "majorIds": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "restrictions": {
+                    "$ref": "#/definitions/Restrictions"
+                },
+                "accessoryType": {
+                    "$ref": "#/definitions/AccessoryType"
+                },
+                "armourColor": {
+                    "type": "string"
+                },
+                "identified": {
+                    "type": "boolean"
+                },
+                "allowCraftsman": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "internalName",
+                "rarity",
+                "requirements",
+                "type"
+            ],
+            "title": "Welcome1Value"
+        },
+        "Base": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "baseDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "baseFireDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "baseHealth": {
+                    "type": "integer"
+                },
+                "baseEarthDefence": {
+                    "type": "integer"
+                },
+                "baseThunderDefence": {
+                    "type": "integer"
+                },
+                "baseFireDefence": {
+                    "type": "integer"
+                },
+                "baseWaterDefence": {
+                    "type": "integer"
+                },
+                "baseAirDefence": {
+                    "type": "integer"
+                },
+                "baseEarthDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "baseAirDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "baseThunderDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "baseWaterDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                }
+            },
+            "required": [],
+            "title": "Base"
+        },
+        "DropMeta": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/TypeUnion"
+                },
+                "coordinates": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "event": {
+                    "$ref": "#/definitions/Event"
+                }
+            },
+            "required": [
+                "coordinates",
+                "name",
+                "type"
+            ],
+            "title": "DropMeta"
+        },
+        "Icon": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "format": {
+                    "$ref": "#/definitions/Format"
+                },
+                "value": {
+                    "$ref": "#/definitions/ValueUnion"
+                }
+            },
+            "required": [
+                "format",
+                "value"
+            ],
+            "title": "Icon"
+        },
+        "ValueClass": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "$ref": "#/definitions/ID"
+                },
+                "customModelData": {
+                    "type": "string",
+                    "format": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "customModelData",
+                "id",
+                "name"
+            ],
+            "title": "ValueClass"
+        },
+        "Identifications": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "rawDefence": {
+                    "type": "integer"
+                },
+                "mainAttackDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "manaSteal": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "fireDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "earthDefence": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawStrength": {
+                    "type": "integer"
+                },
+                "healthRegenRaw": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "poison": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "raw3rdSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "earthDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "thunderDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "lifeSteal": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "manaRegen": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "spellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "walkSpeed": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "fireDefence": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawDexterity": {
+                    "type": "integer"
+                },
+                "rawIntelligence": {
+                    "type": "integer"
+                },
+                "waterDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "jumpHeight": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "airDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "airDefence": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawAgility": {
+                    "type": "integer"
+                },
+                "rawMainAttackDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "healthRegen": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "elementalDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "raw2ndSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "neutralDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawNeutralDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "exploding": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "elementalDefence": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "FourthSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "SecondSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawAttackSpeed": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawFireSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawHealth": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "raw4thSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawElementalSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "sprint": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "elementalSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "ThirdSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "slowEnemy": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawAirDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "knockback": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "waterSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "healingEfficiency": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "raw1stSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "reflection": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "stealing": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawEarthMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "xpBonus": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "sprintRegen": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "damage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "lootBonus": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "elementalMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "waterDefence": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawThunderDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawWaterDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "thunderDefence": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawThunderMainAttackDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "thorns": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawThunderSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawElementalDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "FirstSpellCost": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawAirMainAttackDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "fireSpellDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawWaterSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "rawAirSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "thunderSpellDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "earthMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawFireMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "thunderMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "weakenEnemy": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "airSpellDamage": {
+                    "$ref": "#/definitions/First_SpellCost"
+                },
+                "earthSpellDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "airMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawElementalMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "fireMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawEarthDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawNeutralSpellDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "neutralMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawEarthSpellDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawFireDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                "rawNeutralMainAttackDamage": {
+                    "$ref": "#/definitions/BaseAirDamage"
+                }
+            },
+            "required": [],
+            "title": "Identifications"
+        },
+        "BaseAirDamage": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "min": {
+                    "type": "integer"
+                },
+                "raw": {
+                    "type": "integer"
+                },
+                "max": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "max",
+                "min",
+                "raw"
+            ],
+            "title": "BaseAirDamage"
+        },
+        "Requirements": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "level": {
+                    "type": "integer"
+                },
+                "classRequirement": {
+                    "$ref": "#/definitions/ClassRequirement"
+                },
+                "defence": {
+                    "type": "integer"
+                },
+                "strength": {
+                    "type": "integer"
+                },
+                "intelligence": {
+                    "type": "integer"
+                },
+                "dexterity": {
+                    "type": "integer"
+                },
+                "agility": {
+                    "type": "integer"
+                },
+                "quest": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "level"
+            ],
+            "title": "Requirements"
+        },
+        "TypeUnion": {
+            "anyOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TypeElement"
+                    }
+                },
+                {
+                    "$ref": "#/definitions/PurpleType"
+                }
+            ],
+            "title": "TypeUnion"
+        },
+        "ValueUnion": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/ValueClass"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            "title": "ValueUnion"
+        },
+        "First_SpellCost": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/BaseAirDamage"
+                },
+                {
+                    "type": "integer"
+                }
+            ],
+            "title": "First_SpellCost"
+        },
+        "AccessoryType": {
+            "type": "string",
+            "enum": [
+                "necklace",
+                "ring",
+                "bracelet"
+            ],
+            "title": "AccessoryType"
+        },
+        "ArmourMaterial": {
+            "type": "string",
+            "enum": [
+                "diamond",
+                "leather",
+                "iron",
+                "chain",
+                "golden"
+            ],
+            "title": "ArmourMaterial"
+        },
+        "ArmourType": {
+            "type": "string",
+            "enum": [
+                "helmet",
+                "leggings",
+                "chestplate",
+                "boots"
+            ],
+            "title": "ArmourType"
+        },
+        "AttackSpeed": {
+            "type": "string",
+            "enum": [
+                "super_fast",
+                "very_slow",
+                "fast",
+                "normal",
+                "very_fast",
+                "slow",
+                "super_slow"
+            ],
+            "title": "AttackSpeed"
+        },
+        "Event": {
+            "type": "string",
+            "enum": [
+                "heroes",
+                "bonfire"
+            ],
+            "title": "Event"
+        },
+        "TypeElement": {
+            "type": "string",
+            "enum": [
+                "event",
+                "merchant"
+            ],
+            "title": "TypeElement"
+        },
+        "PurpleType": {
+            "type": "string",
+            "enum": [
+                "raid",
+                "lootrun",
+                "altar",
+                "dungeonMerchant",
+                "quest",
+                "challenge",
+                "merchant",
+                "dungeon",
+                "miniboss"
+            ],
+            "title": "PurpleType"
+        },
+        "DropRestriction": {
+            "type": "string",
+            "enum": [
+                "never",
+                "normal",
+                "lootchest",
+                "dungeon"
+            ],
+            "title": "DropRestriction"
+        },
+        "Format": {
+            "type": "string",
+            "enum": [
+                "attribute",
+                "skin",
+                "legacy"
+            ],
+            "title": "Format"
+        },
+        "ID": {
+            "type": "string",
+            "enum": [
+                "minecraft:iron_horse_armor"
+            ],
+            "title": "ID"
+        },
+        "Rarity": {
+            "type": "string",
+            "enum": [
+                "set",
+                "fabled",
+                "legendary",
+                "rare",
+                "unique",
+                "mythic",
+                "common"
+            ],
+            "title": "Rarity"
+        },
+        "ClassRequirement": {
+            "type": "string",
+            "enum": [
+                "assassin",
+                "mage",
+                "shaman",
+                "archer",
+                "warrior"
+            ],
+            "title": "ClassRequirement"
+        },
+        "Restrictions": {
+            "type": "string",
+            "enum": [
+                "untradable",
+                "quest item"
+            ],
+            "title": "Restrictions"
+        },
+        "Welcome1Type": {
+            "type": "string",
+            "enum": [
+                "weapon",
+                "armour",
+                "accessory"
+            ],
+            "title": "Welcome1Type"
+        },
+        "WeaponType": {
+            "type": "string",
+            "enum": [
+                "dagger",
+                "wand",
+                "relik",
+                "bow",
+                "spear"
+            ],
+            "title": "WeaponType"
+        }
+    }
+}

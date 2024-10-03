@@ -1,8 +1,678 @@
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+extern crate schemafy;
+use std::{collections::HashMap, fmt::Display};
 
-#[derive(Debug, Serialize, Deserialize)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub struct ApiItems {
+    #[serde(flatten)]
+    pub items: HashMap<String, ApiItem>,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum AccessoryType {
+    #[serde(rename = "bracelet")]
+    Bracelet,
+    #[serde(rename = "necklace")]
+    Necklace,
+    #[serde(rename = "ring")]
+    Ring,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum ArmourMaterial {
+    #[serde(rename = "chain")]
+    Chain,
+    #[serde(rename = "diamond")]
+    Diamond,
+    #[serde(rename = "golden")]
+    Golden,
+    #[serde(rename = "iron")]
+    Iron,
+    #[serde(rename = "leather")]
+    Leather,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum ArmourType {
+    #[serde(rename = "boots")]
+    Boots,
+    #[serde(rename = "chestplate")]
+    Chestplate,
+    #[serde(rename = "helmet")]
+    Helmet,
+    #[serde(rename = "leggings")]
+    Leggings,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum AttackSpeed {
+    #[serde(rename = "fast")]
+    Fast,
+    #[serde(rename = "normal")]
+    Normal,
+    #[serde(rename = "slow")]
+    Slow,
+    #[serde(rename = "super_fast")]
+    SuperFast,
+    #[serde(rename = "super_slow")]
+    SuperSlow,
+    #[serde(rename = "very_fast")]
+    VeryFast,
+    #[serde(rename = "very_slow")]
+    VerySlow,
+}
+
+impl Display for AttackSpeed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AttackSpeed::Fast => write!(f, "Fast"),
+            AttackSpeed::Normal => write!(f, "Normal"),
+            AttackSpeed::Slow => write!(f, "Slow"),
+            AttackSpeed::SuperFast => write!(f, "Super Fast"),
+            AttackSpeed::SuperSlow => write!(f, "Super Slow"),
+            AttackSpeed::VeryFast => write!(f, "Very Fast"),
+            AttackSpeed::VerySlow => write!(f, "Very Slow"),
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Base {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseAirDamage")]
+    pub base_air_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseAirDefence")]
+    pub base_air_defence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseDamage")]
+    pub base_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseEarthDamage")]
+    pub base_earth_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseEarthDefence")]
+    pub base_earth_defence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseFireDamage")]
+    pub base_fire_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseFireDefence")]
+    pub base_fire_defence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseHealth")]
+    pub base_health: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseThunderDamage")]
+    pub base_thunder_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseThunderDefence")]
+    pub base_thunder_defence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseWaterDamage")]
+    pub base_water_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseWaterDefence")]
+    pub base_water_defence: Option<i32>,
+}
+
+#[derive(Clone, Copy, PartialEq, Debug, Deserialize, Serialize)]
+pub struct Stat {
+    pub max: i32,
+    pub min: i32,
+    pub raw: i32,
+}
+
+#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum StatOrInt {
+    Stat(Stat),
+    Int(i32),
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum ClassRequirement {
+    #[serde(rename = "archer")]
+    Archer,
+    #[serde(rename = "assassin")]
+    Assassin,
+    #[serde(rename = "mage")]
+    Mage,
+    #[serde(rename = "shaman")]
+    Shaman,
+    #[serde(rename = "warrior")]
+    Warrior,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub struct DropMeta {
+    pub coordinates: Vec<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub event: Option<Event>,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub type_field: MetaType,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum DropRestriction {
+    #[serde(rename = "dungeon")]
+    Dungeon,
+    #[serde(rename = "lootchest")]
+    Lootchest,
+    #[serde(rename = "never")]
+    Never,
+    #[serde(rename = "normal")]
+    Normal,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum Event {
+    #[serde(rename = "bonfire")]
+    Bonfire,
+    #[serde(rename = "heroes")]
+    Heroes,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum Format {
+    #[serde(rename = "attribute")]
+    Attribute,
+    #[serde(rename = "legacy")]
+    Legacy,
+    #[serde(rename = "skin")]
+    Skin,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename = "ID")]
+pub enum Id {
+    #[serde(rename = "minecraft:iron_horse_armor")]
+    MinecraftIronHorseArmor,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub struct Icon {
+    pub format: Format,
+    pub value: ValueUnion,
+}
+
+#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Identifications {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "airDamage")]
+    pub air_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "airDefence")]
+    pub air_defence: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "airMainAttackDamage")]
+    pub air_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "airSpellDamage")]
+    pub air_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "earthDamage")]
+    pub earth_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "earthDefence")]
+    pub earth_defence: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "earthMainAttackDamage")]
+    pub earth_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "earthSpellDamage")]
+    pub earth_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "elementalDamage")]
+    pub elemental_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "elementalDefence")]
+    pub elemental_defence: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "elementalMainAttackDamage")]
+    pub elemental_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "elementalSpellDamage")]
+    pub elemental_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub exploding: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "fireDamage")]
+    pub fire_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "fireDefence")]
+    pub fire_defence: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "fireMainAttackDamage")]
+    pub fire_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "fireSpellDamage")]
+    pub fire_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "1stSpellCost")]
+    pub first_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "4thSpellCost")]
+    pub fourth_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "healingEfficiency")]
+    pub healing_efficiency: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "healthRegen")]
+    pub health_regen: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "healthRegenRaw")]
+    pub health_regen_raw: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "jumpHeight")]
+    pub jump_height: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub knockback: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "lifeSteal")]
+    pub life_steal: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "lootBonus")]
+    pub loot_bonus: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "mainAttackDamage")]
+    pub main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "manaRegen")]
+    pub mana_regen: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "manaSteal")]
+    pub mana_steal: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "neutralDamage")]
+    pub neutral_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "neutralMainAttackDamage")]
+    pub neutral_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub poison: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "raw1stSpellCost")]
+    pub raw_1st_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "raw2ndSpellCost")]
+    pub raw_2nd_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "raw3rdSpellCost")]
+    pub raw_3rd_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "raw4thSpellCost")]
+    pub raw_4th_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawAgility")]
+    pub raw_agility: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawAirDamage")]
+    pub raw_air_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawAirMainAttackDamage")]
+    pub raw_air_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawAirSpellDamage")]
+    pub raw_air_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawAttackSpeed")]
+    pub raw_attack_speed: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawDamage")]
+    pub raw_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawDefence")]
+    pub raw_defence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawDexterity")]
+    pub raw_dexterity: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawEarthDamage")]
+    pub raw_earth_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawEarthMainAttackDamage")]
+    pub raw_earth_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawEarthSpellDamage")]
+    pub raw_earth_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawElementalDamage")]
+    pub raw_elemental_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawElementalMainAttackDamage")]
+    pub raw_elemental_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawElementalSpellDamage")]
+    pub raw_elemental_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawFireDamage")]
+    pub raw_fire_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawFireMainAttackDamage")]
+    pub raw_fire_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawFireSpellDamage")]
+    pub raw_fire_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawHealth")]
+    pub raw_health: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawIntelligence")]
+    pub raw_intelligence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawMainAttackDamage")]
+    pub raw_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawNeutralDamage")]
+    pub raw_neutral_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawNeutralMainAttackDamage")]
+    pub raw_neutral_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawNeutralSpellDamage")]
+    pub raw_neutral_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawSpellDamage")]
+    pub raw_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawStrength")]
+    pub raw_strength: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawThunderDamage")]
+    pub raw_thunder_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawThunderMainAttackDamage")]
+    pub raw_thunder_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawThunderSpellDamage")]
+    pub raw_thunder_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawWaterDamage")]
+    pub raw_water_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "rawWaterSpellDamage")]
+    pub raw_water_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reflection: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "2ndSpellCost")]
+    pub second_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "slowEnemy")]
+    pub slow_enemy: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "spellDamage")]
+    pub spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sprint: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "sprintRegen")]
+    pub sprint_regen: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stealing: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "3rdSpellCost")]
+    pub third_spell_cost: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thorns: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "thunderDamage")]
+    pub thunder_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "thunderDefence")]
+    pub thunder_defence: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "thunderMainAttackDamage")]
+    pub thunder_main_attack_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "thunderSpellDamage")]
+    pub thunder_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "walkSpeed")]
+    pub walk_speed: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "waterDamage")]
+    pub water_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "waterDefence")]
+    pub water_defence: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "waterSpellDamage")]
+    pub water_spell_damage: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "weakenEnemy")]
+    pub weaken_enemy: Option<StatOrInt>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "xpBonus")]
+    pub xp_bonus: Option<StatOrInt>,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum MetaType {
+    #[serde(rename = "altar")]
+    Altar,
+    #[serde(rename = "challenge")]
+    Challenge,
+    #[serde(rename = "dungeon")]
+    Dungeon,
+    #[serde(rename = "dungeonMerchant")]
+    DungeonMerchant,
+    #[serde(rename = "lootrun")]
+    Lootrun,
+    #[serde(rename = "merchant")]
+    Merchant,
+    #[serde(rename = "miniboss")]
+    Miniboss,
+    #[serde(rename = "quest")]
+    Quest,
+    #[serde(rename = "raid")]
+    Raid,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum Rarity {
+    #[serde(rename = "common")]
+    Common,
+    #[serde(rename = "fabled")]
+    Fabled,
+    #[serde(rename = "legendary")]
+    Legendary,
+    #[serde(rename = "mythic")]
+    Mythic,
+    #[serde(rename = "rare")]
+    Rare,
+    #[serde(rename = "set")]
+    Set,
+    #[serde(rename = "unique")]
+    Unique,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub struct Requirements {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub agility: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "classRequirement")]
+    pub class_requirement: Option<ClassRequirement>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub defence: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dexterity: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub intelligence: Option<i32>,
+    pub level: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub quest: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub strength: Option<i32>,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum Restrictions {
+    #[serde(rename = "quest item")]
+    QuestItem,
+    #[serde(rename = "untradable")]
+    Untradable,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum TypeElement {
+    #[serde(rename = "event")]
+    Event,
+    #[serde(rename = "merchant")]
+    Merchant,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub struct ValueClass {
+    #[serde(rename = "customModelData")]
+    pub custom_model_data: String,
+    pub id: Id,
+    pub name: String,
+}
+pub type ValueUnion = serde_json::Value;
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum WeaponType {
+    #[serde(rename = "bow")]
+    Bow,
+    #[serde(rename = "dagger")]
+    Dagger,
+    #[serde(rename = "relik")]
+    Relik,
+    #[serde(rename = "spear")]
+    Spear,
+    #[serde(rename = "wand")]
+    Wand,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub enum ItemType {
+    #[serde(rename = "accessory")]
+    Accessory,
+    #[serde(rename = "armour")]
+    Armour,
+    #[serde(rename = "weapon")]
+    Weapon,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+pub struct ApiItem {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "accessoryType")]
+    pub accessory_type: Option<AccessoryType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "allowCraftsman")]
+    pub allow_craftsman: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "armourColor")]
+    pub armour_color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "armourMaterial")]
+    pub armour_material: Option<ArmourMaterial>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "armourType")]
+    pub armour_type: Option<ArmourType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "attackSpeed")]
+    pub attack_speed: Option<AttackSpeed>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "averageDps")]
+    pub average_dps: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub base: Option<Base>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "dropMeta")]
+    pub drop_meta: Option<DropMeta>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "dropRestriction")]
+    pub drop_restriction: Option<DropRestriction>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<Icon>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub identifications: Option<Identifications>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub identified: Option<bool>,
+    #[serde(rename = "internalName")]
+    pub internal_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lore: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "majorIds")]
+    pub major_ids: Option<::std::collections::BTreeMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "powderSlots")]
+    pub powder_slots: Option<i32>,
+    pub rarity: Rarity,
+    pub requirements: Requirements,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub restrictions: Option<Restrictions>,
+    #[serde(rename = "type")]
+    pub type_field: ItemType,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "weaponType")]
+    pub weapon_type: Option<WeaponType>,
+}
+
+impl Stat {
+    pub fn min(&self) -> i32 {
+        self.min
+    }
+
+    pub fn raw(&self) -> i32 {
+        self.raw
+    }
+
+    pub fn max(&self) -> i32 {
+        self.max
+    }
+
+    pub fn new(min: i32, raw: i32, max: i32) -> Self {
+        Stat { min, raw, max }
+    }
+
+    pub fn zero() -> Self {
+        Stat::new(0, 0, 0)
+    }
+}
+
+impl Default for Stat {
+    fn default() -> Self {
+        Stat::zero()
+    }
+}
+
+impl Display for Rarity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Rarity::Common => write!(f, "Common"),
+            Rarity::Unique => write!(f, "Unique"),
+            Rarity::Rare => write!(f, "Rare"),
+            Rarity::Legendary => write!(f, "Legendary"),
+            Rarity::Mythic => write!(f, "Mythic"),
+            Rarity::Fabled => write!(f, "Fabled"),
+            Rarity::Set => write!(f, "Set"),
+        }
+    }
+}
+
+impl Display for ItemType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ItemType::Accessory => write!(f, "Accessory"),
+            ItemType::Armour => write!(f, "Armour"),
+            ItemType::Weapon => write!(f, "Weapon"),
+        }
+    }
+}
+
+/* #[derive(Debug, Serialize, Deserialize)]
+pub struct ApiItems {
+    #[serde(flatten)]
     pub items: HashMap<String, ApiItem>,
 }
 
@@ -15,9 +685,9 @@ pub struct ApiItem {
     #[serde(rename = "armourColor")]
     pub armour_color: Option<String>,
     #[serde(rename = "armourMaterial")]
-    pub armour_material: String,
+    pub armour_material: Option<String>,
     #[serde(rename = "armourType")]
-    pub armour_type: String,
+    pub armour_type: Option<String>,
     #[serde(rename = "attackSpeed")]
     pub attack_speed: Option<String>,
     #[serde(rename = "averageDps")]
@@ -27,7 +697,7 @@ pub struct ApiItem {
     pub drop_meta: Option<DropMeta>,
     #[serde(rename = "dropRestriction")]
     pub drop_restriction: String,
-    pub icon: Icon,
+    pub icon: Option<Icon>,
     pub identifications: Option<Identifications>,
     pub identified: Option<bool>,
     #[serde(rename = "internalName")]
@@ -194,114 +864,11 @@ pub struct Identifications {
     pub water_spell_damage: Option<IdentificationStat>,
 }
 
-impl Default for Identifications {
-    fn default() -> Self {
-        Self {
-            poison: Default::default(),
-            raw_thunder_damage: Default::default(),
-            raw_health: Default::default(),
-            elemental_spell_damage: Default::default(),
-            raw_earth_damage: Default::default(),
-            thunder_defence: Default::default(),
-            raw_neutral_spell_damage: Default::default(),
-            raw_second_spell_cost: Default::default(),
-            health_regen_pct: Default::default(),
-            elemental_damage: Default::default(),
-            water_spell_damage: Default::default(),
-            raw_earth_main_attack_damage: Default::default(),
-            raw_air_spell_damage: Default::default(),
-            raw_first_spell_cost: Default::default(),
-            second_spell_cost: Default::default(),
-            jump_height: Default::default(),
-            third_spell_cost: Default::default(),
-            raw_elemental_damage: Default::default(),
-            life_steal: Default::default(),
-            fire_spell_damage: Default::default(),
-            earth_defence: Default::default(),
-            raw_dexterity: Default::default(),
-            fourth_spell_cost: Default::default(),
-            raw_strength: Default::default(),
-            fire_defence: Default::default(),
-            raw_third_spell_cost: Default::default(),
-            earth_damage: Default::default(),
-            raw_earth_spell_damage: Default::default(),
-            elemental_main_attack_damage: Default::default(),
-            healing_efficiency: Default::default(),
-            raw_thunder_main_attack_damage: Default::default(),
-            thunder_spell_damage: Default::default(),
-            raw_water_damage: Default::default(),
-            raw_main_attack_damage: Default::default(),
-            first_spell_cost: Default::default(),
-            slow_enemy: Default::default(),
-            sprint: Default::default(),
-            fire_main_attack_damage: Default::default(),
-            stealing: Default::default(),
-            damage: Default::default(),
-            air_spell_damage: Default::default(),
-            raw_elemental_main_attack_damage: Default::default(),
-            mana_regen: Default::default(),
-            raw_air_damage: Default::default(),
-            air_main_attack_damage: Default::default(),
-            neutral_main_attack_damage: Default::default(),
-            raw_thunder_spell_damage: Default::default(),
-            raw_fire_main_attack_damage: Default::default(),
-            walk_speed: Default::default(),
-            raw_damage: Default::default(),
-            air_defence: Default::default(),
-            raw_fire_spell_damage: Default::default(),
-            raw_air_main_attack_damage: Default::default(),
-            neutral_damage: Default::default(),
-            exp_bonus: Default::default(),
-            raw_spell_damage: Default::default(),
-            spell_damage: Default::default(),
-            raw_health_regen: Default::default(),
-            mana_steal: Default::default(),
-            water_defence: Default::default(),
-            raw_intelligence: Default::default(),
-            raw_agility: Default::default(),
-            raw_defence: Default::default(),
-            thunder_damage: Default::default(),
-            water_damage: Default::default(),
-            fire_damage: Default::default(),
-            air_damage: Default::default(),
-            main_attack_damage: Default::default(),
-        }
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdentificationStat {
     pub min: i32,
     pub raw: i32,
     pub max: i32,
-}
-
-impl IdentificationStat {
-    pub fn min(&self) -> i32 {
-        self.min
-    }
-
-    pub fn raw(&self) -> i32 {
-        self.raw
-    }
-
-    pub fn max(&self) -> i32 {
-        self.max
-    }
-
-    pub fn new(min: i32, raw: i32, max: i32) -> Self {
-        IdentificationStat { min, raw, max }
-    }
-
-    pub fn zero() -> Self {
-        IdentificationStat::new(0, 0, 0)
-    }
-}
-
-impl Default for IdentificationStat {
-    fn default() -> Self {
-        IdentificationStat::zero()
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -359,12 +926,4 @@ pub struct Value {
     pub custom_model_data: Option<String>,
     pub id: Option<String>,
     pub name: Option<String>,
-}
-
-impl Copy for IdentificationStat {}
-
-impl Clone for IdentificationStat {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
+} */
