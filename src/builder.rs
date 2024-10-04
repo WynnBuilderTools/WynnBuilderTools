@@ -132,7 +132,7 @@ async fn main() {
         Option::Some(remaining_builds.clone()),
     );
 
-    println!("done")
+    println!("done");
 }
 
 fn spawn_speed_watcher(

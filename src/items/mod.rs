@@ -50,10 +50,7 @@ pub fn load_from_json<P>(path: P) -> Result<([Vec<Apparel>; 7], Vec<Weapon>), St
 where
     P: AsRef<Path>,
 {
-    let file_result: Result<File, std::io::Error> = match File::open(&path) {
-        Ok(ok) => Ok(ok),
-        Err(err) => Err(err),
-    };
+    let file_result: Result<File, std::io::Error> = File::open(path);
 
     if let Ok(file) = file_result {
         let reader = BufReader::new(file);

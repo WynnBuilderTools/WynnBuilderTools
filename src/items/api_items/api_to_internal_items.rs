@@ -127,7 +127,7 @@ impl From<ApiItems> for Items {
                     .and_then(|base| range_or_int(base.base_air_damage)),
                 atk_spd: api_item
                     .attack_speed
-                    .and_then(|atk_spd| Some(convert_to_uppercase_format(&atk_spd.to_string()))),
+                    .map(|atk_spd| convert_to_uppercase_format(&atk_spd.to_string())),
                 n_dam_pct: ids.and_then(|ids| max_or_int(ids.neutral_damage)),
                 e_dam_pct: ids.and_then(|ids| max_or_int(ids.earth_damage)),
                 t_dam_pct: ids.and_then(|ids| max_or_int(ids.thunder_damage)),

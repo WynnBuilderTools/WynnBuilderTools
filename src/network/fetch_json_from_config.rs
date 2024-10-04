@@ -15,10 +15,10 @@ where
 
     let request_url = format!(
         "{url}/{version}/{module}/{query}",
-        url = config.api.as_ref().unwrap_or_else(|| { &defaults }).url,
-        version = config.api.as_ref().unwrap_or_else(|| { &defaults }).version,
-        module = config.api.as_ref().unwrap_or_else(|| { &defaults }).module,
-        query = config.api.as_ref().unwrap_or_else(|| { &defaults }).query,
+        url = config.api.as_ref().unwrap_or(&defaults).url,
+        version = config.api.as_ref().unwrap_or(&defaults).version,
+        module = config.api.as_ref().unwrap_or(&defaults).module,
+        query = config.api.as_ref().unwrap_or(&defaults).query,
     );
 
     let client = reqwest::Client::new();
