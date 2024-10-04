@@ -1,12 +1,10 @@
 use std::{
     collections::HashMap,
-    convert,
     fs::File,
     hash::{DefaultHasher, Hash, Hasher},
     io::Read,
 };
 
-use crate::items::api_items::api_item::ApiItem;
 use crate::items::Items;
 use crate::Item;
 
