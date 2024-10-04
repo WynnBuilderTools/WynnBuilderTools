@@ -32,8 +32,12 @@ The current toolkit consists of two main components: the build batch generation 
 ## Step-by-step Setup Guide (Windows)
 1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
 2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
-3. Download the items.json from [hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data) (in the latest version you can find the items.json), and place it in the config folder in the folder where you extracted the tool.
-4. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `search_item -h` if you're having trouble with the search_item binary!
+3. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `search_item -h` if you're having trouble with the search_item binary!
+
+## Step-by-step Setup Guide (Linux)
+1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
+2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
+3. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `./search_item -h` if you're having trouble with the search_item binary!
 
 If these instructions do not work for you, feel free to [open a new issue](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/issues/new/choose),
 or if you think there's some changes to be made to the step-by-step guide, feel free to open a pull request!
@@ -53,11 +57,15 @@ binaries/
 
   │   └── 01_create_builds_table.sql
 
+├── assets/
+
+  │   └── id_map.json
+
 ├── config/
   
   │   ├── config.toml
 
-  │   └── items.json
+  │   └── items.json (automatically fetched from v1.0.0 onwards)
 
 └── db/ (automatically generated from v0.5.0 onwards)
 

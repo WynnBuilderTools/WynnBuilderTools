@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 04/10/2024
+### Added
+- Automatic fetching of the items' database from the Wynncraft API!
+- Automatic creation of the items.json file if missing, with all the Hppeng important stats!
+
+### Fixed
+- Clippy formatting
+- sqlx vulnerable version
 
 ## [0.5.2] - TBA
 ### Added
