@@ -13,13 +13,22 @@ async fn main() {
 
     let args = ItemSearchArgs::parse();
     let (mut apparels, _) = match load_from_json(&config.hppeng.items_file) {
-        Ok(ok) => ok,
-        Err(_) => load_from_json(
-            fetch_json_from_config(&config.hppeng.items_file, &config)
-                .await
-                .unwrap(),
-        )
-        .unwrap(),
+        Ok(v) => v,
+        Err(_) => {
+            let api_fetch_attempt = fetch_json_from_config(&config.hppeng.items_file, &config).await;
+
+            let new_path = match api_fetch_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            };
+
+            let second_attempt = load_from_json(&new_path);
+
+            match second_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            }
+        },
     };
 
     let reverse = match args.order_by {

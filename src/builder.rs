@@ -22,13 +22,23 @@ async fn main() {
 
     let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
         Ok(v) => v,
-        Err(_) => load_from_json(
-            fetch_json_from_config(&config.hppeng.items_file, &config)
-                .await
-                .unwrap(),
-        )
-        .unwrap(),
+        Err(_) => {
+            let api_fetch_attempt = fetch_json_from_config(&config.hppeng.items_file, &config).await;
+
+            let new_path = match api_fetch_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            };
+
+            let second_attempt = load_from_json(&new_path);
+
+            match second_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            }
+        },
     };
+
     let weapon = weapons
         .iter()
         .find(|v| v.name == config.items.weapon)
