@@ -1,8 +1,8 @@
-name: Create GitHub Releases based on changelog
+name: Create GitHub Releases with Artifacts and correct files
 on:
   push:
     tags:
-      - "v*.*.*" # Glob pattern for tag matching
+      - v*.*.*
 jobs:
   check-and-lint:
     runs-on: ubuntu-latest
@@ -50,7 +50,9 @@ jobs:
           mkdir -pv artifacts
           mkdir -pv temp_package/config
           mkdir -pv temp_package/migrations
+          mkdir -pv temp_package/assets
           cp -v config/config.toml temp_package/config/
+          cp -v assets/id_map.json temp_package/assets/
           cp -v migrations/*.sql temp_package/migrations/
           find ./target/${{ matrix.target }}/release -type f \( -name "builder" -o -name "builder.exe" \) -exec cp -v {} temp_package/ \; || echo "Builder not found"
           find ./target/${{ matrix.target }}/release -type f \( -name "search_item" -o -name "search_item.exe" \) -exec cp -v {} temp_package/ \; || echo "Search item not found"
@@ -79,9 +81,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - name: "Get Previous tag"
+      - name: Get Previous tag
         id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        uses: WyriHaximus/github-action-get-previous-tag@v1
         with:
           fallback: 0.0.1
       - name: Create Release

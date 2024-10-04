@@ -107,12 +107,24 @@ impl From<ApiItems> for Items {
                 spd: ids.and_then(|ids| max_or_int(ids.walk_speed)),
                 sd_raw: ids.and_then(|ids| max_or_int(ids.raw_spell_damage)),
                 sd_pct: ids.and_then(|ids| max_or_int(ids.spell_damage)),
-                n_dam: api_item.base.and_then(|base| range_or_int(base.base_damage)),
-                e_dam: api_item.base.and_then(|base| range_or_int(base.base_earth_damage)),
-                t_dam: api_item.base.and_then(|base| range_or_int(base.base_thunder_damage)),
-                w_dam: api_item.base.and_then(|base| range_or_int(base.base_water_damage)),
-                f_dam: api_item.base.and_then(|base| range_or_int(base.base_fire_damage)),
-                a_dam: api_item.base.and_then(|base| range_or_int(base.base_air_damage)),
+                n_dam: api_item
+                    .base
+                    .and_then(|base| range_or_int(base.base_damage)),
+                e_dam: api_item
+                    .base
+                    .and_then(|base| range_or_int(base.base_earth_damage)),
+                t_dam: api_item
+                    .base
+                    .and_then(|base| range_or_int(base.base_thunder_damage)),
+                w_dam: api_item
+                    .base
+                    .and_then(|base| range_or_int(base.base_water_damage)),
+                f_dam: api_item
+                    .base
+                    .and_then(|base| range_or_int(base.base_fire_damage)),
+                a_dam: api_item
+                    .base
+                    .and_then(|base| range_or_int(base.base_air_damage)),
                 atk_spd: api_item
                     .attack_speed
                     .and_then(|atk_spd| Some(convert_to_uppercase_format(&atk_spd.to_string()))),
