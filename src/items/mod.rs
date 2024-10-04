@@ -59,6 +59,7 @@ where
         let reader = BufReader::new(file);
 
         let items: Items = serde_json::from_reader(reader).unwrap();
+
         let mut apparels: [Vec<Apparel>; 7] = Default::default();
         let mut weapons: Vec<Weapon> = Vec::new();
         items

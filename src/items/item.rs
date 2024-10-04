@@ -19,51 +19,97 @@ pub struct Item {
     pub r#type: String,
     pub lvl: i32,
     #[serde(rename = "fixID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fix_id: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub slots: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub hp: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub hp_bonus: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub a_def: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub f_def: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub t_def: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub e_def: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub w_def: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub def_req: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub str_req: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub int_req: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub agi_req: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub dex_req: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub def: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub str: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub int: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub agi: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub dex: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub hpr_raw: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub hpr_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub a_def_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub f_def_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub t_def_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub e_def_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub w_def_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mr: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ls: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ms: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spd: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sd_raw: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sd_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub n_dam: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub e_dam: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub t_dam: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub w_dam: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub f_dam: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub a_dam: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub atk_spd: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub n_dam_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub e_dam_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub t_dam_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub w_dam_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub f_dam_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub a_dam_pct: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub xpb: Option<i32>,
 }
 impl Item {

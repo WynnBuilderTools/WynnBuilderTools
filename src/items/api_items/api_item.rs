@@ -2,12 +2,11 @@ extern crate schemafy;
 use std::{collections::HashMap, fmt::Display};
 
 use serde::{Deserialize, Serialize};
+use serde_with::formats::PreferOne;
+use serde_with::serde_as;
+use serde_with::OneOrMany;
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
-pub struct ApiItems {
-    #[serde(flatten)]
-    pub items: HashMap<String, ApiItem>,
-}
+pub type ApiItems = HashMap<String, ApiItem>;
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub enum AccessoryType {
@@ -17,6 +16,16 @@ pub enum AccessoryType {
     Necklace,
     #[serde(rename = "ring")]
     Ring,
+}
+
+impl Display for AccessoryType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AccessoryType::Bracelet => write!(f, "bracelet"),
+            AccessoryType::Necklace => write!(f, "necklace"),
+            AccessoryType::Ring => write!(f, "ring"),
+        }
+    }
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -43,6 +52,17 @@ pub enum ArmourType {
     Helmet,
     #[serde(rename = "leggings")]
     Leggings,
+}
+
+impl Display for ArmourType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ArmourType::Boots => write!(f, "boots"),
+            ArmourType::Chestplate => write!(f, "chestplate"),
+            ArmourType::Helmet => write!(f, "helmet"),
+            ArmourType::Leggings => write!(f, "leggings"),
+        }
+    }
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -78,42 +98,31 @@ impl Display for AttackSpeed {
 }
 
 #[derive(Clone, Copy, PartialEq, Debug, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Base {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseAirDamage")]
     pub base_air_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseAirDefence")]
     pub base_air_defence: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseDamage")]
     pub base_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseEarthDamage")]
     pub base_earth_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseEarthDefence")]
     pub base_earth_defence: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseFireDamage")]
     pub base_fire_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseFireDefence")]
     pub base_fire_defence: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseHealth")]
     pub base_health: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseThunderDamage")]
     pub base_thunder_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseThunderDefence")]
     pub base_thunder_defence: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseWaterDamage")]
     pub base_water_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "baseWaterDefence")]
     pub base_water_defence: Option<i32>,
 }
 
@@ -145,14 +154,16 @@ pub enum ClassRequirement {
     Warrior,
 }
 
+#[serde_as]
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub struct DropMeta {
     pub coordinates: Vec<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub event: Option<Event>,
     pub name: String,
+    #[serde_as(as = "OneOrMany<_, PreferOne>")]
     #[serde(rename = "type")]
-    pub type_field: MetaType,
+    pub type_field: Vec<DropMetaType>,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -199,58 +210,43 @@ pub struct Icon {
 }
 
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Identifications {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "airDamage")]
     pub air_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "airDefence")]
     pub air_defence: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "airMainAttackDamage")]
     pub air_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "airSpellDamage")]
     pub air_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "earthDamage")]
     pub earth_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "earthDefence")]
     pub earth_defence: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "earthMainAttackDamage")]
     pub earth_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "earthSpellDamage")]
     pub earth_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "elementalDamage")]
     pub elemental_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "elementalDefence")]
     pub elemental_defence: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "elementalMainAttackDamage")]
     pub elemental_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "elementalSpellDamage")]
     pub elemental_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub exploding: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "fireDamage")]
     pub fire_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "fireDefence")]
     pub fire_defence: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "fireMainAttackDamage")]
     pub fire_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "fireSpellDamage")]
     pub fire_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "1stSpellCost")]
@@ -259,39 +255,28 @@ pub struct Identifications {
     #[serde(rename = "4thSpellCost")]
     pub fourth_spell_cost: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "healingEfficiency")]
     pub healing_efficiency: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "healthRegen")]
     pub health_regen: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "healthRegenRaw")]
     pub health_regen_raw: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "jumpHeight")]
     pub jump_height: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub knockback: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "lifeSteal")]
     pub life_steal: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "lootBonus")]
     pub loot_bonus: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "mainAttackDamage")]
     pub main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "manaRegen")]
     pub mana_regen: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "manaSteal")]
     pub mana_steal: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "neutralDamage")]
     pub neutral_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "neutralMainAttackDamage")]
     pub neutral_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub poison: Option<StatOrInt>,
@@ -308,94 +293,64 @@ pub struct Identifications {
     #[serde(rename = "raw4thSpellCost")]
     pub raw_4th_spell_cost: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawAgility")]
     pub raw_agility: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawAirDamage")]
     pub raw_air_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawAirMainAttackDamage")]
     pub raw_air_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawAirSpellDamage")]
     pub raw_air_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawAttackSpeed")]
     pub raw_attack_speed: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawDamage")]
     pub raw_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawDefence")]
     pub raw_defence: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawDexterity")]
     pub raw_dexterity: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawEarthDamage")]
     pub raw_earth_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawEarthMainAttackDamage")]
     pub raw_earth_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawEarthSpellDamage")]
     pub raw_earth_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawElementalDamage")]
     pub raw_elemental_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawElementalMainAttackDamage")]
     pub raw_elemental_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawElementalSpellDamage")]
     pub raw_elemental_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawFireDamage")]
     pub raw_fire_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawFireMainAttackDamage")]
     pub raw_fire_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawFireSpellDamage")]
     pub raw_fire_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawHealth")]
     pub raw_health: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawIntelligence")]
     pub raw_intelligence: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawMainAttackDamage")]
     pub raw_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawNeutralDamage")]
     pub raw_neutral_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawNeutralMainAttackDamage")]
     pub raw_neutral_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawNeutralSpellDamage")]
     pub raw_neutral_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawSpellDamage")]
     pub raw_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawStrength")]
     pub raw_strength: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawThunderDamage")]
     pub raw_thunder_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawThunderMainAttackDamage")]
     pub raw_thunder_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawThunderSpellDamage")]
     pub raw_thunder_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawWaterDamage")]
     pub raw_water_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "rawWaterSpellDamage")]
     pub raw_water_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reflection: Option<StatOrInt>,
@@ -403,15 +358,12 @@ pub struct Identifications {
     #[serde(rename = "2ndSpellCost")]
     pub second_spell_cost: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "slowEnemy")]
     pub slow_enemy: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "spellDamage")]
     pub spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sprint: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "sprintRegen")]
     pub sprint_regen: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stealing: Option<StatOrInt>,
@@ -421,39 +373,29 @@ pub struct Identifications {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thorns: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "thunderDamage")]
     pub thunder_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "thunderDefence")]
     pub thunder_defence: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "thunderMainAttackDamage")]
     pub thunder_main_attack_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "thunderSpellDamage")]
     pub thunder_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "walkSpeed")]
     pub walk_speed: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "waterDamage")]
     pub water_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "waterDefence")]
     pub water_defence: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "waterSpellDamage")]
     pub water_spell_damage: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "weakenEnemy")]
     pub weaken_enemy: Option<StatOrInt>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "xpBonus")]
     pub xp_bonus: Option<StatOrInt>,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
-pub enum MetaType {
+pub enum DropMetaType {
     #[serde(rename = "altar")]
     Altar,
     #[serde(rename = "challenge")]
@@ -472,6 +414,8 @@ pub enum MetaType {
     Quest,
     #[serde(rename = "raid")]
     Raid,
+    #[serde(rename = "event")]
+    Event,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -521,7 +465,7 @@ pub enum Restrictions {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
-pub enum TypeElement {
+pub enum EventType {
     #[serde(rename = "event")]
     Event,
     #[serde(rename = "merchant")]
@@ -550,6 +494,18 @@ pub enum WeaponType {
     Wand,
 }
 
+impl Display for WeaponType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            WeaponType::Bow => write!(f, "bow"),
+            WeaponType::Dagger => write!(f, "dagger"),
+            WeaponType::Relik => write!(f, "relik"),
+            WeaponType::Spear => write!(f, "spear"),
+            WeaponType::Wand => write!(f, "wand"),
+        }
+    }
+}
+
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub enum ItemType {
     #[serde(rename = "accessory")]
@@ -561,35 +517,27 @@ pub enum ItemType {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ApiItem {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "accessoryType")]
     pub accessory_type: Option<AccessoryType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "allowCraftsman")]
     pub allow_craftsman: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "armourColor")]
     pub armour_color: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "armourMaterial")]
     pub armour_material: Option<ArmourMaterial>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "armourType")]
     pub armour_type: Option<ArmourType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "attackSpeed")]
     pub attack_speed: Option<AttackSpeed>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "averageDps")]
     pub average_dps: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub base: Option<Base>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "dropMeta")]
     pub drop_meta: Option<DropMeta>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "dropRestriction")]
     pub drop_restriction: Option<DropRestriction>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<Icon>,
@@ -597,15 +545,12 @@ pub struct ApiItem {
     pub identifications: Option<Identifications>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub identified: Option<bool>,
-    #[serde(rename = "internalName")]
     pub internal_name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lore: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "majorIds")]
     pub major_ids: Option<::std::collections::BTreeMap<String, String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "powderSlots")]
     pub powder_slots: Option<i32>,
     pub rarity: Rarity,
     pub requirements: Requirements,
@@ -614,7 +559,6 @@ pub struct ApiItem {
     #[serde(rename = "type")]
     pub type_field: ItemType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "weaponType")]
     pub weapon_type: Option<WeaponType>,
 }
 
