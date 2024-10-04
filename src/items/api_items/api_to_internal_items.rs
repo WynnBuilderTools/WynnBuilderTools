@@ -71,7 +71,7 @@ impl From<ApiItems> for Items {
                     Some(id) => *id,
                     None => string_to_i32_hash(&api_item.internal_name),
                 },
-                name: name.clone(),
+                name: api_item.internal_name.clone(),
                 tier: api_item.rarity.to_string(),
                 r#type: item_type,
                 lvl: api_item.requirements.level,
