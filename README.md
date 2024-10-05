@@ -11,7 +11,8 @@ The current toolkit consists of two main components: the build batch generation 
 
 ## Features
 
-- [ ] Planned for v1: Automatically fetch latest items.json if missing, and automatically generate config.toml if it doesn't exist.
+- [x] Automatically fetch latest items.json if missing.
+- [ ] Automatically generate config.toml if it doesn't exist.
 - [x] Traverse and combine builds based on the provided equipment list, identifying valid builds and storing them in a database.
 - [x] Set conditions for validity checks, such as minimum attribute requirements, to filter out ineligible builds.
 - [x]  Calculate basic attributes (hp, ehp, hpr, elemental defenses, attribute points, mana steal, mana regen, life steal, life regen, walk speed).
