@@ -8,7 +8,7 @@ use std::{
 use crate::items::Items;
 use crate::Item;
 
-use super::{ApiItems, StatOrInt};
+use super::{ApiItems, StatOrInt, ApiItem};
 
 fn string_to_i32_hash(s: &str) -> i32 {
     let mut hasher = DefaultHasher::new();
@@ -28,8 +28,19 @@ impl From<ApiItems> for Items {
     fn from(api_items: ApiItems) -> Self {
         let mut items = Items { items: Vec::new() };
 
-        for (name, api_item) in api_items {
-            let ids = api_item.identifications.as_ref();
+        for (_, api_item) in api_items {
+            let item: Item = api_item.into();
+
+            items.items.push(item);
+        }
+
+        items
+    }
+}
+
+impl From<ApiItem> for Item {
+    fn from(api_item: ApiItem) -> Self {
+        let ids = api_item.identifications.as_ref();
 
             let max_or_int = |option: Option<StatOrInt>| match option {
                 Some(v) => match v {
@@ -137,9 +148,6 @@ impl From<ApiItems> for Items {
                 xpb: ids.and_then(|ids| max_or_int(ids.xp_bonus)),
             };
 
-            items.items.push(item);
-        }
-
-        items
+            item
     }
 }

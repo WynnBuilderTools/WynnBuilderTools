@@ -97,10 +97,26 @@ pub struct ThresholdFifth {
 }
 
 pub async fn load_config(path: impl AsRef<Path>) -> Result<Config, String> {
+    // Check if the file exists
+    if !path.as_ref().exists() {
+        // Fetch the default config from https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml
+        let url = "https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml";
+        let request = reqwest::get(url)
+            .await
+            .unwrap()
+            .text()
+            .await
+            .unwrap();
+
+        // Write the default config to the file
+        tokio::fs::write(path.as_ref(), request).await.unwrap();
+    }
+
     let mut f = match File::open(path).await {
         Ok(ok) => Ok(ok),
         Err(err) => Err(err.to_string()),
     }?;
+
     let mut buffer = Vec::new();
 
     match f.read_to_end(&mut buffer).await {

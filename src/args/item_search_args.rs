@@ -3,7 +3,7 @@ use std::fmt::Display;
 use clap::{Parser, ValueEnum};
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about)]
 pub struct ItemSearchArgs {
     /// Apparel type
     #[arg(short, long)]
