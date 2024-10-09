@@ -233,9 +233,11 @@ mod tests {
     }
     #[test]
     fn with_weapon_works() {
-        let mut weapon = Weapon::default();
-        weapon.req = Point::new(10, 5, 0, 5, 0);
-        weapon.add = Point::new(0, 0, 5, 5, 0);
+        let weapon = Weapon {
+            req: Point::new(10, 5, 0, 5, 0),
+            add : Point::new(0, 0, 5, 5, 0),
+            ..Default::default()
+        };
 
         let mut no_weapon = SkillPoints {
             assign: Point::new(0, 10, 0, 0, 0),
