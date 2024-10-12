@@ -190,6 +190,35 @@ pub fn map_to_index_space<const LEN: usize>(
     result
 }
 
+/// Generates random numbers in segments. The returned struct implements the `Iterator` trait.
+///
+/// # Parameters
+///
+/// - `max`: The maximum value for the random numbers.
+/// - `segment_size`: The size of each segment.
+/// - `count`: An `Arc<AtomicUsize>` used to keep track of the number of random numbers generated.
+/// - `combinations_counter`: An optional `Arc<AtomicUsize>` used to keep track of the number of combinations processed.
+///
+/// # Returns
+///
+/// An iterator that generates random numbers in segments.
+///
+/// # Example
+///
+/// ```rust
+/// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
+///
+/// let count = Arc::new(AtomicUsize::new(0));
+/// let srn = segmented_random_numbers(10, 10, count.clone(), None);
+///
+/// for _ in 0..10 {
+///     println!("{}", srn.next().unwrap());
+/// }
+/// ```
+///
+/// # Panics
+///
+/// This function will not panic as long as the `max` and `segment_size` are valid.
 pub fn segmented_random_numbers(
     max: usize,
     segment_size: usize,

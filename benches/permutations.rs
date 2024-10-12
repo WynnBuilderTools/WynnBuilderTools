@@ -10,10 +10,6 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     let array: [usize; 8] = std::array::from_fn(|i| i);
 
-    group.bench_function("custom", |b| {
-        b.iter(|| for _ in Permutations::new(array) {})
-    });
-
     group.bench_function("itertools", |b| {
         b.iter(|| for _ in array.iter().permutations(8) {})
     });
