@@ -52,14 +52,6 @@ async fn main() {
         });
     });
 
-    // Apply the limit
-    let limit = args.limit as usize;
-    for apparel_list in &mut apparels {
-        if apparel_list.len() > limit {
-            apparel_list.truncate(limit);
-        }
-    }
-
     // Sort apparels based on multiple sort_by criteria
     for apparel_list in &mut apparels {
         apparel_list.sort_by(|a, b| {
@@ -76,6 +68,14 @@ async fn main() {
                 ordering
             }
         });
+    }
+
+    // Apply the limit
+    let limit = args.limit as usize;
+    for apparel_list in &mut apparels {
+        if apparel_list.len() > limit {
+            apparel_list.truncate(limit);
+        }
     }
 
     // Print the results based on the type
