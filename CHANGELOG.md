@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - 09/10/2024
+## [1.2.1] - 13/10/2024
+### Added
+- Documented min/max values for attributes better in the help message of search_item
+
+## [1.2.0] - 13/10/2024
 ### Added
 - Ability to filter items by min and max values for various attributes
 

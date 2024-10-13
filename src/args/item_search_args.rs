@@ -26,11 +26,21 @@ pub struct ItemSearchArgs {
     pub sort_by: Vec<SortAndFilterBy>,
 
     /// Minimum values for various attributes (format: attribute=value)
-    #[arg(long = "min", value_parser = parse_key_val_sort_by)]
+    ///
+    /// Possible attributes:
+    /// - `lvl`, `hp`, `hpb`, `hprraw`, `hprpct`, `spadd`, `spreq`, `sdraw`, `sdpct`, `mr`, `spd`, `ls`, `expb`, `ndmg`, `edmg`, `tdmg`, `wdmg`, `fdmg`, `admg`
+    ///
+    /// Note: The inconsistency between case for `sort-by` and `min/max` is known and will be fixed in a future version.
+    #[arg(long = "min", value_parser = parse_key_val_sort_by, num_args = 0..)]
     pub min_values: Vec<(SortAndFilterBy, i32)>,
 
     /// Maximum values for various attributes (format: attribute=value)
-    #[arg(long = "max", value_parser = parse_key_val_sort_by)]
+    ///
+    /// Possible attributes:
+    /// - `lvl`, `hp`, `hpb`, `hprraw`, `hprpct`, `spadd`, `spreq`, `sdraw`, `sdpct`, `mr`, `spd`, `ls`, `expb`, `ndmg`, `edmg`, `tdmg`, `wdmg`, `fdmg`, `admg`
+    ///
+    /// Note: The inconsistency between case for `sort-by` and `min/max` is known and will be fixed in a future version.
+    #[arg(long = "max", value_parser = parse_key_val_sort_by, num_args = 0..)]
     pub max_values: Vec<(SortAndFilterBy, i32)>,
 }
 
