@@ -20,7 +20,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 criterion_group!(benches, criterion_benchmark);
 criterion_main!(benches);
 
-fn array_as_ref<'a, TR, T, const LEN: usize>(array: &'a [TR; LEN]) -> [&'a T; LEN]
+fn array_as_ref<TR, T, const LEN: usize>(array: &[TR; LEN]) -> [&T; LEN]
 where
     TR: AsRef<T>,
 {
@@ -30,7 +30,7 @@ where
     }
     unsafe { MaybeUninit::array_assume_init(result) }
 }
-fn array_no_as_ref<'a, T, const LEN: usize>(array: &'a [T; LEN]) -> [&'a T; LEN] {
+fn array_no_as_ref<T, const LEN: usize>(array: &[T; LEN]) -> [&T; LEN] {
     let mut result: [&T; LEN] = unsafe { std::mem::zeroed() };
     for i in 0..LEN {
         result[i] = &array[i];
@@ -42,6 +42,6 @@ fn array_no_as_ref<'a, T, const LEN: usize>(array: &'a [T; LEN]) -> [&'a T; LEN]
 struct TestStruct {}
 impl AsRef<TestStruct> for TestStruct {
     fn as_ref(&self) -> &TestStruct {
-        &self
+        self
     }
 }

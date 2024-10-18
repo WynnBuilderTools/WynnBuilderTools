@@ -1,8 +1,9 @@
-mod config;
-use config::build_config::*;
 mod db;
 
+use build_config::{load_config, Config};
 use std::{
+    borrow::BorrowMut,
+    collections::VecDeque,
     fmt,
     sync::{
         atomic::{AtomicUsize, Ordering},
@@ -10,6 +11,7 @@ use std::{
     },
     time::Duration,
 };
+use tokio::sync::Mutex;
 
 use tokio::{runtime::Runtime, spawn, time::sleep};
 use wynn_build_tools::*;
@@ -18,11 +20,30 @@ use wynn_build_tools::*;
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
 
-    let (apparels, weapons) = load_from_json("config/items.json");
+    let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
+        Ok(v) => v,
+        Err(_) => {
+            let api_fetch_attempt = fetch_json_from_config(&config.hppeng.items_file, &config).await;
+
+            let new_path = match api_fetch_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            };
+
+            let second_attempt = load_from_json(&new_path);
+
+            match second_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            }
+        },
+    };
+
     let weapon = weapons
         .iter()
         .find(|v| v.name == config.items.weapon)
         .unwrap();
+
     let no_ring_apparels: [&[&Apparel]; 6] = [
         &find(&apparels[0], &config.items.helmets).unwrap(),
         &find(&apparels[1], &config.items.chest_plates).unwrap(),
@@ -31,25 +52,33 @@ async fn main() {
         &find(&apparels[5], &config.items.bracelets).unwrap(),
         &find(&apparels[6], &config.items.necklaces).unwrap(),
     ];
+
     let rings: [&[&Apparel]; 2] = [
         &find(&apparels[4], &config.items.rings).unwrap(),
         &find(&apparels[4], &config.items.rings).unwrap(),
     ];
     let ring_combinations = generate_no_order_combinations(rings[0].len());
+    let total_combinations =
+        no_ring_apparels.map(|f| f.len()).iter().product::<usize>() * ring_combinations.len();
 
     no_ring_apparels
         .iter()
         .for_each(|v| println!("{}:{}", v.first().unwrap().r#type, v.len()));
     println!("rings:{}", rings.first().unwrap().len());
-    println!(
-        "total combinations: {}",
-        no_ring_apparels.map(|f| f.len()).iter().product::<usize>() * ring_combinations.len()
-    );
+    println!("total combinations: {}", total_combinations);
 
     let counter = Arc::new(AtomicUsize::new(0));
-    spawn_speed_watcher(counter.clone(), ring_combinations.len());
+    let remaining_builds = Arc::new(AtomicUsize::new(total_combinations));
+    let last_10_speeds = Arc::new(Mutex::new(VecDeque::with_capacity(10)));
+    spawn_speed_watcher(
+        counter.clone(),
+        remaining_builds.clone(),
+        ring_combinations.len(),
+        last_10_speeds,
+        total_combinations,
+    );
 
-    let db_pool = db::init().await;
+    let db_pool = db::init(&config).await;
     generate_full_combinations_with_random(
         1000,
         counter,
@@ -60,10 +89,10 @@ async fn main() {
             combination[2..].copy_from_slice(&no_rings_combination);
 
             for indexes in &ring_combinations {
-                let ring_combination = unsafe { select_from_arrays(&indexes, &rings) };
+                let ring_combination = unsafe { select_from_arrays(indexes, &rings) };
                 combination[..2].copy_from_slice(&ring_combination);
 
-                if let Ok(stat) = calculate_stats(&config, &combination, &weapon) {
+                if let Ok(stat) = calculate_stats(&config, &combination, weapon) {
                     let code = encode_build(
                         [
                             combination[2].id,
@@ -88,33 +117,70 @@ async fn main() {
 
                     let url = format!(
                         "{}{}{}",
-                        config.hppeng.url_refix, code, config.hppeng.url_suffix
+                        config.hppeng.url_prefix, code, config.hppeng.url_suffix
                     );
-                    println!("{}", url);
-                    println!("{}", stat);
+                    if config.hppeng.log_builds {
+                        println!("{}", url);
+                        println!("{}", stat);
+                    }
 
                     let rt = Runtime::new().unwrap();
                     rt.block_on(db::save_build(db_pool.clone(), url, stat, combination));
                 };
             }
         },
+        Option::Some(remaining_builds.clone()),
     );
+
     println!("done");
 }
 
-fn spawn_speed_watcher(counter: Arc<AtomicUsize>, coefficient: usize) {
+fn spawn_speed_watcher(
+    counter: Arc<AtomicUsize>,
+    remaining_builds: Arc<AtomicUsize>,
+    coefficient: usize,
+    mut last_10_speeds: Arc<Mutex<VecDeque<usize>>>,
+    combinations: usize,
+) {
     spawn(async move {
         loop {
             sleep(Duration::from_secs(1)).await;
-            println!("speed:{}", counter.load(Ordering::Acquire) * coefficient);
+
+            let counter_val = counter.load(Ordering::Acquire);
+
+            // Keep track of past 10 speeds and calculate the avg
+            let speed = counter_val * coefficient;
+            let mut last_10_speeds = last_10_speeds.borrow_mut().lock().await;
+
+            // Remove 1 from 10 to see if we're nearly at capacity, then pop the last value
+            if last_10_speeds.get(10 - 1).is_some() {
+                last_10_speeds.pop_back();
+            }
+            last_10_speeds.push_front(speed);
+
+            let mut remaining_time = usize::MAX;
+            if last_10_speeds.front().is_some() {
+                let avg_speed = last_10_speeds.iter().sum::<usize>() / last_10_speeds.len();
+                if avg_speed > 0 {
+                    remaining_time = combinations / avg_speed;
+                }
+            }
+
+            // Uncommented because we're doing fetch_sub in SegmentedRandomNumbers's Iterator
+            let remaining_builds_val = remaining_builds.load(Ordering::Acquire)/* - counter_val */;
+            // remaining_builds.store(remaining_builds_val, Ordering::Release);
+
+            println!("speed: {}/builds per second", speed);
+            println!("remaining time: {}h left", remaining_time / 3600);
+            println!("remaining builds: {}", remaining_builds_val);
             counter.store(0, Ordering::Release);
         }
     });
 }
 
 fn find<'a>(
-    apparels: &'a Vec<Apparel>,
-    names: &'a Vec<String>,
+    apparels: &'a [Apparel],
+    names: &'a [String],
 ) -> Result<Vec<&'a Apparel>, Vec<&'a String>> {
     let result = names
         .iter()
@@ -131,7 +197,7 @@ fn find<'a>(
     let ok_values: Vec<_> = oks.into_iter().map(Result::unwrap).collect();
     let err_values: Vec<_> = errs.into_iter().map(Result::unwrap_err).collect();
 
-    if err_values.len() > 0 {
+    if !err_values.is_empty() {
         Err(err_values)
     } else {
         Ok(ok_values)
@@ -145,12 +211,13 @@ pub struct Status {
     pub max_def: Point,
     pub skill_point: SkillPoints,
     pub max_dam_pct: Dam,
+    pub max_exp_bonus: i32,
 }
 impl std::fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}",
+            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}\nmax_exp_bonus:\t{}",
             self.max_stat,
             self.max_hpr,
             self.max_hp,
@@ -158,6 +225,7 @@ impl std::fmt::Display for Status {
             self.skill_point,
             self.max_def,
             self.max_dam_pct,
+            self.max_exp_bonus,
         )
     }
 }
@@ -172,7 +240,7 @@ fn calculate_stats(
     if let Some(threshold) = &config.threshold_first {
         if let Some(v) = threshold.min_hp {
             if max_hp < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
@@ -192,11 +260,11 @@ fn calculate_stats(
         if max_stat.any_lt(&CommonStat::new(
             hpr_raw, hpr_pct, mr, ls, ms, spd, sd_raw, sd_pct,
         )) {
-            return Err(format!(""));
+            return Err(String::new());
         }
         if let Some(v) = threshold.min_hpr {
             if max_hpr < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
@@ -210,7 +278,7 @@ fn calculate_stats(
         let a = threshold.min_air_defense.unwrap_or(MIN_16);
 
         if max_def.any_lt(&Point::new(e, t, w, f, a)) {
-            return Err(format!(""));
+            return Err(String::new());
         }
     }
 
@@ -224,18 +292,18 @@ fn calculate_stats(
         let a = threshold.min_air_dam_pct.unwrap_or(MIN_16);
 
         if max_dam_pct.any_lt(&Dam::new(n, e, t, w, f, a)) {
-            return Err(format!(""));
+            return Err(String::new());
         }
     }
 
     if let Some(illegal_combinations) = &config.items.illegal_combinations {
-        if is_illegal_combination(&combination, illegal_combinations.as_slice()) {
-            return Err(format!(""));
+        if is_illegal_combination(combination, illegal_combinations.as_slice()) {
+            return Err(String::new());
         }
     }
 
-    if SkillPoints::fast_gap(&combination) < -config.player.available_point {
-        return Err(format!(""));
+    if SkillPoints::fast_gap(combination) < -config.player.available_point {
+        return Err(String::new());
     }
     let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);
     skill_point.add_weapon(weapon);
@@ -250,19 +318,28 @@ fn calculate_stats(
     }
 
     if !skill_point.check(config.player.available_point) {
-        return Err(format!(""));
+        return Err(String::new());
     }
 
     let max_ehp = ehp(&skill_point, max_hp, &weapon.class);
     if let Some(threshold) = &config.threshold_fifth {
         if let Some(v) = threshold.min_ehp {
             if max_ehp < v {
-                return Err(format!(""));
+                return Err(String::new());
             }
         }
     }
 
-    return Ok(Status {
+    let max_exp_bonus = sum_exp_bonus_max(combination, weapon);
+    if let Some(threshold) = &config.threshold_second {
+        if let Some(v) = threshold.min_exp_bonus {
+            if max_exp_bonus < v {
+                return Err(String::new());
+            }
+        }
+    }
+
+    Ok(Status {
         max_stat,
         max_hpr,
         max_hp,
@@ -270,7 +347,8 @@ fn calculate_stats(
         skill_point,
         max_ehp,
         max_dam_pct,
-    });
+        max_exp_bonus,
+    })
 }
 
 fn is_illegal_combination(
@@ -289,5 +367,5 @@ fn is_illegal_combination(
             }
         }
     }
-    return false;
+    false
 }

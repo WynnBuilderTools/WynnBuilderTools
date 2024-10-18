@@ -4,18 +4,22 @@
 
 ## Introduction
 
-This tool is a third-party utility for the Minecraft server [WynnCraft](https://wynncraft.com/), designed to generate build combinations in bulk within the game, aiming to discover the most suitable builds with optimal attributes.
+This tool is a third-party utility for the Minecraft server [WynnCraft](https://wynncraft.com/), designed to generate build combinations in bulk within the game,
+aiming to discover the most suitable builds with optimal attributes.
 
 The current toolkit consists of two main components: the build batch generation tool and the equipment filtering tool.
 
 ## Features
 
+- [x] Automatically fetch latest items.json if missing.
+- [x] Automatically fetch config.toml if it doesn't exist.
 - [x] Traverse and combine builds based on the provided equipment list, identifying valid builds and storing them in a database.
 - [x] Set conditions for validity checks, such as minimum attribute requirements, to filter out ineligible builds.
 - [x]  Calculate basic attributes (hp, ehp, hpr, elemental defenses, attribute points, mana steal, mana regen, life steal, life regen, walk speed).
 - [x] Convert builds into [WynnBuilder](https://hppeng-wynn.github.io/builder) URLs.
 - [ ] Additional attribute calculations.
   - [x] dam_pct
+  - [x] exp_bonus
   - [ ] cost
 - [x] Implement legality checks for Hive equipment.
 - [ ] Damage calculations.
@@ -23,11 +27,51 @@ The current toolkit consists of two main components: the build batch generation 
   - [ ] Tomes calculations.
   - [ ] Powders calculations.
 - [x] Equipment filtering tool to extract fitting equipment from all WynnCraft equipment, facilitating the creation of equipment lists.
+- [x] Remaining time based on moving average of last ten speeds
+- [x] Remaining combinations to process
+
+## Step-by-step Setup Guide (Windows)
+1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
+2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
+3. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `search_item -h` if you're having trouble with the search_item binary!
+
+## Step-by-step Setup Guide (Linux)
+1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
+2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
+3. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `./search_item -h` if you're having trouble with the search_item binary!
+
+If these instructions do not work for you, feel free to [open a new issue](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/issues/new/choose),
+or if you think there's some changes to be made to the step-by-step guide, feel free to open a pull request!
 
 ## Batch Generation Tool User Guide
 
-The batch generation tool includes a build generator (builder.exe), a configuration file (config.toml), a WynnCraft item data file (items.json), and a database file (data.db).
+The batch generation tool includes a build generator (builder.exe), a configuration file (config.toml) in the config folder, a WynnCraft item data file (items.json) again in the config folder, and a database file (data.db) in the db folder.
 The item data file is sourced from [hppeng-wynn](https://github.com/hppeng-wynn/hppeng-wynn.github.io/tree/dev/data).
+
+The final directory structure should look something like this:
+
+binaries/
+
+├── builder.exe
+
+├── migrations/
+
+  │   └── 01_create_builds_table.sql
+
+├── assets/
+
+  │   └── id_map.json
+
+├── config/
+  
+  │   ├── config.toml
+
+  │   └── items.json (automatically fetched from v1.0.0 onwards)
+
+└── db/ (automatically generated from v0.5.0 onwards)
+
+  └── data.db (automatically generated from v0.5.0 onwards given a migrations folder at root)
+
 All interactions are handled through the configuration file, as shown below:
 
 ```toml
@@ -45,8 +89,13 @@ available_point = 200 # Available attribute points; not tied to the level here f
 base_hp = 500 # Base health points; typically 500
 
 [hppeng] # hppeng related settings
-url_refix = "https://hppeng-wynn.github.io/builder/?v=4#" # Prefix for generated URLs
-url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
+url_prefix = "https://hppeng-wynn.github.io/builder/?v=8#"  # Prefix for generated URLs
+url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"            # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
+db_path = "db/data.db"                                      # Database path
+migrations_path = "migrations"                           # Database migration path
+log_builds = true                                           # Whether to log builds to the console; useful for debugging
+log_db_errors = true                                        # Whether to log database errors to the console; useful for debugging
+db_retry_count = 10                                         # Number of retries for database operations
 # The final URL generated when running this configuration will look like this: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
 
 [threshold_first] # First filtering threshold; attributes here are calculated first, and most builds can be filtered out here to improve speed
@@ -63,6 +112,7 @@ url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated
 # min_sd_raw = 0
 # min_sd_pct = 0
 # min_hpr = 0
+# min_exp_bonus = 0
 
 [threshold_third]
 # min_earth_defense = 0
@@ -88,7 +138,7 @@ url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated
 # min_ehp = 0
 
 [items] # Equipment list; multiple items can be specified for all slots except weapon
-helmets = ["Cumulonimbus"]
+helmets = ["Blue Mask"]
 chest_plates = ["Soulflare"]
 leggings = ["Vaward"]
 boots = ["Resurgence"]
@@ -183,15 +233,17 @@ bracelet:1
 necklace:1
 rings:2
 total combinations: 3
-https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
-max_stat:(mr:80, ms:14, spd:23, ls:440, hpr_raw:507, hpr_pct:20, sd_raw:343, sd_pct:15)
+https://hppeng-wynn.github.io/builder/?v=8#8_0690K70r50Qr0OK0OK0K40OH0Qf0Q0Q351Y0Q1g00001004fI0z0z0+0+0+0+0---hOsKbv3
+max_stat:(mr:74, ms:18, spd:-10, ls:440, hpr_raw:507, hpr_pct:20, sd_raw:343, sd_pct:-5)
 max_hpr:608
-max_hp:14975
-max_ehp:42217
+max_hp:12751
+max_ehp:34600
 skill_point:
-assign:         earth:10        thunder:15      water:52        fire:65 air:15
-original:       earth:25        thunder:40      water:146       fire:90 air:40
-max_def:        earth:85        thunder:290     water:-30       fire:15 air:79
+assign:         earth:0 thunder:0       water:100       fire:62 air:0
+original:       earth:26        thunder:26      water:197       fire:98 air:26
+max_def:        earth:15        thunder:-82     water:72        fire:290        air:15
+max_dam_pct:    earth:0 thunder:0       water:20        fire:0  air:0   neutral:0
+max_exp_bonus:  0
 ...
 done
 ```
@@ -218,7 +270,19 @@ Options:
           
           [default: 10]
 
+      --min-lvl <MIN_LVL>
+          Minimum level
+          
+          [default: 1]
+
+      --max-lvl <MAX_LVL>
+          Maximum level
+          
+          [default: 106]
+
   -o, --order-by <ORDER_BY>
+          Order the results in ascending or descending order
+          
           [default: desc]
 
           Possible values:
@@ -226,8 +290,11 @@ Options:
           - desc: Sort the results in descending order, arrange them from largest to smallest
 
   -s, --sort-by <SORT_BY>
+          Sort the results by a specific field
+
           Possible values:
           - lvl:     Level
+          - hp:      Hp
           - hpb:     Hp bonus(max)
           - hpr-raw: Hp regain raw(max)
           - hpr-pct: Hp regain pct(max)
@@ -238,6 +305,7 @@ Options:
           - mr:      Mana regain(max)
           - spd:     Walk speed bonus(max)
           - ls:      Life steal(max)
+          - expb:    Exp bonus(max)
 
   -h, --help
           Print help (see a summary with '-h')
@@ -246,18 +314,68 @@ Options:
           Print version
 ```
 
-example:
+examples:
 
 ```txt
-# InPut:
+# Input:
 .\search_item.ext -s lvl
 
 # OutPut:
-Helmets:   "Dissociation","Aquamarine","Dissonance","Anima-Infused Helmet","Obsidian-Framed Helmet","Keratoconus","Ornate Shadow Cowl","Pisces","Nonexistence","Morph-Stardust"
-ChestPlat: "Dondasch","Brilliant Diamond Chestplate","Atakebune","Gaping Cavity","Far Cosmos","Gravity","Boreal-Patterned Aegis","Elysium-Engraved Aegis","Twilight-Gilded Cloak","Empyreal Emberplate","Medeis","Inhibitor֎","Ornate Shadow Garb","Roridula","Wanderlust"
-Leggings : "Anxiolytic","Anaerobic","Atomizer","Writhing Growth","Abyss-Imbued Leggings","Chaos-Woven Greaves","Hephaestus-Forged Greaves","Pyrrhic Respite","Ornate Shadow Cover","Neutrino","Aleph Null"
-Boots:     "Capricorn","Curador Boots","Skidbladnir","Expedition's End","Fermion","Gaea-Hewn Boots","Hephaestus-Forged Sabatons","Kickback","Cytotoxic Striders","Revenant","Ornate Shadow Cloud","Wasteland Azalea"
-Ring:      "Acid","Facile","Intensity","Azeotrope","Prism","Dispersion","Obstinance","Forbearance","Ingress","Tranquility"
-Bracelet:  "Privateer","Enmity","Prowess","Knucklebones","Gravitron","Misalignment","Anya's Penumbra","Nebulous","Pandemonium","Compliance","Succession","Breakthrough","Detachment"
-Necklace:  "Xebec","Ambivalence","Grafted Eyestalk","Contrast","Legendary Medallion","Planet Healer","Abrasion","Recalcitrance","Exhibition","Simulacrum","Reborn"
+Helmets:        "Nonexistence","Fool's Errand","Nuclear Emesis","Inconceivably Deranged Paper Mask of Legendary Victory","Mesmerizing Madness","Transplanted Psyche","Outlandish Replica Face Mask of Legendary Victory","Ornate Shadow Cowl","Dissonance","Treasured Diamond Mask of Legendary Victory"
+Chestplate:     "Null Plating","Roridula","Empyreal Emberplate","Ornate Shadow Garb","Wanderlust","Schadenfreude","Medeis","Dondasch","Twilight-Gilded Cloak","Elysium-Engraved Aegis","Atakebune","Brilliant Diamond Chestplate","Boreal-Patterned Aegis","Gravity","Far Cosmos","Gaping Cavity"
+Leggings:       "Aleph Null","Anaerobic","Ornate Shadow Cover","Atomizer","Pyrrhic Respite","Anxiolytic","Chaos-Woven Greaves","Hephaestus-Forged Greaves","Writhing Growth","Neutrino","Abyss-Imbued Leggings"
+Boots:          "Delusion","Ornate Shadow Cloud","Withstand","Acidosis","Expedition's End","Wasteland Azalea","Hephaestus-Forged Sabatons","Fermion","Gaea-Hewn Boots","Skidbladnir"
+Ring:           "Ingress","Forbearance","Azeotrope","Tranquility","Obstinance","Dispersion","Prism","Intensity","Acid","Facile"
+Bracelet:       "Detachment","Breakthrough","Misalignment","Black Space","Gravitron","Succession","Enmity","Anya's Penumbra","Compliance","Prowess"
+Necklace:       "Simulacrum","Exhibition","Swindler's Charm","Grafted Eyestalk","Contrast","Planet Healer","Legendary Medallion","Abrasion","Xebec","Recalcitrance","Ambivalence","Reborn"
+```
+
+```txt
+# Input:
+.\search_item.ext -t ring -s expb
+
+# Output:
+Rings:  "Summa","Bronze Basic Ring","Detective's Ring","Ring of Generosity","Draoi Fair","Lodestone","Living Slime","Precious","Decoder Ring","Law of the Jungle","Rarity"
+```
+
+```txt
+# Input:
+.\search_item.ext -s hpr-raw
+
+# Output:
+Helmets:        "Morph-Stardust","Aquamarine","Cancer֎","Ophiolite","Skyfloat","Snail Helm","Azure Halo","Phoenix Prince's Crown","Sano's Care","Grillface"
+Chestplate:     "Elysium-Engraved Aegis","Gravity","Sparkling Plate","Nether's Reach","Leo","Keeper of Souls","Darkiron Aegis","Dreamcloud","About-Face","Pristine Antiquity"
+Leggings:       "Hephaestus-Forged Greaves","Ration","Philophilia","The Golem","Mycelium Plating","Black Lily","Anti-Causality","Elder Oak Roots","Horizon","Greaves of the Veneer"
+Boots:          "Delusion","Withstand","Gaea-Hewn Boots","Curador Boots","Burnout","Crater Print","Boreal","Resurgence","Scorpio","Sempiternel"
+Ring:           "Iron Will","Diamond Solar Ring","Silver Solar Ring","Gold Solar Ring","Bloodborne","Archaic","Cacophony","Fuse","Recovery","Vital","Draoi Fair"
+Bracelet:       "Succession","Hamsey's Brilliance","Flashfire Gauntlet","Sacramentalia","Auric","Siwel's Guilt","Lazarus' Brace","Lasting","Great Brace","Ra"
+Necklace:       "Contrast","Antim","Gigabyte","Ambiguity","Pulse Starter","Golemlus Core","Alkali","Mech Core","Adder Stone","Amulet of Rejuvenation"
+```
+
+```txt
+# Input:
+.\search_item.ext -s lvl --min-lvl 50 --max-lvl 80
+
+# Output:
+Helmets:        "Cosmic Visor","Dragon Horned Helmet","Green Helmet","Gale's Sight","Centipede","Sparkling Visor","Tephra","Hollow Virtue","Toxin","Rust","Rinkaku","Breakbeat"
+Chestplate:     "Changeling's Chestplate","Bete Noire","Cosmic Vest","Traumerei","Reinforced Iron Chestplate","Screech","Future Shock Plating","Eleventh Hour","Pristine Antiquity","Endurance","Aura of Element","Marshmallow"
+Leggings:       "Air Sanctuary","Xyloid","Earth Sanctuary","Ringlets","Water Sanctuary","Cosmic Ward","Fire Sanctuary","Thunder Sanctuary","Rainbow Sanctuary","The Prisoner","Leggings of Haste","Reinforced Iron Leggings"
+Boots:          "Centennial","Ventus Tail","Missing","Cosmic Walkers","Dragulj Boots","Earthsky Eclipse","Sturdy","Black Sheep","Slipstream","Gert Boots","Reinforced Iron Boots","Determination","Scale of Sieryu","Corrupted Nii Mukluk","Lerteco"
+Ring:           "Athanasia","Ring of Power","Time Ring","Cacophony","Ring of Wisdom","Rainbow","Clockwork Ring","Puff","Soldier","Rubber","Ghost","Martyr"
+Bracelet:       "Auric","Veneration","Provenance","Tight Clamp","Flexing Chain","Lecade's Rank","Double Vision","Broken Gauntlet","Momentum","Example","Panic Attack"
+Necklace:       "Dancer","Altum Spatium","Adder Stone","Asbestos","Metamorphosis","Amulet of Rejuvenation","Sterling Silver","Rough Diamond","Reckoning","Tenuto"
+```
+
+```txt
+# Input:
+.\search_item.ext -s expb
+
+# Output:
+Helmets:        "Sano's Care","Facedown","Speaker","Cosmic Visor","Green Helmet","Gale's Sight","Sparkling Visor","Restored Ancient Helmet","Penance","Clearsight Spectacles","Upgraded Orc Mask","Blueberry","Illuminite","Venison","Hero's Mask","Bloodied Wreath","Aeolus","Faded","Santa Hat","Sound of Silence"
+Chestplate:     "Roridula","Diamond Dust","Tisaun's Valor","Dragon Hide Plate","Cosmic Vest","Aura of Element","Papyrus","The Jingling Jester","Matryoshka Shell","Geis"
+Leggings:       "Trench Scourer","Bantisu's Approach","Ringlets","Cosmic Ward","Helios Lux","Egression","The Oblivious","Greaves of Honor","Bridge of the Divide","Moisture","Chained Pixels"
+Boots:          "Memento","Ensa's Ideals","Cosmic Walkers","Champion Boots","Sodeta Boots","Bad Wolf","Durum's Journey","Seven-League Boots","Galloping Spurs","Prologue","Santa Boots","Snowtread Boots","Silken Slippers"
+Ring:           "Summa","Bronze Basic Ring","Detective's Ring","Ring of Generosity","Draoi Fair","Lodestone","Living Slime","Precious","Decoder Ring","Law of the Jungle","Rarity"
+Bracelet:       "Knucklebones","Follow The Wind","Synchro Core","Kayde","Jiandan Handwraps","Double Vision","Vanguard","Back-up Plan","Shackle of Shade","Rayshyroth's Knowledge","Dragon's Eye Bracelet","Homeorhesis","Binding Brace"
+Necklace:       "Ominous Wind","Overload Core","Altum Spatium","Adder Stone","Gospel","Ensa's Faith","Trainer's Pendant","Renda Langit","Hexed Amulet","Criistal","Constrict Collar","Durum's Serenity"
 ```

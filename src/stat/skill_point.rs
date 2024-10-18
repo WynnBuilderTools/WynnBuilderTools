@@ -1,11 +1,11 @@
-use std::{
-    fmt,
-    simd::{i16x8, SimdInt, SimdPartialOrd},
-};
+use std::{fmt, simd::i16x8};
+
+use std::simd::cmp::SimdPartialOrd;
+use std::simd::num::SimdInt;
 
 use crate::*;
 
-#[derive(Debug, Default, Hash, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct SkillPoints {
     pub assign: Point,
     pub original: Point,
@@ -15,7 +15,7 @@ impl SkillPoints {
         items: &'a [&Apparel; LEN],
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
         let zero = i16x8::splat(0);
-        let mut put_perm: [&Apparel; LEN] = items.clone();
+        let mut put_perm: [&Apparel; LEN] = *items;
         let mut best_put_perm: [&Apparel; LEN] = put_perm;
         let mut best_assign: Point = Point::new(i16::MAX, i16::MAX, i16::MAX, i16::MAX, i16::MAX);
         let mut best_original: Point = Default::default();
@@ -69,11 +69,11 @@ impl SkillPoints {
         // - add is 0
         let zero = i16x8::splat(0);
 
-        let mut best_perm: [&Apparel; LEN] = items.clone();
+        let mut best_perm: [&Apparel; LEN] = *items;
         let mut best_assign: Point = Point::new(i16::MAX, i16::MAX, i16::MAX, i16::MAX, i16::MAX);
         let mut best_original: Point = Default::default();
 
-        let mut put_perm: [&Apparel; LEN] = items.clone();
+        let mut put_perm: [&Apparel; LEN] = *items;
         loop {
             let mut assign: Point = Default::default();
             let mut original: Point = Default::default();
@@ -169,12 +169,7 @@ mod tests {
     #[test]
     fn fast_put_calculate_works() {
         let apparels = gen_test_apparels();
-        let apparels: [&Apparel; 8] = apparels
-            .iter()
-            .map(|s| s)
-            .collect::<Vec<_>>()
-            .try_into()
-            .unwrap();
+        let apparels: [&Apparel; 8] = apparels.iter().collect::<Vec<_>>().try_into().unwrap();
         let (req, _) = SkillPoints::fast_put_calculate(&apparels);
         assert_eq!(
             req,
@@ -187,12 +182,7 @@ mod tests {
     #[test]
     fn full_put_calculate_works() {
         let apparels = gen_test_apparels();
-        let apparels: [&Apparel; 8] = apparels
-            .iter()
-            .map(|s| s)
-            .collect::<Vec<_>>()
-            .try_into()
-            .unwrap();
+        let apparels: [&Apparel; 8] = apparels.iter().collect::<Vec<_>>().try_into().unwrap();
         let (req, _) = SkillPoints::full_put_calculate(&apparels);
         assert_eq!(
             req,
@@ -205,41 +195,27 @@ mod tests {
     #[test]
     fn fast_gap_works() {
         let apparels = gen_test_apparels();
-        let apparels: [&Apparel; 8] = apparels
-            .iter()
-            .map(|s| s)
-            .collect::<Vec<_>>()
-            .try_into()
-            .unwrap();
+        let apparels: [&Apparel; 8] = apparels.iter().collect::<Vec<_>>().try_into().unwrap();
         assert_eq!(SkillPoints::fast_gap(&apparels), -192)
     }
 
     #[test]
     fn check_works() {
-        assert_eq!(
-            SkillPoints {
-                assign: Point::new(0, 0, 0, 0, 0),
-                original: Point::new(100, 0, 0, 0, 0),
-            }
-            .check(0),
-            true
-        );
-        assert_eq!(
-            SkillPoints {
-                assign: Point::new(101, 0, 0, 0, 0),
-                original: Point::new(0, 0, 0, 0, 0),
-            }
-            .check(200),
-            false
-        );
-        assert_eq!(
-            SkillPoints {
-                assign: Point::new(101, 100, 0, 0, 0),
-                original: Point::new(0, 0, 0, 0, 0),
-            }
-            .check(200),
-            false
-        );
+        assert!(SkillPoints {
+            assign: Point::new(0, 0, 0, 0, 0),
+            original: Point::new(100, 0, 0, 0, 0),
+        }
+        .check(0));
+        assert!(!SkillPoints {
+            assign: Point::new(101, 0, 0, 0, 0),
+            original: Point::new(0, 0, 0, 0, 0),
+        }
+        .check(200));
+        assert!(!SkillPoints {
+            assign: Point::new(101, 100, 0, 0, 0),
+            original: Point::new(0, 0, 0, 0, 0),
+        }
+        .check(200));
     }
     #[test]
     fn assign_works() {
@@ -257,9 +233,11 @@ mod tests {
     }
     #[test]
     fn with_weapon_works() {
-        let mut weapon = Weapon::default();
-        weapon.req = Point::new(10, 5, 0, 5, 0);
-        weapon.add = Point::new(0, 0, 5, 5, 0);
+        let weapon = Weapon {
+            req: Point::new(10, 5, 0, 5, 0),
+            add : Point::new(0, 0, 5, 5, 0),
+            ..Default::default()
+        };
 
         let mut no_weapon = SkillPoints {
             assign: Point::new(0, 10, 0, 0, 0),

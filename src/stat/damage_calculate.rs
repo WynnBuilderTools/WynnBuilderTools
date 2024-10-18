@@ -1,5 +1,6 @@
 use crate::*;
 
+#[allow(dead_code)]
 struct Statistics {
     // "nConvBase:4.Ice Snake Damage"
     // "wConvBase:4.Ice Snake Damage"
@@ -33,6 +34,7 @@ struct Statistics {
     // wDamAddMin wDamAddMax
     dam_add: Damages,
 }
+#[allow(dead_code)]
 struct Weapon {
     // "nDam_"
     // "eDam_"
@@ -47,6 +49,7 @@ struct Weapon {
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/damage_calc.js#L31
+#[allow(dead_code)]
 fn damage_calculate(
     stats: &Statistics,
     weapon: &Weapon,
@@ -150,10 +153,10 @@ fn damage_calculate(
 
     let crit_mult = 1.0 + stats.crit_dam_pct;
 
-    let normal_damage = &damages * (str_boost as f64);
-    let crit_damage = &damages * ((str_boost + crit_mult) as f64);
+    let normal_damage = &damages * str_boost;
+    let crit_damage = &damages * (str_boost + crit_mult);
 
-    return (normal_damage, crit_damage);
+    (normal_damage, crit_damage)
 }
 
 #[cfg(test)]

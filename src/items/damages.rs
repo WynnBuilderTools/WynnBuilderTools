@@ -231,12 +231,12 @@ impl std::ops::Mul<&DamagesConvert> for &DamagesConvert {
 
     fn mul(self, rhs: &DamagesConvert) -> Self::Output {
         DamagesConvert::from_slice([
-            &self.inner[0] * rhs.inner[0],
-            &self.inner[1] * rhs.inner[1],
-            &self.inner[2] * rhs.inner[2],
-            &self.inner[3] * rhs.inner[3],
-            &self.inner[4] * rhs.inner[4],
-            &self.inner[5] * rhs.inner[5],
+            self.inner[0] * rhs.inner[0],
+            self.inner[1] * rhs.inner[1],
+            self.inner[2] * rhs.inner[2],
+            self.inner[3] * rhs.inner[3],
+            self.inner[4] * rhs.inner[4],
+            self.inner[5] * rhs.inner[5],
         ])
     }
 }

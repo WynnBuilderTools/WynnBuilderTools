@@ -1,53 +1,3 @@
-pub struct Permutations<T, const LEN: usize> {
-    array: [T; LEN],
-    first_permutation: bool,
-}
-
-impl<T, const LEN: usize> Permutations<T, LEN> {
-    pub fn new(array: [T; LEN]) -> Self {
-        Permutations {
-            array,
-            first_permutation: true,
-        }
-    }
-}
-
-impl<T, const LEN: usize> Iterator for Permutations<T, LEN>
-where
-    T: Ord + Clone,
-{
-    type Item = [T; LEN];
-
-    fn next(&mut self) -> Option<Self::Item>
-    where
-        T: Ord + Clone,
-    {
-        if self.first_permutation {
-            self.first_permutation = false;
-            return Some(self.array.clone());
-        }
-
-        let mut i = LEN - 1;
-        while i > 0 && self.array[i - 1] >= self.array[i] {
-            i -= 1;
-        }
-
-        if i == 0 {
-            return None;
-        }
-
-        let mut j = LEN - 1;
-        while self.array[j] <= self.array[i - 1] {
-            j -= 1;
-        }
-
-        self.array.swap(i - 1, j);
-        self.array[i..].reverse();
-
-        Some(&self.array).cloned()
-    }
-}
-
 pub fn next_permutation<T: Ord>(arr: &mut [T]) -> bool {
     let mut i = arr.len() - 1;
     while i > 0 && arr[i - 1] >= arr[i] {
@@ -67,9 +17,31 @@ pub fn next_permutation<T: Ord>(arr: &mut [T]) -> bool {
     true
 }
 
+/// Generates the next permutation of pointers in the given slice.
+///
+/// This function modifies the input slice to produce the next permutation
+/// of its elements in ascending order. It compares the pointers directly using
+/// their memory addresses.
+///
+/// # Arguments
+///
+/// * `arr` - A mutable slice of pointers to modify in-place.
+///
+/// # Returns
+///
+/// * `true` if a new permutation was generated.
+/// * `false` if the input was already the last possible permutation.
+///
+/// # Examples
+///
+/// ```
+/// let mut arr = [&1, &2, &3];
+/// assert_eq!(next_permutation_ptr(&mut arr), true);
+/// assert_eq!(arr, [&1, &3, &2]);
+/// ```
 pub fn next_permutation_ptr<T: ?Sized>(arr: &mut [&T]) -> bool {
     let mut i = arr.len() - 1;
-    while i > 0 && arr[i - 1] as *const _ >= arr[i] as *const _ {
+    while i > 0 && !std::ptr::eq(arr[i - 1], arr[i]) {
         i -= 1;
     }
     if i == 0 {
@@ -77,7 +49,7 @@ pub fn next_permutation_ptr<T: ?Sized>(arr: &mut [&T]) -> bool {
     }
 
     let mut j = arr.len() - 1;
-    while arr[j] as *const _ <= arr[i - 1] as *const _ {
+    while !std::ptr::eq(arr[i - 1], arr[i]) {
         j -= 1;
     }
 
@@ -90,21 +62,6 @@ pub fn next_permutation_ptr<T: ?Sized>(arr: &mut [&T]) -> bool {
 mod tests {
     use super::*;
 
-    #[test]
-    fn permutations_works() {
-        let want = [
-            [0, 1, 2],
-            [0, 2, 1],
-            [1, 0, 2],
-            [1, 2, 0],
-            [2, 0, 1],
-            [2, 1, 0],
-        ];
-        let array: [usize; 3] = std::array::from_fn(|i| i);
-        for (i, v) in Permutations::new(array).enumerate() {
-            assert_eq!(v, want[i]);
-        }
-    }
     #[test]
     fn next_permutation_works() {
         let want = [

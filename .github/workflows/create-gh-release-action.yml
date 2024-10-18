@@ -1,0 +1,96 @@
+name: Create GitHub Releases with Artifacts and correct files
+on:
+  push:
+    tags:
+      - v*.*.*
+jobs:
+  check-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
+          components: clippy, rustfmt
+      - name: Check
+        run: cargo check --all-features
+      - name: Clippy
+        run: cargo clippy -- -W warnings # Changed from -D to -W
+      - name: Format
+        run: cargo fmt
+  build-and-package:
+    needs: check-and-lint
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            archive: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-gnu
+            archive: zip
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
+      - uses: Swatinem/rust-cache@v2
+      - name: Install target
+        run: rustup target add ${{ matrix.target }}
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Debug - Show current directory
+        run: pwd
+      - name: Debug - List files in current directory
+        run: ls -R
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -pv artifacts
+          mkdir -pv temp_package/config
+          mkdir -pv temp_package/migrations
+          mkdir -pv temp_package/assets
+          cp -v config/config.toml temp_package/config/
+          cp -v assets/id_map.json temp_package/assets/
+          cp -v migrations/*.sql temp_package/migrations/
+          find ./target/${{ matrix.target }}/release -type f \( -name "builder" -o -name "builder.exe" \) -exec cp -v {} temp_package/ \; || echo "Builder not found"
+          find ./target/${{ matrix.target }}/release -type f \( -name "search_item" -o -name "search_item.exe" \) -exec cp -v {} temp_package/ \; || echo "Search item not found"
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            pwsh -Command "
+              \$artifactName = '${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive }}'
+              \$destinationZip = 'artifacts/'+\$artifactName
+              Compress-Archive -Path 'temp_package/*' -DestinationPath \$destinationZip -Force
+            "
+          else
+            tar -czvf artifacts/${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive }} -C temp_package .
+          fi
+          rm -rf temp_package
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.target }}
+          path: artifacts/${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive }}
+          retention-days: 5
+  create-release:
+    needs: build-and-package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Get Previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: 0.0.1
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |-
+          gh release create ${{ github.ref_name }} \
+            --title "${{ github.ref_name }}" \
+            --generate-notes \
+            artifacts/**/*

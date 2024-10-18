@@ -1,18 +1,19 @@
 mod dam;
+mod damage_calculate;
 mod def;
 mod encode;
+mod exp;
 mod hp;
 mod rolls;
 mod skill_point;
-mod damage_calculate;
 
 pub use dam::*;
 pub use def::*;
 pub use encode::*;
+pub use exp::*;
 pub use hp::*;
 pub use rolls::*;
 pub use skill_point::*;
-pub use damage_calculate::*;
 
 use crate::*;
 use std::fs;
@@ -32,7 +33,7 @@ pub fn skill_points_to_percentage(skp: i32) -> f64 {
         skp = 150;
     }
     const R: f64 = 0.9908;
-    return (R / (1.0 - R) * (1.0 - R.powi(skp))) / 100.0;
+    (R / (1.0 - R) * (1.0 - R.powi(skp))) / 100.0
 }
 
 #[cfg(test)]

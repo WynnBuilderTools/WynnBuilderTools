@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::{path::Path, str};
 use tokio::{fs::File, io::AsyncReadExt};
 
@@ -7,13 +7,14 @@ pub struct Config {
     pub items: Items,
     pub player: Player,
     pub hppeng: Hppeng,
+    pub api: Option<Api>,
     pub threshold_first: Option<ThresholdFirst>,
     pub threshold_second: Option<ThresholdSecond>,
     pub threshold_third: Option<ThresholdThird>,
     pub threshold_fourth: Option<ThresholdFourth>,
     pub threshold_fifth: Option<ThresholdFifth>,
 }
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct Items {
     pub helmets: Vec<String>,
     pub chest_plates: Vec<String>,
@@ -33,8 +34,21 @@ pub struct Player {
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct Hppeng {
-    pub url_refix: String,
+    pub url_prefix: String,
     pub url_suffix: String,
+    pub log_builds: bool,
+    pub db_path: String,
+    pub migrations_path: String,
+    pub items_file: String,
+    pub log_db_errors: bool,
+    pub db_retry_count: u8,
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct Api {
+    pub url: String,
+    pub version: String,
+    pub module: String,
+    pub query: String,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct ThresholdFirst {
@@ -50,6 +64,7 @@ pub struct ThresholdSecond {
     pub min_spd: Option<i16>,
     pub min_sd_raw: Option<i16>,
     pub min_sd_pct: Option<i16>,
+    pub min_exp_bonus: Option<i32>,
 
     pub min_hpr: Option<i32>,
 }
@@ -82,10 +97,26 @@ pub struct ThresholdFifth {
 }
 
 pub async fn load_config(path: impl AsRef<Path>) -> Result<Config, String> {
+    // Check if the file exists
+    if !path.as_ref().exists() {
+        // Fetch the default config from https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml
+        let url = "https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml";
+        let request = reqwest::get(url)
+            .await
+            .unwrap()
+            .text()
+            .await
+            .unwrap();
+
+        // Write the default config to the file
+        tokio::fs::write(path.as_ref(), request).await.unwrap();
+    }
+
     let mut f = match File::open(path).await {
         Ok(ok) => Ok(ok),
         Err(err) => Err(err.to_string()),
     }?;
+
     let mut buffer = Vec::new();
 
     match f.read_to_end(&mut buffer).await {

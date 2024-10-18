@@ -1,75 +1,139 @@
 mod args;
 
+use crate::load_from_json;
 use args::item_search_args::*;
+use build_config::load_config;
 use clap::Parser;
 use itertools::Itertools;
 use wynn_build_tools::*;
 
 #[tokio::main]
 async fn main() {
+    let config = load_config("config/config.toml").await.unwrap();
+
     let args = ItemSearchArgs::parse();
-    let (mut apparels, _) = load_from_json("config/items.json");
+    let (mut apparels, _) = match load_from_json(&config.hppeng.items_file) {
+        Ok(v) => v,
+        Err(_) => {
+            let api_fetch_attempt =
+                fetch_json_from_config(&config.hppeng.items_file, &config).await;
+
+            let new_path = match api_fetch_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            };
+
+            let second_attempt = load_from_json(&new_path);
+
+            match second_attempt {
+                Ok(v) => v,
+                Err(e) => panic!("{}", e),
+            }
+        }
+    };
 
     let reverse = match args.order_by {
-        OrderBy::ASC => false,
-        OrderBy::DESC => true,
+        OrderBy::Asc => false,
+        OrderBy::Desc => true,
     };
-    let thresholds = get_threshold(&apparels, args.limit as usize - 1, reverse, |v| match args
-        .sort_by
-    {
-        SortBy::LVL => v.lvl,
-        SortBy::HP => v.hp,
-        SortBy::HPB => v.hp_bonus_max,
-        SortBy::HPRRaw => v.stat_max.hpr_raw() as i32,
-        SortBy::HPRPct => v.stat_max.hpr_pct() as i32,
-        SortBy::SPAdd => v.add.all() as i32,
-        SortBy::SPReq => v.req.all() as i32,
-        SortBy::SDRaw => v.stat_max.sd_raw() as i32,
-        SortBy::SDPct => v.stat_max.sd_pct() as i32,
-        SortBy::MR => v.stat_max.mr() as i32,
-        SortBy::SPD => v.stat_max.spd() as i32,
-        SortBy::LS => v.stat_max.ls() as i32,
+
+    // Filter apparels based on min and max values
+    apparels.iter_mut().for_each(|v| {
+        v.retain(|item| {
+            args.min_values
+                .iter()
+                .all(|(sort_by, min_value)| sort_by.get_value(item) >= *min_value)
+        });
+
+        v.retain(|item| {
+            args.max_values
+                .iter()
+                .all(|(sort_by, max_value)| sort_by.get_value(item) <= *max_value)
+        });
     });
 
-    filter_2d_vector(&mut apparels, |array_index, v| match args.sort_by {
-        SortBy::LVL => v.lvl < thresholds[array_index],
-        SortBy::HP => v.hp < thresholds[array_index],
-        SortBy::HPB => v.hp_bonus_max < thresholds[array_index],
-        SortBy::HPRRaw => (v.stat_max.hpr_raw() as i32) < thresholds[array_index],
-        SortBy::HPRPct => (v.stat_max.hpr_pct() as i32) < thresholds[array_index],
-        SortBy::SPAdd => (v.add.all() as i32) < thresholds[array_index],
-        SortBy::SPReq => (v.req.all() as i32) < thresholds[array_index],
-        SortBy::SDRaw => (v.stat_max.sd_raw() as i32) < thresholds[array_index],
-        SortBy::SDPct => (v.stat_max.sd_pct() as i32) < thresholds[array_index],
-        SortBy::MR => (v.stat_max.mr() as i32) < thresholds[array_index],
-        SortBy::SPD => (v.stat_max.spd() as i32) < thresholds[array_index],
-        SortBy::LS => (v.stat_max.ls() as i32) < thresholds[array_index],
-    });
+    // Sort apparels based on multiple sort_by criteria
+    for apparel_list in &mut apparels {
+        apparel_list.sort_by(|a, b| {
+            let mut ordering = std::cmp::Ordering::Equal;
+            for &sort_key in &args.sort_by {
+                ordering = compare_items(a, b, sort_key);
+                if ordering != std::cmp::Ordering::Equal {
+                    break;
+                }
+            }
+            if reverse {
+                ordering.reverse()
+            } else {
+                ordering
+            }
+        });
+    }
 
+    // Apply the limit
+    let limit = args.limit as usize;
+    for apparel_list in &mut apparels {
+        if apparel_list.len() > limit {
+            apparel_list.truncate(limit);
+        }
+    }
+
+    // Print the results based on the type
     match args.r#type {
         Some(v) => {
             let apparels = match v {
-                Type::Helmets => &apparels[0],
-                Type::ChestPlate => &apparels[1],
-                Type::Leggings => &apparels[2],
-                Type::Boots => &apparels[3],
-                Type::Ring => &apparels[4],
-                Type::Bracelet => &apparels[5],
-                Type::Necklace => &apparels[6],
+                Type::Helmets => (&apparels[0], "Helmets"),
+                Type::ChestPlate => (&apparels[1], "Chestplates"),
+                Type::Leggings => (&apparels[2], "Leggings"),
+                Type::Boots => (&apparels[3], "Boots"),
+                Type::Ring => (&apparels[4], "Ring"),
+                Type::Bracelet => (&apparels[5], "Bracelet"),
+                Type::Necklace => (&apparels[6], "Necklace"),
             };
-            let apparels_str = apparels.iter().map(|v| format!("\"{}\"", v.name)).join(",");
-            println!("{}", apparels_str);
+            let apparels_str = apparels
+                .0
+                .iter()
+                .map(|v| format!("\"{}\"", v.name))
+                .join(",");
+            println!("{}:\t{}", apparels.1, apparels_str);
         }
         None => {
-            let apparels_str: [String; 7] =
-                apparels.map(|v| v.iter().map(|v| format!("\"{}\"", v.name)).join(","));
-            println!("Helmets:   {}", apparels_str[0]);
-            println!("ChestPlat: {}", apparels_str[1]);
-            println!("Leggings : {}", apparels_str[2]);
-            println!("Boots:     {}", apparels_str[3]);
-            println!("Ring:      {}", apparels_str[4]);
-            println!("Bracelet:  {}", apparels_str[5]);
-            println!("Necklace:  {}", apparels_str[6]);
+            let apparels_str: Vec<String> = apparels
+                .iter()
+                .map(|v| v.iter().map(|v| format!("\"{}\"", v.name)).join(","))
+                .collect();
+            println!("Helmets:\t{}", apparels_str[0]);
+            println!("Chestplates:\t{}", apparels_str[1]);
+            println!("Leggings:\t{}", apparels_str[2]);
+            println!("Boots:\t\t{}", apparels_str[3]);
+            println!("Ring:\t\t{}", apparels_str[4]);
+            println!("Bracelet:\t{}", apparels_str[5]);
+            println!("Necklace:\t{}", apparels_str[6]);
         }
     };
+}
+
+// Function to compare two items based on a single SortAndFilterBy criterion
+fn compare_items(a: &Apparel, b: &Apparel, sort_by: SortAndFilterBy) -> std::cmp::Ordering {
+    match sort_by {
+        SortAndFilterBy::Lvl => a.lvl.cmp(&b.lvl),
+        SortAndFilterBy::Hp => a.hp.cmp(&b.hp),
+        SortAndFilterBy::Hpb => a.hp_bonus_max.cmp(&b.hp_bonus_max),
+        SortAndFilterBy::HprRaw => a.stat_max.hpr_raw().cmp(&b.stat_max.hpr_raw()),
+        SortAndFilterBy::HprPct => a.stat_max.hpr_pct().cmp(&b.stat_max.hpr_pct()),
+        SortAndFilterBy::SPAdd => a.add.all().cmp(&b.add.all()),
+        SortAndFilterBy::SPReq => a.req.all().cmp(&b.req.all()),
+        SortAndFilterBy::SDRaw => a.stat_max.sd_raw().cmp(&b.stat_max.sd_raw()),
+        SortAndFilterBy::SDPct => a.stat_max.sd_pct().cmp(&b.stat_max.sd_pct()),
+        SortAndFilterBy::Mr => a.stat_max.mr().cmp(&b.stat_max.mr()),
+        SortAndFilterBy::Spd => a.stat_max.spd().cmp(&b.stat_max.spd()),
+        SortAndFilterBy::Ls => a.stat_max.ls().cmp(&b.stat_max.ls()),
+        SortAndFilterBy::Ndmg => a.dam_pct_max.n().cmp(&b.dam_pct_max.n()),
+        SortAndFilterBy::Edmg => a.dam_pct_max.e().cmp(&b.dam_pct_max.e()),
+        SortAndFilterBy::Tdmg => a.dam_pct_max.t().cmp(&b.dam_pct_max.t()),
+        SortAndFilterBy::Wdmg => a.dam_pct_max.w().cmp(&b.dam_pct_max.w()),
+        SortAndFilterBy::Fdmg => a.dam_pct_max.f().cmp(&b.dam_pct_max.f()),
+        SortAndFilterBy::Admg => a.dam_pct_max.a().cmp(&b.dam_pct_max.a()),
+        SortAndFilterBy::ExpB => a.max_exp_bonus.cmp(&b.max_exp_bonus),
+    }
 }
