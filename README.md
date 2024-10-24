@@ -31,16 +31,18 @@ The current toolkit consists of two main components: the build batch generation 
 - [x] Remaining combinations to process
 
 ## Step-by-step Setup Guide (Windows)
-1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
+
+1. Download the latest release's artifacts from [the releases page](https://github.com/WynnBuilderTools/WynnBuilderTools/releases)
 2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
 3. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `search_item -h` if you're having trouble with the search_item binary!
 
 ## Step-by-step Setup Guide (Linux)
-1. Download the latest release's artifacts from [the releases page](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/releases)
+
+1. Download the latest release's artifacts from [the releases page](https://github.com/WynnBuilderTools/WynnBuilderTools/releases)
 2. Extract its contents wherever you prefer, but make sure you can easily access the directory in a terminal!
 3. You're all set, open a terminal and run the binaries! Remember to make use of the example config.toml, and remember to run `./search_item -h` if you're having trouble with the search_item binary!
 
-If these instructions do not work for you, feel free to [open a new issue](https://github.com/TYTheBeast/WynnBuilderTools-Rekindled/issues/new/choose),
+If these instructions do not work for you, feel free to [open a new issue](https://github.com/WynnBuilderTools/WynnBuilderTools/issues/new/choose),
 or if you think there's some changes to be made to the step-by-step guide, feel free to open a pull request!
 
 ## Batch Generation Tool User Guide
@@ -63,7 +65,7 @@ binaries/
   │   └── id_map.json
 
 ├── config/
-  
+
   │   ├── config.toml
 
   │   └── items.json (automatically fetched from v1.0.0 onwards)
@@ -262,27 +264,27 @@ Usage: search_item [OPTIONS] --sort-by <SORT_BY>
 Options:
   -t, --type <TYPE>
           Apparel type
-          
+
           [possible values: helmets, chest-plate, leggings, boots, ring, bracelet, necklace]
 
   -l, --limit <LIMIT>
           A limit on the number of results, auto-inflated if the last item has the same value as multiple items
-          
+
           [default: 10]
 
       --min-lvl <MIN_LVL>
           Minimum level
-          
+
           [default: 1]
 
       --max-lvl <MAX_LVL>
           Maximum level
-          
+
           [default: 106]
 
   -o, --order-by <ORDER_BY>
           Order the results in ascending or descending order
-          
+
           [default: desc]
 
           Possible values:
