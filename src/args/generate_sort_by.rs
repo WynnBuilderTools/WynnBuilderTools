@@ -10,9 +10,20 @@ macro_rules! generate_sort_by {
             type Err = String;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                match s.to_lowercase().as_str() {
-                    $(lower!(stringify!($variant)) => Ok(SortAndFilterBy::$variant),)*
-                    _ => Err(format!("Unknown sort criterion: {}", s)),
+                // Convert kebab-case to PascalCase
+                let pascal = s.split('-')
+                    .map(|part| {
+                        let mut c = part.chars();
+                        match c.next() {
+                            None => String::new(),
+                            Some(f) => f.to_uppercase().chain(c).collect()
+                        }
+                    })
+                    .collect::<String>();
+
+                match pascal.as_str() {
+                    $(stringify!($variant) => Ok(SortAndFilterBy::$variant),)*
+                    _ => Err(format!("Unknown sort criterion: {}", s))
                 }
             }
         }
