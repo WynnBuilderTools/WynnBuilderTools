@@ -36,6 +36,8 @@ pub enum ArmourMaterial {
     Diamond,
     #[serde(rename = "golden")]
     Golden,
+    #[serde(rename = "gold")]
+    Gold,
     #[serde(rename = "iron")]
     Iron,
     #[serde(rename = "leather")]

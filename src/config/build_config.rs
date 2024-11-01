@@ -97,6 +97,12 @@ pub struct ThresholdFifth {
 }
 
 pub async fn load_config(path: impl AsRef<Path>) -> Result<Config, String> {
+    // Check if the config folder exists
+    let config_folder = path.as_ref().parent().unwrap();
+    if !config_folder.exists() {
+        tokio::fs::create_dir_all(config_folder).await.unwrap();
+    }
+
     // Check if the file exists
     if !path.as_ref().exists() {
         // Fetch the default config from https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml
