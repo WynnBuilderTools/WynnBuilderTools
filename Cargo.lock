@@ -3127,6 +3127,7 @@ dependencies = [
  "clap 4.5.19",
  "criterion",
  "fastrand 1.9.0",
+ "heck",
  "itertools",
  "num 0.4.3",
  "percentage",

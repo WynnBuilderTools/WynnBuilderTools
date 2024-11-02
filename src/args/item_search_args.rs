@@ -28,18 +28,14 @@ pub struct ItemSearchArgs {
     /// Minimum values for various attributes (format: attribute=value)
     ///
     /// Possible attributes:
-    /// - `lvl`, `hp`, `hpb`, `hprraw`, `hprpct`, `spadd`, `spreq`, `sdraw`, `sdpct`, `mr`, `spd`, `ls`, `expb`, `ndmg`, `edmg`, `tdmg`, `wdmg`, `fdmg`, `admg`
-    ///
-    /// Note: The inconsistency between case for `sort-by` and `min/max` is known and will be fixed in a future version.
+    /// - `lvl`, `hp`, `hpb`, `hpr-raw`, `hpr-pct`, `sp-add`, `sp-req`, `sd-raw`, `sd-pct`, `mr`, `spd`, `ls`, `exp-b`, `ndmg`, `edmg`, `tdmg`, `wdmg`, `fdmg`, `admg`
     #[arg(long = "min", value_parser = parse_key_val_sort_by, num_args = 0..)]
     pub min_values: Vec<(SortAndFilterBy, i32)>,
 
     /// Maximum values for various attributes (format: attribute=value)
     ///
     /// Possible attributes:
-    /// - `lvl`, `hp`, `hpb`, `hprraw`, `hprpct`, `spadd`, `spreq`, `sdraw`, `sdpct`, `mr`, `spd`, `ls`, `expb`, `ndmg`, `edmg`, `tdmg`, `wdmg`, `fdmg`, `admg`
-    ///
-    /// Note: The inconsistency between case for `sort-by` and `min/max` is known and will be fixed in a future version.
+    /// - `lvl`, `hp`, `hpb`, `hpr-raw`, `hpr-pct`, `sp-add`, `sp-req`, `sd-raw`, `sd-pct`, `mr`, `spd`, `ls`, `exp-b`, `ndmg`, `edmg`, `tdmg`, `wdmg`, `fdmg`, `admg`
     #[arg(long = "max", value_parser = parse_key_val_sort_by, num_args = 0..)]
     pub max_values: Vec<(SortAndFilterBy, i32)>,
 }
@@ -89,10 +85,10 @@ generate_sort_by! { item =>
     Hpb => item.hp_bonus_max,
     HprRaw => item.stat_max.hpr_raw() as i32,
     HprPct => item.stat_max.hpr_pct() as i32,
-    SPAdd => item.add.all() as i32,
-    SPReq => item.req.all() as i32,
-    SDRaw => item.stat_max.sd_raw() as i32,
-    SDPct => item.stat_max.sd_pct() as i32,
+    SpAdd => item.add.all() as i32,
+    SpReq => item.req.all() as i32,
+    SdRaw => item.stat_max.sd_raw() as i32,
+    SdPct => item.stat_max.sd_pct() as i32,
     Mr => item.stat_max.mr() as i32,
     Spd => item.stat_max.spd() as i32,
     Ls => item.stat_max.ls() as i32,

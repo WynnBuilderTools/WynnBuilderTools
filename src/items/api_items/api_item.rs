@@ -29,28 +29,22 @@ impl Display for AccessoryType {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum ArmourMaterial {
-    #[serde(rename = "chain")]
     Chain,
-    #[serde(rename = "diamond")]
     Diamond,
-    #[serde(rename = "golden")]
     Golden,
-    #[serde(rename = "iron")]
+    Gold,
     Iron,
-    #[serde(rename = "leather")]
     Leather,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum ArmourType {
-    #[serde(rename = "boots")]
     Boots,
-    #[serde(rename = "chestplate")]
     Chestplate,
-    #[serde(rename = "helmet")]
     Helmet,
-    #[serde(rename = "leggings")]
     Leggings,
 }
 
@@ -66,20 +60,14 @@ impl Display for ArmourType {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum AttackSpeed {
-    #[serde(rename = "fast")]
     Fast,
-    #[serde(rename = "normal")]
     Normal,
-    #[serde(rename = "slow")]
     Slow,
-    #[serde(rename = "super_fast")]
     SuperFast,
-    #[serde(rename = "super_slow")]
     SuperSlow,
-    #[serde(rename = "very_fast")]
     VeryFast,
-    #[serde(rename = "very_slow")]
     VerySlow,
 }
 
@@ -141,16 +129,12 @@ pub enum StatOrInt {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum ClassRequirement {
-    #[serde(rename = "archer")]
     Archer,
-    #[serde(rename = "assassin")]
     Assassin,
-    #[serde(rename = "mage")]
     Mage,
-    #[serde(rename = "shaman")]
     Shaman,
-    #[serde(rename = "warrior")]
     Warrior,
 }
 
@@ -167,32 +151,26 @@ pub struct DropMeta {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum DropRestriction {
-    #[serde(rename = "dungeon")]
     Dungeon,
-    #[serde(rename = "lootchest")]
     Lootchest,
-    #[serde(rename = "never")]
     Never,
-    #[serde(rename = "normal")]
     Normal,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Event {
-    #[serde(rename = "bonfire")]
     Bonfire,
-    #[serde(rename = "heroes")]
     Heroes,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Format {
-    #[serde(rename = "attribute")]
     Attribute,
-    #[serde(rename = "legacy")]
     Legacy,
-    #[serde(rename = "skin")]
     Skin,
 }
 
@@ -395,44 +373,29 @@ pub struct Identifications {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum DropMetaType {
-    #[serde(rename = "altar")]
     Altar,
-    #[serde(rename = "challenge")]
     Challenge,
-    #[serde(rename = "dungeon")]
     Dungeon,
-    #[serde(rename = "dungeonMerchant")]
     DungeonMerchant,
-    #[serde(rename = "lootrun")]
     Lootrun,
-    #[serde(rename = "merchant")]
     Merchant,
-    #[serde(rename = "miniboss")]
     Miniboss,
-    #[serde(rename = "quest")]
     Quest,
-    #[serde(rename = "raid")]
     Raid,
-    #[serde(rename = "event")]
     Event,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Rarity {
-    #[serde(rename = "common")]
     Common,
-    #[serde(rename = "fabled")]
     Fabled,
-    #[serde(rename = "legendary")]
     Legendary,
-    #[serde(rename = "mythic")]
     Mythic,
-    #[serde(rename = "rare")]
     Rare,
-    #[serde(rename = "set")]
     Set,
-    #[serde(rename = "unique")]
     Unique,
 }
 
@@ -465,10 +428,9 @@ pub enum Restrictions {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum EventType {
-    #[serde(rename = "event")]
     Event,
-    #[serde(rename = "merchant")]
     Merchant,
 }
 
@@ -481,16 +443,12 @@ pub struct ValueClass {
 }
 pub type ValueUnion = serde_json::Value;
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum WeaponType {
-    #[serde(rename = "bow")]
     Bow,
-    #[serde(rename = "dagger")]
     Dagger,
-    #[serde(rename = "relik")]
     Relik,
-    #[serde(rename = "spear")]
     Spear,
-    #[serde(rename = "wand")]
     Wand,
 }
 
@@ -507,12 +465,10 @@ impl Display for WeaponType {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum ItemType {
-    #[serde(rename = "accessory")]
     Accessory,
-    #[serde(rename = "armour")]
     Armour,
-    #[serde(rename = "weapon")]
     Weapon,
 }
 
