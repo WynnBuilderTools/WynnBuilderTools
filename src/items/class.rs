@@ -1,23 +1,44 @@
 use std::str::FromStr;
 
+use super::*;
+
 #[derive(Clone, Debug, Default)]
 pub enum Class {
     #[default]
-    Relik,
-    Bow,
-    Wand,
-    Dagger,
-    Spear,
+    Mage,
+    Warrior,
+    Archer,
+    Assassin,
+    Shaman,
 }
-
 impl Class {
-    pub fn class_def_mult(&self) -> f64 {
+    pub fn def_mult(&self) -> f64 {
         match &self {
-            Class::Relik => 0.60,
-            Class::Bow => 0.70,
-            Class::Wand => 0.80,
-            Class::Dagger => 1.0,
-            Class::Spear => 1.0,
+            Class::Shaman => 0.60,
+            Class::Archer => 0.70,
+            Class::Mage => 0.80,
+            Class::Assassin => 1.0,
+            Class::Warrior => 1.0,
+        }
+    }
+    pub fn weapon_type(&self) -> WeaponTypes {
+        match &self {
+            Class::Shaman => WeaponTypes::Relik,
+            Class::Archer => WeaponTypes::Bow,
+            Class::Mage => WeaponTypes::Wand,
+            Class::Assassin => WeaponTypes::Dagger,
+            Class::Warrior => WeaponTypes::Spear,
+        }
+    }
+}
+impl From<&Weapon> for Class {
+    fn from(value: &Weapon) -> Self {
+        match value.r#type {
+            WeaponTypes::Relik => Class::Shaman,
+            WeaponTypes::Bow => Class::Archer,
+            WeaponTypes::Wand => Class::Mage,
+            WeaponTypes::Dagger => Class::Assassin,
+            WeaponTypes::Spear => Class::Warrior,
         }
     }
 }
@@ -26,12 +47,37 @@ impl FromStr for Class {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "relik" => Ok(Class::Relik),
-            "bow" => Ok(Class::Bow),
-            "wand" => Ok(Class::Wand),
-            "dagger" => Ok(Class::Dagger),
-            "spear" => Ok(Class::Spear),
+            "Shaman" => Ok(Class::Shaman),
+            "Archer" => Ok(Class::Archer),
+            "Mage" => Ok(Class::Mage),
+            "Assassin" => Ok(Class::Assassin),
+            "Warrior" => Ok(Class::Warrior),
             _ => Err(format!("Invalid value for class, found '{}'", s)),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Default)]
+pub enum WeaponTypes {
+    #[default]
+    Relik,
+    Bow,
+    Wand,
+    Dagger,
+    Spear,
+}
+
+impl FromStr for WeaponTypes {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "relik" => Ok(WeaponTypes::Relik),
+            "bow" => Ok(WeaponTypes::Bow),
+            "wand" => Ok(WeaponTypes::Wand),
+            "dagger" => Ok(WeaponTypes::Dagger),
+            "spear" => Ok(WeaponTypes::Spear),
+            _ => Err(format!("Invalid value for weapon type, found '{}'", s)),
         }
     }
 }

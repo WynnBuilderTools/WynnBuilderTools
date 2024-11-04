@@ -321,7 +321,7 @@ fn calculate_stats(
         return Err(String::new());
     }
 
-    let max_ehp = ehp(&skill_point, max_hp, &weapon.class);
+    let max_ehp = ehp(&skill_point, max_hp, &Class::from(weapon));
     if let Some(threshold) = &config.threshold_fifth {
         if let Some(v) = threshold.min_ehp {
             if max_ehp < v {

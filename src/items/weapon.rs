@@ -6,7 +6,7 @@ use crate::*;
 pub struct Weapon {
     pub id: i32,
     pub name: String,
-    pub class: Class,
+    pub r#type: WeaponTypes,
 
     pub hp_bonus_max: i32,
     pub hp_bonus_min: i32,
@@ -68,7 +68,7 @@ impl TryFrom<&Item> for Weapon {
                 Range::from_str(value.f_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
                 Range::from_str(value.a_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
             ],
-            class: Class::from_str(value.r#type.as_str())?,
+            r#type: WeaponTypes::from_str(value.r#type.as_str())?,
             atk_spd: AtkSpd::from_str(
                 value
                     .atk_spd
