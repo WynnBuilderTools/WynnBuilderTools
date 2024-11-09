@@ -1,3 +1,4 @@
+mod ability;
 mod dam;
 mod damage_calculate;
 mod def;
@@ -7,7 +8,9 @@ mod hp;
 mod rolls;
 mod skill_point;
 
+pub use ability::*;
 pub use dam::*;
+pub use damage_calculate::*;
 pub use def::*;
 pub use encode::*;
 pub use exp::*;

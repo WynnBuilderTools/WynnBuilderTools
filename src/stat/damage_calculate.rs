@@ -1,41 +1,39 @@
 use crate::*;
 
-#[allow(dead_code)]
-struct Statistics {
+pub struct Statistics {
     // "nConvBase:4.Ice Snake Damage"
     // "wConvBase:4.Ice Snake Damage"
-    ability_dam_convert: DamagesConvert,
+    pub ability_dam_convert: DamagesConvert,
     // "nConvBase"
     // "wConvBase"
-    dam_convert: DamagesConvert,
+    pub dam_convert: DamagesConvert,
     // str dex int def agi
-    skill_point: [i32; 6],
+    pub skill_point: [i32; 6],
     // sdPct
-    sd_pct: f64,
+    pub sd_pct: f64,
     // nSdPct
     // wSdPct
-    sd_pct_s: DamagesConvert,
-    dam_pct: f64,
-    dam_pct_s: DamagesConvert,
-    r_sd_pct: f64,
-    r_dam_pct: f64,
+    pub sd_pct_s: DamagesConvert,
+    pub dam_pct: f64,
+    pub dam_pct_s: DamagesConvert,
+    pub r_sd_pct: f64,
+    pub r_dam_pct: f64,
     // rSdRaw
-    r_sd_raw: i32,
+    pub r_sd_raw: i32,
     // rDamRaw
-    r_dam_raw: i32,
-    sd_raw: i32,
-    sd_raw_s: [i32; 6],
+    pub r_dam_raw: i32,
+    pub sd_raw: i32,
+    pub sd_raw_s: [i32; 6],
     // damRaw
-    dam_raw: i32,
-    dam_raw_s: [i32; 6],
+    pub dam_raw: i32,
+    pub dam_raw_s: [i32; 6],
     // critDamPct
-    crit_dam_pct: f64,
+    pub crit_dam_pct: f64,
     // tDamAddMin tDamAddMax
     // wDamAddMin wDamAddMax
-    dam_add: Damages,
+    pub dam_add: Damages,
 }
-#[allow(dead_code)]
-struct Weapon {
+pub struct WeaponStat {
     // "nDam_"
     // "eDam_"
     // "tDam_"
@@ -49,10 +47,9 @@ struct Weapon {
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/damage_calc.js#L31
-#[allow(dead_code)]
-fn damage_calculate(
+pub fn damage_calculate(
     stats: &Statistics,
-    weapon: &Weapon,
+    weapon: &WeaponStat,
     dam_convert: &DamagesConvert,
 ) -> (Damages, Damages) {
     // 1. Get weapon damage (with powders).
@@ -193,7 +190,7 @@ mod tests {
                     Range { min: 3.0, max: 4.0 },
                 ]),
             },
-            &Weapon {
+            &WeaponStat {
                 damage: Damages::from_slice([
                     Default::default(),
                     Default::default(),

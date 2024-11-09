@@ -1,3 +1,4 @@
+mod ability;
 mod api_items;
 mod apparel;
 mod atk_spd;
@@ -6,12 +7,14 @@ mod comm_stat;
 mod dam;
 mod damages;
 mod item;
+mod major_id;
 mod point;
 mod range;
 mod weapon;
 
 use std::{fs::File, io::BufReader, path::Path};
 
+pub use ability::*;
 pub use api_items::*;
 pub use apparel::*;
 pub use atk_spd::*;
@@ -20,6 +23,7 @@ pub use comm_stat::*;
 pub use dam::*;
 pub use damages::*;
 pub use item::*;
+pub use major_id::*;
 pub use point::*;
 pub use range::*;
 pub use weapon::*;
