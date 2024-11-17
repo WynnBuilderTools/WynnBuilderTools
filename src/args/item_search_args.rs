@@ -99,4 +99,5 @@ generate_sort_by! { item =>
     Wdmg => item.dam_pct_max.w() as i32,
     Fdmg => item.dam_pct_max.f() as i32,
     Admg => item.dam_pct_max.a() as i32,
+    LootBonus => item.max_loot_bonus,
 }

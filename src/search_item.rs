@@ -135,5 +135,6 @@ fn compare_items(a: &Apparel, b: &Apparel, sort_by: SortAndFilterBy) -> std::cmp
         SortAndFilterBy::Fdmg => a.dam_pct_max.f().cmp(&b.dam_pct_max.f()),
         SortAndFilterBy::Admg => a.dam_pct_max.a().cmp(&b.dam_pct_max.a()),
         SortAndFilterBy::ExpB => a.max_exp_bonus.cmp(&b.max_exp_bonus),
+        SortAndFilterBy::LootBonus => a.max_loot_bonus.cmp(&b.max_loot_bonus),
     }
 }
