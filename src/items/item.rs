@@ -111,6 +111,8 @@ pub struct Item {
     pub a_dam_pct: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub xpb: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub loot_bonus: Option<i32>,
 }
 impl Item {
     pub fn as_req(&self) -> Point {

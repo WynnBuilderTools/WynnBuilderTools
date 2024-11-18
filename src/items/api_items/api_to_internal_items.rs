@@ -146,6 +146,7 @@ impl From<ApiItem> for Item {
                 f_dam_pct: ids.and_then(|ids| max_or_int(ids.fire_damage)),
                 a_dam_pct: ids.and_then(|ids| max_or_int(ids.air_damage)),
                 xpb: ids.and_then(|ids| max_or_int(ids.xp_bonus)),
+                loot_bonus: ids.and_then(|ids| max_or_int(ids.loot_bonus)),
             };
 
             item

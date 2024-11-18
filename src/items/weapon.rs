@@ -31,6 +31,9 @@ pub struct Weapon {
     pub min_exp_bonus: i32,
     pub max_exp_bonus: i32,
 
+    pub min_loot_bonus: i32,
+    pub max_loot_bonus: i32,
+
     pub fix_id: bool,
 }
 
@@ -44,6 +47,7 @@ impl TryFrom<&Item> for Weapon {
         let def_pct = value.as_def_pct();
         let dam_pct = value.as_dam_pct();
         let exp_bonus = value.xpb.unwrap_or(0);
+        let loot_bonus = value.loot_bonus.unwrap_or(0);
         let fix_id = value.as_fix_id();
 
         Ok(Self {
@@ -78,6 +82,8 @@ impl TryFrom<&Item> for Weapon {
             )?,
             min_exp_bonus: min_roll(&exp_bonus, fix_id),
             max_exp_bonus: max_roll(&exp_bonus, fix_id),
+            min_loot_bonus: min_roll(&loot_bonus, fix_id),
+            max_loot_bonus: max_roll(&loot_bonus, fix_id),
         })
     }
 }

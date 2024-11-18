@@ -4,6 +4,7 @@ mod def;
 mod encode;
 mod exp;
 mod hp;
+mod loot;
 mod rolls;
 mod skill_point;
 
@@ -12,6 +13,7 @@ pub use def::*;
 pub use encode::*;
 pub use exp::*;
 pub use hp::*;
+pub use loot::*;
 pub use rolls::*;
 pub use skill_point::*;
 
