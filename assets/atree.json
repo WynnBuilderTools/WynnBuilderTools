@@ -29,7 +29,7 @@
 							"name": "Arrow Bomb",
 							"type": "damage",
 							"multipliers": [
-								130,
+								140,
 								0,
 								0,
 								0,
@@ -374,7 +374,7 @@
 							"name": "Shield Damage",
 							"type": "damage",
 							"multipliers": [
-								90,
+								60,
 								0,
 								0,
 								0,
@@ -1143,7 +1143,7 @@
 						"name": "damMult.Focus"
 					},
 					"scaling": [
-						12
+						15
 					],
 					"slider_max": 3
 				}
@@ -2443,7 +2443,7 @@
 					"base_spell": 3,
 					"target_part": "Shrapnel Bomblet",
 					"multipliers": [
-						40,
+						80,
 						0,
 						0,
 						0,
@@ -3155,7 +3155,7 @@
 							"name": "Single Hit",
 							"type": "damage",
 							"multipliers": [
-								150,
+								170,
 								30,
 								0,
 								0,
@@ -3915,7 +3915,7 @@
 					"target_part": "Uppercut",
 					"cost": -5,
 					"multipliers": [
-						-70,
+						-60,
 						0,
 						0,
 						30,
@@ -4523,12 +4523,12 @@
 						{
 							"name": "Smite Damage",
 							"multipliers": [
-								100,
-								0,
-								20,
+								95,
 								0,
 								0,
-								0
+								15,
+								0,
+								10
 							]
 						}
 					]
@@ -5041,7 +5041,7 @@
 					"base_spell": 3,
 					"target_part": "Uppercut",
 					"multipliers": [
-						-70,
+						-30,
 						0,
 						0,
 						0,
@@ -5151,9 +5151,9 @@
 							"multipliers": [
 								70,
 								0,
+								0,
+								0,
 								30,
-								0,
-								0,
 								0
 							]
 						}
@@ -5193,9 +5193,9 @@
 							"multipliers": [
 								40,
 								0,
-								20,
 								0,
-								0,
+								10,
+								10,
 								0
 							]
 						}
@@ -5542,61 +5542,37 @@
 					"type": "stat_scaling",
 					"slider": true,
 					"slider_name": "Hits dealt",
-					"slider_max": 15,
+					"slider_max": 30,
 					"output": [
 						{
 							"type": "stat",
-							"name": "nDamAddMin"
+							"name": "nDamRaw"
 						},
 						{
 							"type": "stat",
-							"name": "nDamAddMax"
+							"name": "eDamRaw"
 						},
 						{
 							"type": "stat",
-							"name": "eDamAddMin"
+							"name": "tDamRaw"
 						},
 						{
 							"type": "stat",
-							"name": "eDamAddMax"
+							"name": "wDamRaw"
 						},
 						{
 							"type": "stat",
-							"name": "tDamAddMin"
+							"name": "fDamRaw"
 						},
 						{
 							"type": "stat",
-							"name": "tDamAddMax"
-						},
-						{
-							"type": "stat",
-							"name": "wDamAddMin"
-						},
-						{
-							"type": "stat",
-							"name": "wDamAddMax"
-						},
-						{
-							"type": "stat",
-							"name": "fDamAddMin"
-						},
-						{
-							"type": "stat",
-							"name": "fDamAddMax"
-						},
-						{
-							"type": "stat",
-							"name": "aDamAddMin"
-						},
-						{
-							"type": "stat",
-							"name": "aDamAddMax"
+							"name": "aDamRaw"
 						}
 					],
 					"scaling": [
-						4
+						5
 					],
-					"max": 60
+					"max": 150
 				}
 			],
 			"id": 64
@@ -5625,7 +5601,7 @@
 					"base_spell": 1,
 					"target_part": "Single Hit",
 					"multipliers": [
-						-30,
+						0,
 						0,
 						20,
 						0,
@@ -5674,12 +5650,12 @@
 					"base_spell": 4,
 					"target_part": "Cyclone",
 					"multipliers": [
+						20,
+						0,
+						0,
+						0,
 						10,
-						0,
-						0,
-						0,
-						5,
-						10
+						20
 					]
 				},
 				{
@@ -5721,10 +5697,10 @@
 					"multipliers": [
 						70,
 						0,
-						10,
 						0,
+						5,
 						0,
-						0
+						5
 					]
 				}
 			],
@@ -5807,10 +5783,10 @@
 					"type": "replace_spell",
 					"name": "Bloodlust Damage",
 					"base_spell": 10,
-					"display": "Damage",
+					"display": "Annihilation",
 					"parts": [
 						{
-							"name": "Damage",
+							"name": "Annihilation",
 							"multipliers": [
 								150,
 								0,
@@ -5820,6 +5796,19 @@
 								0
 							]
 						}
+					]
+				},
+				{
+					"type": "stat_scaling",
+					"slider": true,
+					"slider_name": "Corrupted",
+					"behavior": "modify",
+					"output": {
+						"type": "stat",
+						"name": "damMult.Bloodlust:3.Annihilation"
+					},
+					"scaling": [
+						5
 					]
 				}
 			],
@@ -6019,7 +6008,7 @@
 		{
 			"display_name": "Shooting Star",
 			"desc": "Drastically increase the speed of your Meteor ability.",
-			"base_abil": 3,
+			"base_abil": 0,
 			"parents": [
 				1
 			],
@@ -7101,7 +7090,7 @@
 		{
 			"display_name": "Larger Heal",
 			"desc": "Increase your Heal's range.",
-			"base_abil": 1,
+			"base_abil": 7,
 			"archetype": "Light Bender",
 			"archetype_req": 0,
 			"parents": [
@@ -7139,7 +7128,7 @@
 		{
 			"display_name": "Larger Mana Bank",
 			"desc": "Increase your maximum Mana Bank by +30.",
-			"base_abil": 1,
+			"base_abil": 22,
 			"archetype": "Arcanist",
 			"archetype_req": 0,
 			"parents": [
@@ -7251,7 +7240,7 @@
 		{
 			"display_name": "Pyrokinesis",
 			"desc": "When your Mana Bank reaches 30, your Main Attack will explode upon impact with enemies. (Damage is dealt as Main Attack Damage)",
-			"base_abil": 4,
+			"base_abil": 22,
 			"archetype": "Arcanist",
 			"archetype_req": 4,
 			"parents": [
@@ -7675,6 +7664,12 @@
 				{
 					"type": "add_spell_prop",
 					"base_spell": 1,
+					"target_part": "Heal",
+					"power": 0.05
+				},
+				{
+					"type": "add_spell_prop",
+					"base_spell": 1,
 					"display": "Total Heal",
 					"target_part": "Total Heal",
 					"hits": {
@@ -7805,11 +7800,11 @@
 							"name": "Single Orb",
 							"type": "damage",
 							"multipliers": [
-								150,
+								120,
 								0,
 								0,
 								0,
-								50,
+								30,
 								0
 							]
 						},
@@ -7851,7 +7846,7 @@
 		{
 			"display_name": "Larger Mana Bank II",
 			"desc": "Increase your maximum Mana Bank by +30.",
-			"base_abil": 1,
+			"base_abil": 22,
 			"archetype": "Arcanist",
 			"archetype_req": 0,
 			"parents": [
@@ -7916,7 +7911,7 @@
 		{
 			"display_name": "Psychokinesis",
 			"desc": "Meteor will launch directly from you as a slow projectile.",
-			"base_abil": 3,
+			"base_abil": 0,
 			"archetype": "Arcanist",
 			"archetype_req": 5,
 			"parents": [
@@ -8882,6 +8877,7 @@
 					"type": "add_spell_prop",
 					"base_spell": 0,
 					"target_part": "Melee",
+					"behavior": "modify",
 					"multipliers": [
 						-40,
 						0,
@@ -9282,7 +9278,7 @@
 							"name": "Backstab Damage",
 							"type": "damage",
 							"multipliers": [
-								200,
+								250,
 								50,
 								0,
 								0,
@@ -9550,7 +9546,6 @@
 				"col": 7,
 				"icon": "node_3"
 			},
-			"properties": {},
 			"effects": [
 				{
 					"type": "replace_spell",
@@ -9937,7 +9932,7 @@
 		},
 		{
 			"display_name": "Weightless",
-			"desc": "You gain +0.35 Mana if you hit an enemy while airborne. (1.25+ blocks off the ground to be airborne)",
+			"desc": "You gain +0.6 Mana if you hit an enemy while airborne. (1.25+ blocks off the ground to be airborne)",
 			"archetype": "Acrobat",
 			"archetype_req": 3,
 			"parents": [
@@ -11117,7 +11112,7 @@
 		},
 		{
 			"display_name": "Better Weightless",
-			"desc": "Weightless will grant +0.25 more mana.",
+			"desc": "Weightless will grant +0.6 more mana.",
 			"archetype": "",
 			"archetype_req": 0,
 			"base_abil": 34,
@@ -12158,7 +12153,8 @@
 			"archetype": "Ritualist",
 			"base_abil": 0,
 			"parents": [
-				12
+				12,
+				18
 			],
 			"dependencies": [
 				0
@@ -12199,7 +12195,8 @@
 			"archetype": "Acolyte",
 			"parents": [
 				13,
-				19
+				19,
+				17
 			],
 			"dependencies": [
 				9
@@ -12207,7 +12204,7 @@
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 12,
+				"row": 13,
 				"col": 6,
 				"icon": "node_1"
 			},
@@ -12244,7 +12241,7 @@
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 12,
+				"row": 13,
 				"col": 8,
 				"icon": "node_1"
 			},
@@ -12368,7 +12365,7 @@
 			"cost": 2,
 			"display": {
 				"row": 15,
-				"col": 4,
+				"col": 3,
 				"icon": "node_3"
 			},
 			"properties": {},
@@ -12410,7 +12407,6 @@
 			"archetype": "Acolyte",
 			"archetype_req": 3,
 			"parents": [
-				18,
 				19
 			],
 			"dependencies": [
@@ -12422,7 +12418,7 @@
 			"cost": 2,
 			"display": {
 				"row": 15,
-				"col": 7,
+				"col": 8,
 				"icon": "node_3"
 			},
 			"properties": {
@@ -12623,11 +12619,10 @@
 				24,
 				25
 			],
-			"dependencies": [
-				21
-			],
+			"dependencies": [],
 			"blockers": [],
 			"cost": 2,
+			"archetype_req": 4,
 			"display": {
 				"row": 18,
 				"col": 3,
@@ -12754,18 +12749,17 @@
 			"base_abil": 9,
 			"archetype": "Ritualist",
 			"parents": [
-				25,
-				33
+				21
 			],
 			"dependencies": [
 				21
 			],
 			"blockers": [],
-			"cost": 2,
+			"cost": 1,
 			"display": {
-				"row": 20,
-				"col": 4,
-				"icon": "node_2"
+				"row": 15,
+				"col": 6,
+				"icon": "node_0"
 			},
 			"properties": {},
 			"effects": [
@@ -12786,8 +12780,7 @@
 			"archetype": "Acolyte",
 			"base_abil": 22,
 			"parents": [
-				26,
-				32
+				26
 			],
 			"dependencies": [
 				22
@@ -12859,8 +12852,8 @@
 			"blockers": [],
 			"cost": 1,
 			"display": {
-				"row": 21,
-				"col": 2,
+				"row": 22,
+				"col": 1,
 				"icon": "node_0"
 			},
 			"properties": {
@@ -12892,18 +12885,17 @@
 			"desc": "When casting Uproot, instead wear the Mask of the Fanatic. While wearing this mask, the mana cost of Totem is decreased and you gain resistance at the cost of reduced walk speed.",
 			"base_abil": 7,
 			"archetype": "Ritualist",
-			"archetype_req": 3,
+			"archetype_req": 2,
 			"parents": [
-				32,
-				33,
-				37
+				25,
+				33
 			],
 			"dependencies": [],
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 21,
-				"col": 5,
+				"row": 20,
+				"col": 4,
 				"icon": "node_3"
 			},
 			"properties": {},
@@ -12946,7 +12938,7 @@
 			"archetype": "Acolyte",
 			"parents": [
 				33,
-				36
+				38
 			],
 			"dependencies": [],
 			"blockers": [],
@@ -12965,8 +12957,11 @@
 			"desc": "After switching from a Mask to another 2 times, gain 30 mana.",
 			"base_abil": 7,
 			"archetype": "Ritualist",
+			"archetype_req": 4,
 			"parents": [
-				36
+				36,
+				37,
+				33
 			],
 			"dependencies": [
 				21
@@ -12974,8 +12969,8 @@
 			"blockers": [],
 			"cost": 1,
 			"display": {
-				"row": 22,
-				"col": 4,
+				"row": 21,
+				"col": 5,
 				"icon": "node_0"
 			},
 			"properties": {
@@ -13079,7 +13074,7 @@
 			"archetype": "Ritualist",
 			"parents": [
 				40,
-				36,
+				38,
 				43
 			],
 			"dependencies": [
@@ -13179,8 +13174,7 @@
 			"desc": "Reduce the Mana cost of Aura.",
 			"base_abil": 9,
 			"parents": [
-				39,
-				40,
+				49,
 				45
 			],
 			"dependencies": [
@@ -13189,7 +13183,7 @@
 			"blockers": [],
 			"cost": 1,
 			"display": {
-				"row": 26,
+				"row": 28,
 				"col": 1,
 				"icon": "node_0"
 			},
@@ -13208,9 +13202,9 @@
 			"desc": "Increase Totem's damage.",
 			"base_abil": 0,
 			"parents": [
-				44,
-				41,
-				40
+				50,
+				51,
+				44
 			],
 			"dependencies": [
 				0
@@ -13218,7 +13212,7 @@
 			"blockers": [],
 			"cost": 1,
 			"display": {
-				"row": 26,
+				"row": 28,
 				"col": 4,
 				"icon": "node_0"
 			},
@@ -13304,8 +13298,7 @@
 			"display_name": "Totemic Shatter",
 			"desc": "While wearing the Mask of the Fanatic, your Totem will shatter upon impacting the ground, rapidly triggering 8s worth of its effects. Regeneration will only heal 50% of its usual amount.",
 			"parents": [
-				44,
-				45
+				36
 			],
 			"dependencies": [
 				36
@@ -13314,7 +13307,7 @@
 			"archetype": "Ritualist",
 			"cost": 2,
 			"display": {
-				"row": 27,
+				"row": 21,
 				"col": 3,
 				"icon": "node_2"
 			},
@@ -13356,9 +13349,10 @@
 			"display_name": "Depersonalization",
 			"desc": "Masquerade will need -1 Mask switch to trigger. Reduce the mana given by -10.",
 			"archetype": "Ritualist",
-			"archetype_req": 6,
+			"archetype_req": 7,
 			"base_abil": 7,
 			"parents": [
+				51,
 				45
 			],
 			"dependencies": [
@@ -13367,7 +13361,7 @@
 			"blockers": [],
 			"cost": 1,
 			"display": {
-				"row": 27,
+				"row": 29,
 				"col": 5,
 				"icon": "node_0"
 			},
@@ -13399,7 +13393,8 @@
 			"archetype": "Summoner",
 			"archetype_req": 8,
 			"parents": [
-				44,
+				39,
+				40,
 				50
 			],
 			"dependencies": [
@@ -13408,7 +13403,7 @@
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 28,
+				"row": 26,
 				"col": 1,
 				"icon": "node_3"
 			},
@@ -13453,21 +13448,21 @@
 			"id": 49
 		},
 		{
-			"display_name": "Mask of the Coward",
-			"desc": "When casting Uproot, instead wear the Mask of the Coward. While wearing this mask, the mana cost of Haul is reduced and you gain walk speed at the cost of reduced damage.",
+			"display_name": "Mask of the Heretic",
+			"desc": "When casting Uproot, instead wear the Mask of the Heretic. While wearing this mask, the mana cost of Haul is reduced and you gain walk speed at the cost of reduced damage.",
 			"base_abil": 7,
 			"archetype": "Ritualist",
-			"archetype_req": 7,
+			"archetype_req": 2,
 			"parents": [
-				45,
+				41,
 				49,
-				51
+				40
 			],
 			"dependencies": [],
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 28,
+				"row": 26,
 				"col": 4,
 				"icon": "node_3"
 			},
@@ -13482,7 +13477,7 @@
 				},
 				{
 					"type": "raw_stat",
-					"toggle": "Mask of the Coward",
+					"toggle": "Mask of the Heretic",
 					"bonuses": [
 						{
 							"type": "stat",
@@ -13509,7 +13504,6 @@
 			"desc": "For every 1% Water Damage you have from items, buff Aura's healing power by +0.3%.",
 			"parents": [
 				46,
-				50,
 				52
 			],
 			"dependencies": [
@@ -13576,7 +13570,7 @@
 			"base_abil": 7,
 			"archetype": "Summoner",
 			"parents": [
-				49
+				44
 			],
 			"dependencies": [
 				7
@@ -13596,13 +13590,13 @@
 			"id": 53
 		},
 		{
-			"display_name": "Chant of the Coward",
-			"desc": "When switching to the Mask of the Coward, damage and knockback nearby enemies.",
+			"display_name": "Chant of the Heretic",
+			"desc": "When switching to the Mask of the Heretic, damage and knockback nearby enemies.",
 			"archetype": "Ritualist",
 			"archetype_req": 0,
 			"parents": [
-				51,
-				50
+				48,
+				58
 			],
 			"dependencies": [
 				50
@@ -13610,7 +13604,7 @@
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 29,
+				"row": 31,
 				"col": 5,
 				"icon": "node_1"
 			},
@@ -13620,7 +13614,7 @@
 			"effects": [
 				{
 					"type": "add_spell_prop",
-					"target_part": "Chant of the Coward",
+					"target_part": "Chant of the Heretic",
 					"base_spell": 4,
 					"multipliers": [
 						200,
@@ -13630,7 +13624,7 @@
 						0,
 						0
 					],
-					"display": "Chant of the Coward"
+					"display": "Chant of the Heretic"
 				}
 			],
 			"id": 54
@@ -13702,16 +13696,15 @@
 			"desc": "When switching to Mask of the Fanatic, temporarily give massive resistance to yourself and allies (8s cooldown).",
 			"base_abil": 7,
 			"archetype": "Ritualist",
-			"archetype_req": 9,
+			"archetype_req": 0,
 			"parents": [
-				54,
-				58
+				50
 			],
 			"dependencies": [],
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 31,
+				"row": 27,
 				"col": 5,
 				"icon": "node_1"
 			},
@@ -13737,7 +13730,7 @@
 			"archetype": "Acolyte",
 			"parents": [
 				55,
-				57
+				54
 			],
 			"dependencies": [
 				46
@@ -13772,7 +13765,7 @@
 			"desc": "Increase your maximum Totem by +1 and reduce Totem and Aura's damage.",
 			"base_abil": 0,
 			"archetype": "Summoner",
-			"archetype_req": 2,
+			"archetype_req": 8,
 			"parents": [
 				56,
 				60
@@ -13833,7 +13826,7 @@
 			"parents": [
 				56,
 				59,
-				61
+				62
 			],
 			"dependencies": [
 				9
@@ -13873,12 +13866,12 @@
 		},
 		{
 			"display_name": "Seeking Totem",
-			"desc": "When wearing the Mask of the Coward, your Totem will move towards you, unless you are within its range.",
+			"desc": "When wearing the Mask of the Heretic, your Totem will move towards you, unless you are within its range.",
 			"base_abil": 0,
 			"archetype": "Ritualist",
 			"parents": [
-				57,
-				60
+				50,
+				49
 			],
 			"dependencies": [
 				36
@@ -13886,8 +13879,8 @@
 			"blockers": [],
 			"cost": 1,
 			"display": {
-				"row": 32,
-				"col": 4,
+				"row": 27,
+				"col": 3,
 				"icon": "node_0"
 			},
 			"properties": {},
@@ -13896,11 +13889,12 @@
 		},
 		{
 			"display_name": "Frog Dance",
-			"desc": "When wearing the Mask of the Coward, Haul will make you bounce off the ground 3 times at increasing speed and deal damage to nearby enemies.",
+			"desc": "When wearing the Mask of the Heretic, Haul will make you bounce off the ground 3 times at increasing speed and deal damage to nearby enemies.",
 			"archetype": "Ritualist",
 			"base_abil": 5,
 			"parents": [
-				57
+				54,
+				60
 			],
 			"dependencies": [
 				50
@@ -13908,8 +13902,8 @@
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 33,
-				"col": 5,
+				"row": 32,
+				"col": 4,
 				"icon": "node_2"
 			},
 			"properties": {},
@@ -13948,7 +13942,7 @@
 				},
 				{
 					"type": "raw_stat",
-					"toggle": "Mask of the Coward",
+					"toggle": "Mask of the Heretic",
 					"bonuses": [
 						{
 							"type": "stat",
@@ -13966,7 +13960,7 @@
 			"archetype": "Ritualist",
 			"base_abil": 7,
 			"parents": [
-				62
+				36
 			],
 			"dependencies": [
 				21
@@ -13974,7 +13968,7 @@
 			"blockers": [],
 			"cost": 2,
 			"display": {
-				"row": 34,
+				"row": 22,
 				"col": 4,
 				"icon": "node_1"
 			},
@@ -14068,7 +14062,7 @@
 			"archetype": "Ritualist",
 			"archetype_req": 11,
 			"parents": [
-				62,
+				54,
 				68
 			],
 			"dependencies": [

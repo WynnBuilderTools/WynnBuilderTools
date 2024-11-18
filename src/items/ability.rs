@@ -12,17 +12,18 @@ pub struct Abilities {
     pub shaman: Vec<ATreeNodeData>,
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L15
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L15
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ATreeNodeData {
     pub display_name: String,
     pub id: i32,
+    pub parents: Vec<i32>,
     pub base_abil: Option<i32>,
     pub cost: i32,
     pub effects: Vec<Effect>,
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L36
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L36
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
 #[serde(rename_all = "snake_case")]
@@ -36,7 +37,7 @@ pub enum Effect {
     StatScaling(StatScaling),
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/damage_calc.js#L233
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/damage_calc.js#L233
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ReplaceSpell {
     name: String,
@@ -49,7 +50,7 @@ pub struct ReplaceSpell {
     parts: Vec<Part>,
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/damage_calc.js#L252
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/damage_calc.js#L252
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 enum Part {
@@ -67,7 +68,7 @@ enum Part {
     },
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L43
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L43
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AddSpellProp {
     base_spell: i32,
@@ -81,7 +82,7 @@ pub struct AddSpellProp {
     hide: Option<bool>,
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L63
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L63
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConvertSpellConv {
     pub base_spell: i32,
@@ -89,7 +90,7 @@ pub struct ConvertSpellConv {
     pub conversion: String,
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L70
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L70
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RawStat {
     /// if toggle is Some, the RawStat is option effect
@@ -111,7 +112,7 @@ impl Default for Behavior {
     }
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L79
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L79
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
 #[serde(rename_all = "snake_case")]
@@ -210,7 +211,7 @@ where
     }
 }
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/7afed640451f2a085640b6c5e7259fcc827119ef/js/builder/atree.js#L85
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L85
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StatScaling {
     // TODO
