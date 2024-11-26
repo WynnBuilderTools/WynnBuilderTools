@@ -1,3 +1,4 @@
+use std::ops::AddAssign;
 use std::simd::cmp::SimdPartialEq;
 use std::simd::cmp::SimdPartialOrd;
 use std::{ops::Add, simd::i16x8};
@@ -9,6 +10,13 @@ use crate::*;
 pub struct CommonStat {
     pub inner: i16x8,
 }
+
+impl AddAssign<&CommonStat> for CommonStat {
+    fn add_assign(&mut self, rhs: &Self) {
+        self.inner += rhs.inner;
+    }
+}
+
 impl CommonStat {
     #[allow(clippy::too_many_arguments)]
     pub fn new(

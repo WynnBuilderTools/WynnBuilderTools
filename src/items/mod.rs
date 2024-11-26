@@ -10,6 +10,7 @@ mod item;
 mod major_id;
 mod point;
 mod range;
+mod spell;
 mod weapon;
 
 use std::{fs::File, io::BufReader, path::Path};
@@ -26,6 +27,7 @@ pub use item::*;
 pub use major_id::*;
 pub use point::*;
 pub use range::*;
+pub use spell::*;
 pub use weapon::*;
 
 /// Load items from a JSON file

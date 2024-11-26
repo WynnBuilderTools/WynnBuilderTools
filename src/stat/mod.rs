@@ -2,9 +2,9 @@ mod ability;
 mod dam;
 mod damage_calculate;
 mod def;
-mod hppeng;
 mod exp;
 mod hp;
+mod hppeng;
 mod rolls;
 mod skill_point;
 
@@ -12,9 +12,9 @@ pub use ability::*;
 pub use dam::*;
 pub use damage_calculate::*;
 pub use def::*;
-pub use hppeng::*;
 pub use exp::*;
 pub use hp::*;
+pub use hppeng::*;
 pub use rolls::*;
 pub use skill_point::*;
 

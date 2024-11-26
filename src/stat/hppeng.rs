@@ -116,7 +116,7 @@ impl TreeNode for ATreeNodeData {
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L416
-fn decode_atree<'a>(
+pub fn decode_atree<'a>(
     abilities: &'a Vec<ATreeNodeData>,
     atree_url: &'a str,
 ) -> Vec<&'a ATreeNodeData> {
