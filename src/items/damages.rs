@@ -174,11 +174,24 @@ impl PartialEq for Damages {
     }
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct DamagesConvert {
     inner: [f64; 6],
 }
+impl From<&Dam> for DamagesConvert {
+    fn from(value: &Dam) -> Self {
+        Self::from_slice([
+            value.inner[0] as f64 / 100.0,
+            value.inner[1] as f64 / 100.0,
+            value.inner[2] as f64 / 100.0,
+            value.inner[3] as f64 / 100.0,
+            value.inner[4] as f64 / 100.0,
+            value.inner[5] as f64 / 100.0,
+        ])
+    }
+}
 impl DamagesConvert {
+    /// n e t w f a
     pub fn from_slice(items: [f64; 6]) -> Self {
         Self { inner: items }
     }

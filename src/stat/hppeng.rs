@@ -1,48 +1,114 @@
 use std::collections::{HashMap, HashSet};
+use std::fmt::Write;
 use std::hash::Hash;
 
+use url::Url;
+
 use crate::*;
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/build_encode_decode.js#L285
-///
+
 /// ## url index:
-/// example: #9_0Au0K70r50Qr0OK0K20K40OH0Qf160e2I1S0e1g00010039I1004fI0z0z0+0+0+0+0o1T--hOsKbv3
+/// fragment example: #9_0Au0K70r50Qr0OK0K20K40OH0Qf160e2I1S0e1g00010039I1004fI0z0z0+0+0+0+0o1T--hOsKbv3
 /// - version "9"
-/// - items "0Au0K70r50Qr0OK0K20K40OH0Qf" [len 27]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L153
+/// - apparels+weapon "0Au0K70r50Qr0OK0K20K40OH0Qf" [len 27]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L153
 /// - skill point "160e2I1S0e" [len 10]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L224
 /// - level "1g" [len 2]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L221
 /// - powder "00010039I1004fI" [len 5*(1+5*?)]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L231
 /// - tomes "0z0z0+0+0+0+0o1T" [len 16]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L235
 /// - ability "--hOsKbv3" [len last]: https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/builder/build_encode_decode.js#L268
-pub fn encode_build(
-    apparel_ids: [i32; 8],
-    lvl: i32,
-    weapon_id: i32,
-    skill_points: [i32; 5],
-) -> String {
-    let mut build_string = String::from("");
+#[derive(Debug, Clone, PartialEq)]
+pub struct HppengCodes {
+    pub prefix: String,
+    pub version: String,
+    pub items: String,
+    pub skill_point: String,
+    pub level: String,
+    pub powder: String,
+    pub tomes: String,
+    pub ability: String,
+}
+impl HppengCodes {
+    pub fn split_hppeng_url(url: &str) -> Self {
+        let mut url = Url::parse(url).unwrap();
+        let fragment = url.fragment().unwrap().to_owned();
 
-    let build_version = 9;
+        url.set_fragment(None);
+        let url_prefix = url.to_string();
 
-    // apparels
-    for id in apparel_ids {
-        build_string = format!("{}{}", build_string, from_int_n(id, 3));
+        let version = fragment[0..1].to_string();
+        let items_end = 2 + 27;
+        let items = fragment[2..items_end].to_string();
+        let skill_point_end = items_end + 10;
+        let skill_point = fragment[items_end..skill_point_end].to_string();
+        let level_end = skill_point_end + 2;
+        let level = fragment[skill_point_end..level_end].to_string();
+
+        let powder_length = calculate_powder_length(&fragment[level_end..].to_string());
+        let powder_end = level_end + powder_length;
+        let powder = fragment[level_end..powder_end].to_string();
+
+        let tomes_end = powder_end + 16;
+        let tomes = fragment[powder_end..tomes_end].to_string();
+        let ability = fragment[tomes_end..].to_string();
+
+        Self {
+            prefix: url_prefix,
+            version,
+            items,
+            skill_point,
+            level,
+            powder,
+            tomes,
+            ability,
+        }
     }
-    // weapon
-    build_string = format!("{}{}", build_string, from_int_n(weapon_id, 3));
-    // skill points
-    for skill_point in skill_points {
-        build_string = format!("{}{}", build_string, from_int_n(skill_point, 2));
-    }
-    // lvl
-    build_string = format!("{}{}", build_string, from_int_n(lvl, 2));
-    // // powders
-    // build_string = format!("{}{}", build_string, "00000");
-    // // tomes
-    // for id in [61, 61, 62, 62, 62, 62, 63] {
-    //     build_string = format!("{}{}", build_string, from_int_n(id, 2));
-    // }
+    pub fn generate_url(
+        &self,
+        version: Option<&str>,
+        items: Option<[i32; 9]>,
+        skill_point: Option<[i32; 5]>,
+        level: Option<i32>,
+    ) -> String {
+        let items = items.map(|value| value.map(|id| from_int_n(id, 3)).join(""));
+        let skill_point = skill_point.map(|value| value.map(|point| from_int_n(point, 2)).join(""));
+        let level = level.map(|value| from_int_n(value, 2));
 
-    format!("{}_{}", build_version, build_string)
+        let mut template = String::new();
+        write!(&mut template, "{}", self.prefix).unwrap();
+        write!(&mut template, "#{}_", version.unwrap_or(&self.version)).unwrap();
+        write!(&mut template, "{}", items.unwrap_or(self.items.clone())).unwrap();
+        write!(
+            &mut template,
+            "{}",
+            skill_point.unwrap_or(self.skill_point.clone())
+        )
+        .unwrap();
+        write!(&mut template, "{}", level.unwrap_or(self.level.clone())).unwrap();
+        write!(&mut template, "{}", self.powder).unwrap();
+        write!(&mut template, "{}", self.tomes).unwrap();
+        write!(&mut template, "{}", self.ability).unwrap();
+        template
+    }
+}
+/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/d952c489f021694113ef89cd0a7452c42ce0ccac/js/builder/build_encode_decode.js#L11
+fn calculate_powder_length(mut powder_info: &str) -> usize {
+    let mut total_length = 0;
+
+    for _ in 0..5 {
+        if powder_info.is_empty() {
+            break;
+        }
+        let n_blocks = match powder_info.chars().next() {
+            Some(c) => c,
+            None => break,
+        };
+        total_length += 1;
+        let n_blocks = to_int(&n_blocks.to_string()) as usize;
+
+        total_length += n_blocks * 5;
+        powder_info = &powder_info[1 + n_blocks * 5..];
+    }
+
+    total_length
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/197e50863b366a32251dc77c0511d96004d754d4/js/utils.js#L87
@@ -391,15 +457,48 @@ mod tests {
     }
 
     #[test]
-    fn encode_build_works() {
+    fn split_hppeng_url_works() {
         assert_eq!(
-            "9_04004B04C0482SK2SL2SM2SN03E00000000001g",
-            encode_build(
-                [256, 267, 268, 264, 10004, 10005, 10006, 10007],
-                106,
-                206,
-                [0, 0, 0, 0, 0]
+            HppengCodes {
+                prefix: "https://hppeng-wynn.github.io/builder/?v=10".to_owned(),
+                version: "9".to_owned(),
+                items: "2SG2SH2SI2SJ2SK2SL2SM2SN0Qf".to_owned(),
+                skill_point: "00002I0000".to_owned(),
+                level: "1g".to_owned(),
+                powder: "00000".to_owned(),
+                tomes: "0z0z0+0+0+0+0-1T".to_owned(),
+                ability: "--hOsK5v3".to_owned(),
+            },
+            HppengCodes::split_hppeng_url("https://hppeng-wynn.github.io/builder/?v=10#9_2SG2SH2SI2SJ2SK2SL2SM2SN0Qf00002I00001g000000z0z0+0+0+0+0-1T--hOsK5v3")
+        )
+    }
+    #[test]
+    fn generate_url_works() {
+        let test = HppengCodes {
+            prefix: "".to_owned(),
+            version: "".to_owned(),
+            items: "".to_owned(),
+            skill_point: "".to_owned(),
+            level: "".to_owned(),
+            powder: "".to_owned(),
+            tomes: "".to_owned(),
+            ability: "".to_owned(),
+        };
+        assert_eq!(
+            "#9_04004B04C0482SK2SL2SM2SN03E00000000001g",
+            test.generate_url(
+                Some("9"),
+                Some([256, 267, 268, 264, 10004, 10005, 10006, 10007, 206]),
+                Some([0, 0, 0, 0, 0]),
+                Some(106),
             )
+        );
+    }
+    #[test]
+    fn calculate_powder_length_works() {
+        assert_eq!(
+            15,
+            calculate_powder_length("00010039I1004fI0z0z0+0+0+0+0o1T--hOsKbv3")
         );
     }
 

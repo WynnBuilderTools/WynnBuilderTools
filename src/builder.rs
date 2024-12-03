@@ -5,6 +5,8 @@ use std::{
     borrow::BorrowMut,
     collections::VecDeque,
     fmt,
+    fs::File,
+    io::BufReader,
     sync::{
         atomic::{AtomicUsize, Ordering},
         Arc,
@@ -19,11 +21,13 @@ use wynn_build_tools::*;
 #[tokio::main]
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
+    let hppeng_codes: HppengCodes = HppengCodes::split_hppeng_url(&config.hppeng.template_url);
 
     let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
         Ok(v) => v,
         Err(_) => {
-            let api_fetch_attempt = fetch_json_from_config(&config.hppeng.items_file, &config).await;
+            let api_fetch_attempt =
+                fetch_json_from_config(&config.hppeng.items_file, &config).await;
 
             let new_path = match api_fetch_attempt {
                 Ok(v) => v,
@@ -36,8 +40,15 @@ async fn main() {
                 Ok(v) => v,
                 Err(e) => panic!("{}", e),
             }
-        },
+        }
     };
+
+    let file = File::open("assets/atree.json")
+        .expect("The file `atree.json` should exist in the folder assets.");
+    let reader = BufReader::new(file);
+    let abilities: Abilities = serde_json::from_reader(reader).unwrap();
+    let active_abilities = decode_atree(&abilities.warrior, &hppeng_codes.ability);
+    let (common_stat, dam_raw, dam_pct, dam_add, spells) = atree_merge(&active_abilities);
 
     let weapon = weapons
         .iter()
@@ -93,8 +104,21 @@ async fn main() {
                 combination[..2].copy_from_slice(&ring_combination);
 
                 if let Ok(stat) = calculate_stats(&config, &combination, weapon) {
-                    let code = encode_build(
-                        [
+                    let common_stat = &common_stat + &stat.max_stat;
+                    let dam_pct = &dam_pct + &stat.max_dam_pct;
+
+                    let spell_damage = calculate_spell_damage(
+                        &common_stat,
+                        &stat.skill_point,
+                        &dam_pct,
+                        weapon,
+                        dam_raw,
+                        &dam_add,
+                        &spells,
+                    );
+                    let url = hppeng_codes.generate_url(
+                        Some("9"),
+                        Some([
                             combination[2].id,
                             combination[3].id,
                             combination[4].id,
@@ -103,25 +127,27 @@ async fn main() {
                             combination[1].id,
                             combination[6].id,
                             combination[7].id,
-                        ],
-                        config.player.lvl,
-                        weapon.id,
-                        [
+                            weapon.id,
+                        ]),
+                        Some([
                             stat.skill_point.original.e() as i32,
                             stat.skill_point.original.t() as i32,
                             stat.skill_point.original.w() as i32,
                             stat.skill_point.original.f() as i32,
                             stat.skill_point.original.a() as i32,
-                        ],
-                    );
-
-                    let url = format!(
-                        "{}{}{}",
-                        config.hppeng.url_prefix, code, config.hppeng.url_suffix
+                        ]),
+                        Some(config.player.lvl),
                     );
                     if config.hppeng.log_builds {
                         println!("{}", url);
                         println!("{}", stat);
+                        for (name, normal, crit) in spell_damage {
+                            println!(
+                                "{name}: normal: {:.2} crit: {:.2}",
+                                normal.avg(),
+                                crit.avg()
+                            )
+                        }
                     }
 
                     let rt = Runtime::new().unwrap();
@@ -230,6 +256,51 @@ impl std::fmt::Display for Status {
     }
 }
 
+fn calculate_spell_damage(
+    common_stat: &CommonStat,
+    skill_point: &SkillPoints,
+    dam_pct: &Dam,
+    weapon: &Weapon,
+    dam_raw: i32,
+    dam_add: &Damages,
+    spells: &Vec<Spell>,
+) -> Vec<(String, Range, Range)> {
+    let mut spell_damage = Vec::new();
+    for spell in spells {
+        for part in &spell.parts {
+            let (normal_damage, crit_damage) = damage_calculate(
+                &Statistics {
+                    // TODO
+                    ability_dam_convert: Default::default(),
+                    dam_convert: Default::default(),
+                    skill_point: skill_point.original.clone(),
+                    sd_pct: common_stat.sd_pct() as f64 / 100.0,
+                    sd_pct_s: Default::default(),
+                    dam_pct: Default::default(),
+                    dam_pct_s: DamagesConvert::from(dam_pct),
+                    r_sd_pct: Default::default(),
+                    r_dam_pct: Default::default(),
+                    r_sd_raw: Default::default(),
+                    r_dam_raw: Default::default(),
+                    sd_raw: common_stat.sd_raw() as i32,
+                    sd_raw_s: Default::default(),
+                    dam_raw: dam_raw,
+                    dam_raw_s: Default::default(),
+                    crit_dam_pct: Default::default(),
+                    dam_add: dam_add.clone(),
+                },
+                weapon,
+                &part.dam_convert,
+            );
+            spell_damage.push((
+                format!("{}({})", spell.name, part.name),
+                normal_damage.total(),
+                crit_damage.total(),
+            ));
+        }
+    }
+    spell_damage
+}
 const MIN_16: i16 = i16::MIN / 2;
 fn calculate_stats(
     config: &Config,
@@ -248,17 +319,15 @@ fn calculate_stats(
     let max_stat = CommonStat::sum_max_stats(combination, weapon);
     let max_hpr = max_stat.hpr();
     if let Some(threshold) = &config.threshold_second {
-        let hpr_raw = threshold.min_hpr_raw.unwrap_or(MIN_16);
-        let hpr_pct = threshold.min_hpr_pct.unwrap_or(MIN_16);
-        let mr = threshold.min_mr.unwrap_or(MIN_16);
-        let ls = threshold.min_ls.unwrap_or(MIN_16);
-        let ms = threshold.min_ms.unwrap_or(MIN_16);
-        let spd = threshold.min_spd.unwrap_or(MIN_16);
-        let sd_raw = threshold.min_sd_raw.unwrap_or(MIN_16);
-        let sd_pct = threshold.min_sd_pct.unwrap_or(MIN_16);
-
         if max_stat.any_lt(&CommonStat::new(
-            hpr_raw, hpr_pct, mr, ls, ms, spd, sd_raw, sd_pct,
+            threshold.min_hpr_raw.unwrap_or(MIN_16),
+            threshold.min_hpr_pct.unwrap_or(MIN_16),
+            threshold.min_mr.unwrap_or(MIN_16),
+            threshold.min_ls.unwrap_or(MIN_16),
+            threshold.min_ms.unwrap_or(MIN_16),
+            threshold.min_spd.unwrap_or(MIN_16),
+            threshold.min_sd_raw.unwrap_or(MIN_16),
+            threshold.min_sd_pct.unwrap_or(MIN_16),
         )) {
             return Err(String::new());
         }
@@ -271,27 +340,27 @@ fn calculate_stats(
 
     let max_def = sum_def_max(combination, weapon);
     if let Some(threshold) = &config.threshold_third {
-        let e = threshold.min_earth_defense.unwrap_or(MIN_16);
-        let t = threshold.min_thunder_defense.unwrap_or(MIN_16);
-        let w = threshold.min_water_defense.unwrap_or(MIN_16);
-        let f = threshold.min_fire_defense.unwrap_or(MIN_16);
-        let a = threshold.min_air_defense.unwrap_or(MIN_16);
-
-        if max_def.any_lt(&Point::new(e, t, w, f, a)) {
+        if max_def.any_lt(&Point::new(
+            threshold.min_earth_defense.unwrap_or(MIN_16),
+            threshold.min_thunder_defense.unwrap_or(MIN_16),
+            threshold.min_water_defense.unwrap_or(MIN_16),
+            threshold.min_fire_defense.unwrap_or(MIN_16),
+            threshold.min_air_defense.unwrap_or(MIN_16),
+        )) {
             return Err(String::new());
         }
     }
 
     let max_dam_pct = sum_dam_pct_max(combination, weapon);
     if let Some(threshold) = &config.threshold_fourth {
-        let n = threshold.min_neutral_dam_pct.unwrap_or(MIN_16);
-        let e = threshold.min_earth_dam_pct.unwrap_or(MIN_16);
-        let t = threshold.min_thunder_dam_pct.unwrap_or(MIN_16);
-        let w = threshold.min_water_dam_pct.unwrap_or(MIN_16);
-        let f = threshold.min_fire_dam_pct.unwrap_or(MIN_16);
-        let a = threshold.min_air_dam_pct.unwrap_or(MIN_16);
-
-        if max_dam_pct.any_lt(&Dam::new(n, e, t, w, f, a)) {
+        if max_dam_pct.any_lt(&Dam::new(
+            threshold.min_neutral_dam_pct.unwrap_or(MIN_16),
+            threshold.min_earth_dam_pct.unwrap_or(MIN_16),
+            threshold.min_thunder_dam_pct.unwrap_or(MIN_16),
+            threshold.min_water_dam_pct.unwrap_or(MIN_16),
+            threshold.min_fire_dam_pct.unwrap_or(MIN_16),
+            threshold.min_air_dam_pct.unwrap_or(MIN_16),
+        )) {
             return Err(String::new());
         }
     }
@@ -309,12 +378,13 @@ fn calculate_stats(
     skill_point.add_weapon(weapon);
 
     if let Some(threshold) = &config.threshold_fifth {
-        let e = threshold.min_earth_point.unwrap_or(MIN_16);
-        let t = threshold.min_thunder_point.unwrap_or(MIN_16);
-        let w = threshold.min_water_point.unwrap_or(MIN_16);
-        let f = threshold.min_fire_point.unwrap_or(MIN_16);
-        let a = threshold.min_air_point.unwrap_or(MIN_16);
-        skill_point.assign(&Point::new(e, t, w, f, a));
+        skill_point.assign(&Point::new(
+            threshold.min_earth_point.unwrap_or(MIN_16),
+            threshold.min_thunder_point.unwrap_or(MIN_16),
+            threshold.min_water_point.unwrap_or(MIN_16),
+            threshold.min_fire_point.unwrap_or(MIN_16),
+            threshold.min_air_point.unwrap_or(MIN_16),
+        ));
     }
 
     if !skill_point.check(config.player.available_point) {

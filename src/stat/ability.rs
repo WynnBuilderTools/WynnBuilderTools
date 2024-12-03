@@ -47,14 +47,22 @@ pub fn atree_merge<'a>(
             (acc_spells, acc_spell_adds)
         },
     );
-    for (base_id, (cost, mut parts)) in merged_spell_adds {
+
+    for (base_id, (cost, add_parts)) in merged_spell_adds {
         if let Some(value) = merged_spells.get_mut(&base_id) {
             value.cost += cost;
-            value.parts.append(&mut parts);
+            for add_part in add_parts {
+                if let Some(v) = value.parts.iter_mut().find(|v| v.name == add_part.name) {
+                    v.dam_convert += &add_part.dam_convert;
+                } else {
+                    value.parts.push(add_part);
+                }
+            }
         } else {
             println!("not found base ability: {}", base_id);
         }
     }
+
     (
         common_stat,
         dam_raw,
@@ -97,3 +105,64 @@ pub fn merge_ability(abilities_merged: &mut HashMap<i32, ATreeNodeData>, abil: &
 
 // TODO merge_major_id
 // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L502
+
+#[cfg(test)]
+mod tests {
+    use std::{fs::File, io::BufReader};
+
+    use super::*;
+
+    #[test]
+    fn test_atree_merge() {
+        let file = File::open("assets/atree.json")
+            .expect("The file `atree.json` should exist in the folder assets.");
+        let reader = BufReader::new(file);
+
+        let abilities: Abilities = serde_json::from_reader(reader).unwrap();
+
+        // https://hppeng-wynn.github.io/builder/?v=10#9_2SG2SH2SI2SJ2SK2SL2SM2SN0Qf00002I00001g000000z0z0+0+0+0+0-1T--hOsK5v3
+        let active_abilities = decode_atree(&abilities.warrior, "--hOsK5v3");
+        let (common_stat, dam_raw, dam_pct, dam_add, spells) = atree_merge(&active_abilities);
+        assert_eq!(common_stat, CommonStat::new(0, 0, 0, 0, 0, 20, 0, 0));
+        assert_eq!(5, dam_raw);
+        assert_eq!(
+            DamagesConvert::from_slice([0.0, 0.0, 0.1, 0.15, 0.15, 0.15]),
+            DamagesConvert::from(&dam_pct)
+        );
+        assert_eq!(
+            Damages::from_slice([
+                Default::default(),
+                Default::default(),
+                Range { min: 1.0, max: 8.0 },
+                Range { min: 2.0, max: 4.0 },
+                Range { min: 3.0, max: 5.0 },
+                Range { min: 3.0, max: 4.0 },
+            ]),
+            dam_add
+        );
+
+        for v in spells {
+            if v.id != 3 {
+                continue;
+            }
+            assert_eq!(
+                Spell::new(
+                    "Uppercut".to_string(),
+                    3,
+                    45,
+                    vec![
+                        DamagePart::new(
+                            "Uppercut".to_string(),
+                            DamagesConvert::from_slice([3.2, 0.4, 0.4, 0.3, 0.0, 0.3])
+                        ),
+                        DamagePart::new(
+                            "Fireworks".to_string(),
+                            DamagesConvert::from_slice([0.8, 0.0, 0.2, 0.0, 0.0, 0.0])
+                        )
+                    ]
+                ),
+                v
+            );
+        }
+    }
+}

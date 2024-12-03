@@ -87,6 +87,15 @@ impl Add for CommonStat {
         }
     }
 }
+impl Add<&CommonStat> for &CommonStat {
+    type Output = CommonStat;
+
+    fn add(self, rhs: &CommonStat) -> Self::Output {
+        Self::Output {
+            inner: self.inner + rhs.inner,
+        }
+    }
+}
 impl std::fmt::Display for CommonStat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(

@@ -407,7 +407,7 @@ pub struct RawStat {
 pub enum Behavior {
     Merge,
     Modify,
-    // only major_id.json use overwrite
+    // only majid.json use overwrite
     Overwrite,
 }
 impl Default for Behavior {

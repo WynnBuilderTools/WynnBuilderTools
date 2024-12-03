@@ -28,7 +28,7 @@ pub fn gen_test_apparels() -> [Apparel; 8] {
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/build_utils.js#L8
-pub fn skill_points_to_percentage(skp: i32) -> f64 {
+pub fn skill_points_to_percentage(skp: i16) -> f64 {
     let mut skp = skp;
     if skp <= 0 {
         return 0.0;
@@ -36,7 +36,7 @@ pub fn skill_points_to_percentage(skp: i32) -> f64 {
         skp = 150;
     }
     const R: f64 = 0.9908;
-    (R / (1.0 - R) * (1.0 - R.powi(skp))) / 100.0
+    (R / (1.0 - R) * (1.0 - R.powi(skp as i32))) / 100.0
 }
 
 #[cfg(test)]

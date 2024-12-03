@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Spell {
     pub name: String,
     pub id: i32,
@@ -19,7 +19,7 @@ impl Spell {
     }
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct DamagePart {
     pub name: String,
     pub dam_convert: DamagesConvert,
