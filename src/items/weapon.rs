@@ -21,18 +21,14 @@ pub struct Weapon {
 
     pub req: Point,
     pub add: Point,
-    pub stat_max: CommonStat,
-    pub stat_min: CommonStat,
+    pub common_stat_max: CommonStat,
+    pub common_stat_min: CommonStat,
+    pub sec_stat_max: SecStat,
+    pub sec_stat_min: SecStat,
     pub def_pct_max: Point,
     pub def_pct_min: Point,
     pub dam_pct_max: Dam,
     pub dam_pct_min: Dam,
-
-    pub min_exp_bonus: i32,
-    pub max_exp_bonus: i32,
-
-    pub min_loot_bonus: i32,
-    pub max_loot_bonus: i32,
 
     pub fix_id: bool,
 }
@@ -43,11 +39,10 @@ impl TryFrom<&Item> for Weapon {
     fn try_from(value: &Item) -> Result<Self, Self::Error> {
         let req = value.as_req();
         let add = value.as_add();
-        let stat = value.as_comm_stat();
+        let common_stat = value.as_common_stat();
+        let sec_stat = value.as_sec_stat();
         let def_pct = value.as_def_pct();
         let dam_pct = value.as_dam_pct();
-        let exp_bonus = value.xpb.unwrap_or(0);
-        let loot_bonus = value.loot_bonus.unwrap_or(0);
         let fix_id = value.as_fix_id();
 
         Ok(Self {
@@ -58,8 +53,10 @@ impl TryFrom<&Item> for Weapon {
             fix_id,
             hp_bonus_max: max_roll(&value.hp_bonus.unwrap_or(0), fix_id),
             hp_bonus_min: min_roll(&value.hp_bonus.unwrap_or(0), fix_id),
-            stat_max: max_roll(&stat, false),
-            stat_min: min_roll(&stat, false),
+            common_stat_max: max_roll(&common_stat, false),
+            common_stat_min: min_roll(&common_stat, false),
+            sec_stat_max: max_roll(&sec_stat, false),
+            sec_stat_min: min_roll(&sec_stat, false),
             def_pct_max: max_roll(&def_pct, fix_id),
             def_pct_min: min_roll(&def_pct, fix_id),
             dam_pct_max: max_roll(&dam_pct, fix_id),
@@ -80,10 +77,6 @@ impl TryFrom<&Item> for Weapon {
                     .ok_or("atkSpd is missing".to_string())?
                     .as_str(),
             )?,
-            min_exp_bonus: min_roll(&exp_bonus, fix_id),
-            max_exp_bonus: max_roll(&exp_bonus, fix_id),
-            min_loot_bonus: min_roll(&loot_bonus, fix_id),
-            max_loot_bonus: max_roll(&loot_bonus, fix_id),
         })
     }
 }

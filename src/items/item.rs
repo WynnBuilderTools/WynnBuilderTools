@@ -133,7 +133,7 @@ impl Item {
             self.agi.map_or(0, |v| v as i16),
         )
     }
-    pub fn as_comm_stat(&self) -> CommonStat {
+    pub fn as_common_stat(&self) -> CommonStat {
         CommonStat::new(
             self.hpr_raw.map_or(0, |v| v as i16),
             self.hpr_pct.map_or(0, |v| v as i16),
@@ -143,6 +143,12 @@ impl Item {
             self.spd.map_or(0, |v| v as i16),
             self.sd_raw.map_or(0, |v| v as i16),
             self.sd_pct.map_or(0, |v| v as i16),
+        )
+    }
+    pub fn as_sec_stat(&self) -> SecStat {
+        SecStat::new(
+            self.loot_bonus.map_or(0, |v| v as i16),
+            self.xpb.map_or(0, |v| v as i16),
         )
     }
     pub fn as_def(&self) -> Point {
@@ -250,6 +256,27 @@ impl Roll for Dam {
     }
 }
 impl Roll for CommonStat {
+    fn min_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: min_rolls(&self.inner),
+            }
+        }
+    }
+
+    fn max_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: max_rolls(&self.inner),
+            }
+        }
+    }
+}
+impl Roll for SecStat {
     fn min_roll(&self, fix_id: bool) -> Self {
         if fix_id {
             self.clone()

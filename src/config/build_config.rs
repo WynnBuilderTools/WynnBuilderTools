@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::{path::Path, str};
 use tokio::{fs::File, io::AsyncReadExt};
 
+use crate::{CommonStat, Dam, Point, SecStat};
+
 #[derive(Debug, Deserialize, Clone)]
 pub struct Config {
     pub items: Items,
@@ -13,6 +15,99 @@ pub struct Config {
     pub threshold_third: Option<ThresholdThird>,
     pub threshold_fourth: Option<ThresholdFourth>,
     pub threshold_fifth: Option<ThresholdFifth>,
+    pub threshold_sixth: Option<ThresholdSixth>,
+    pub threshold_seventh: Option<ThresholdSeventh>,
+    pub threshold_eighth: Option<ThresholdEighth>,
+}
+const MIN_16: i16 = i16::MIN / 2;
+impl Config {
+    pub fn hp_threshold(&self) -> Option<i32> {
+        if let Some(threshold) = &self.threshold_first {
+            threshold.min_hp
+        } else {
+            None
+        }
+    }
+    pub fn common_stat_threshold(&self) -> Option<CommonStat> {
+        if let Some(threshold) = &self.threshold_second {
+            Some(CommonStat::new(
+                threshold.min_hpr_raw.unwrap_or(MIN_16),
+                threshold.min_hpr_pct.unwrap_or(MIN_16),
+                threshold.min_mr.unwrap_or(MIN_16),
+                threshold.min_ls.unwrap_or(MIN_16),
+                threshold.min_ms.unwrap_or(MIN_16),
+                threshold.min_spd.unwrap_or(MIN_16),
+                threshold.min_sd_raw.unwrap_or(MIN_16),
+                threshold.min_sd_pct.unwrap_or(MIN_16),
+            ))
+        } else {
+            None
+        }
+    }
+    pub fn sec_stat_threshold(&self) -> Option<SecStat> {
+        if let Some(threshold) = &self.threshold_eighth {
+            Some(SecStat::new(
+                threshold.min_exp_bonus.unwrap_or(MIN_16),
+                threshold.min_loot_bonus.unwrap_or(MIN_16),
+            ))
+        } else {
+            None
+        }
+    }
+    pub fn hpr_threshold(&self) -> Option<i32> {
+        if let Some(threshold) = &self.threshold_third {
+            threshold.min_hpr
+        } else {
+            None
+        }
+    }
+    pub fn def_threshold(&self) -> Option<Point> {
+        if let Some(threshold) = &self.threshold_fourth {
+            Some(Point::new(
+                threshold.min_earth_defense.unwrap_or(MIN_16),
+                threshold.min_thunder_defense.unwrap_or(MIN_16),
+                threshold.min_water_defense.unwrap_or(MIN_16),
+                threshold.min_fire_defense.unwrap_or(MIN_16),
+                threshold.min_air_defense.unwrap_or(MIN_16),
+            ))
+        } else {
+            None
+        }
+    }
+    pub fn dam_threshold(&self) -> Option<Dam> {
+        if let Some(threshold) = &self.threshold_fifth {
+            Some(Dam::new(
+                threshold.min_neutral_dam_pct.unwrap_or(MIN_16),
+                threshold.min_earth_dam_pct.unwrap_or(MIN_16),
+                threshold.min_thunder_dam_pct.unwrap_or(MIN_16),
+                threshold.min_water_dam_pct.unwrap_or(MIN_16),
+                threshold.min_fire_dam_pct.unwrap_or(MIN_16),
+                threshold.min_air_dam_pct.unwrap_or(MIN_16),
+            ))
+        } else {
+            None
+        }
+    }
+    pub fn point_threshold(&self) -> Option<Point> {
+        if let Some(threshold) = &self.threshold_sixth {
+            Some(Point::new(
+                threshold.min_earth_point.unwrap_or(MIN_16),
+                threshold.min_thunder_point.unwrap_or(MIN_16),
+                threshold.min_water_point.unwrap_or(MIN_16),
+                threshold.min_fire_point.unwrap_or(MIN_16),
+                threshold.min_air_point.unwrap_or(MIN_16),
+            ))
+        } else {
+            None
+        }
+    }
+    pub fn ehp_threshold(&self) -> Option<i32> {
+        if let Some(threshold) = &self.threshold_seventh {
+            threshold.min_ehp
+        } else {
+            None
+        }
+    }
 }
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct Items {
@@ -64,13 +159,13 @@ pub struct ThresholdSecond {
     pub min_spd: Option<i16>,
     pub min_sd_raw: Option<i16>,
     pub min_sd_pct: Option<i16>,
-    pub min_exp_bonus: Option<i32>,
-    pub min_loot_bonus: Option<i32>,
-
-    pub min_hpr: Option<i32>,
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct ThresholdThird {
+    pub min_hpr: Option<i32>,
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThresholdFourth {
     pub min_earth_defense: Option<i16>,
     pub min_thunder_defense: Option<i16>,
     pub min_water_defense: Option<i16>,
@@ -78,7 +173,7 @@ pub struct ThresholdThird {
     pub min_air_defense: Option<i16>,
 }
 #[derive(Debug, Deserialize, Clone)]
-pub struct ThresholdFourth {
+pub struct ThresholdFifth {
     pub min_neutral_dam_pct: Option<i16>,
     pub min_earth_dam_pct: Option<i16>,
     pub min_thunder_dam_pct: Option<i16>,
@@ -87,14 +182,21 @@ pub struct ThresholdFourth {
     pub min_air_dam_pct: Option<i16>,
 }
 #[derive(Debug, Deserialize, Clone)]
-pub struct ThresholdFifth {
+pub struct ThresholdSixth {
     pub min_earth_point: Option<i16>,
     pub min_thunder_point: Option<i16>,
     pub min_water_point: Option<i16>,
     pub min_fire_point: Option<i16>,
     pub min_air_point: Option<i16>,
-
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThresholdSeventh {
     pub min_ehp: Option<i32>,
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThresholdEighth {
+    pub min_exp_bonus: Option<i16>,
+    pub min_loot_bonus: Option<i16>,
 }
 
 pub async fn load_config(path: impl AsRef<Path>) -> Result<Config, String> {
@@ -108,12 +210,7 @@ pub async fn load_config(path: impl AsRef<Path>) -> Result<Config, String> {
     if !path.as_ref().exists() {
         // Fetch the default config from https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml
         let url = "https://raw.githubusercontent.com/TYTheBeast/WynnBuilderTools-Rekindled/refs/heads/master/config/config.toml";
-        let request = reqwest::get(url)
-            .await
-            .unwrap()
-            .text()
-            .await
-            .unwrap();
+        let request = reqwest::get(url).await.unwrap().text().await.unwrap();
 
         // Write the default config to the file
         tokio::fs::write(path.as_ref(), request).await.unwrap();

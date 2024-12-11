@@ -9,19 +9,19 @@
 # The provided example uses RawFish's [Idol build](https://hppeng-wynn.github.io/builder?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf160e2I1S0e1g00010039I1004fI18180H0I0I0E0o--hOsKbv3)
 
 [player] # Player attribute settings
-lvl = 106 # Level
+lvl = 106             # Level
 available_point = 200 # Available attribute points; not tied to the level here for compatibility with points from tomes
-base_hp = 500 # Base health points; typically 500
+base_hp = 500         # Base health points; typically 500
 
 [hppeng] # hppeng related settings
 url_prefix = "https://hppeng-wynn.github.io/builder/?v=8#" # Prefix for generated URLs
-url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"          # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
-db_path = "db/data.db" # Database path
-migrations_path = "migrations" # Database migration path
-items_file = "config/items.json" # Database migration path
-log_builds = true # Whether to log builds to the console; useful for debugging
-log_db_errors = true # Whether to log database errors to the console; useful for debugging
-db_retry_count = 3 # Number of retries for database operations
+url_suffix = "00001004fI0z0z0+0+0+0+0---hOsKbv3"           # Suffix for generated URLs; includes powders, tomes, and skills; not needed once these calculations are supported
+db_path = "db/data.db"                                     # Database path
+migrations_path = "migrations"                             # Database migration path
+items_file = "config/items.json"                           # Database migration path
+log_builds = true                                          # Whether to log builds to the console; useful for debugging
+log_db_errors = true                                       # Whether to log database errors to the console; useful for debugging
+db_retry_count = 3                                         # Number of retries for database operations
 # The final URL generated when running this configuration will look like this: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00001004fI0z0z0+0+0+0+0---hOsKbv3
 
 [threshold_first] # First filtering threshold; attributes here are calculated first, and most builds can be filtered out here to improve speed
@@ -37,17 +37,19 @@ db_retry_count = 3 # Number of retries for database operations
 # min_spd = 0
 # min_sd_raw = 0
 # min_sd_pct = 0
+
+[threshold_third]
 # min_hpr = 0
 # min_exp_bonus = 0
 
-[threshold_third]
+[threshold_fourth]
 # min_earth_defense = 0
 # min_thunder_defense = 0
 # min_water_defense = 0
 # min_fire_defense = 0
 # min_air_defense = 0
 
-[threshold_fourth]
+[threshold_fifth]
 # min_neutral_dam_pct = 0
 # min_earth_dam_pct = 0
 # min_thunder_dam_pct = 0
@@ -55,13 +57,19 @@ db_retry_count = 3 # Number of retries for database operations
 # min_fire_dam_pct = 0
 # min_air_dam_pct = 0
 
-[threshold_fifth]
+[threshold_sixth]
 # min_earth_point = 0
 # min_thunder_point = 0
 # min_water_point = 0
 # min_fire_point = 0
 # min_air_point = 0
+
+[threshold_seventh]
 # min_ehp = 0
+
+[threshold_eighth]
+# min_exp_bonus = 0
+# min_loot_bonus = 0
 
 [items] # Equipment list; multiple items can be specified for all slots except weapon
 helmets = ["Blue Mask"]

@@ -93,14 +93,14 @@ pub async fn save_build(
     let max_def_f = status.max_def.f();
     let max_def_a = status.max_def.a();
 
-    let mr = status.max_stat.mr();
-    let ms = status.max_stat.ms();
-    let spd = status.max_stat.spd();
-    let ls = status.max_stat.ls();
-    let hpr_raw = status.max_stat.hpr_raw();
-    let hpr_pct = status.max_stat.hpr_pct();
-    let sd_raw = status.max_stat.sd_raw();
-    let sd_pct = status.max_stat.sd_pct();
+    let mr = status.max_common_stat.mr();
+    let ms = status.max_common_stat.ms();
+    let spd = status.max_common_stat.spd();
+    let ls = status.max_common_stat.ls();
+    let hpr_raw = status.max_common_stat.hpr_raw();
+    let hpr_pct = status.max_common_stat.hpr_pct();
+    let sd_raw = status.max_common_stat.sd_raw();
+    let sd_pct = status.max_common_stat.sd_pct();
 
     let max_dam_pct_n = status.max_dam_pct.n();
     let max_dam_pct_e = status.max_dam_pct.e();
@@ -109,7 +109,7 @@ pub async fn save_build(
     let max_dam_pct_f = status.max_dam_pct.f();
     let max_dam_pct_a = status.max_dam_pct.a();
 
-    let max_exp_bonus = status.max_exp_bonus;
+    let max_exp_bonus = status.max_sec_stat.exp_bonus();
 
     loop {
         let query = sqlx::query(

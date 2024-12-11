@@ -23,7 +23,8 @@ async fn main() {
     let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
         Ok(v) => v,
         Err(_) => {
-            let api_fetch_attempt = fetch_json_from_config(&config.hppeng.items_file, &config).await;
+            let api_fetch_attempt =
+                fetch_json_from_config(&config.hppeng.items_file, &config).await;
 
             let new_path = match api_fetch_attempt {
                 Ok(v) => v,
@@ -36,7 +37,7 @@ async fn main() {
                 Ok(v) => v,
                 Err(e) => panic!("{}", e),
             }
-        },
+        }
     };
 
     let weapon = weapons
@@ -182,118 +183,81 @@ fn find<'a>(
     apparels: &'a [Apparel],
     names: &'a [String],
 ) -> Result<Vec<&'a Apparel>, Vec<&'a String>> {
-    let result = names
-        .iter()
-        .map(|name| {
-            let item = apparels.iter().find(|apparel| &apparel.name == name);
-            match item {
-                Some(v) => Ok(v),
-                None => Err(name),
-            }
-        })
-        .collect::<Vec<Result<_, _>>>();
+    let mut results = Vec::with_capacity(names.len());
+    let mut errors = Vec::new();
 
-    let (oks, errs): (Vec<_>, Vec<_>) = result.into_iter().partition(Result::is_ok);
-    let ok_values: Vec<_> = oks.into_iter().map(Result::unwrap).collect();
-    let err_values: Vec<_> = errs.into_iter().map(Result::unwrap_err).collect();
+    for name in names {
+        match apparels.iter().find(|apparel| &apparel.name == name) {
+            Some(apparel) => results.push(apparel),
+            None => errors.push(name),
+        }
+    }
 
-    if !err_values.is_empty() {
-        Err(err_values)
+    if errors.is_empty() {
+        Ok(results)
     } else {
-        Ok(ok_values)
+        Err(errors)
     }
 }
 pub struct Status {
-    pub max_stat: CommonStat,
+    pub max_common_stat: CommonStat,
+    pub max_sec_stat: SecStat,
     pub max_hpr: i32,
     pub max_hp: i32,
     pub max_ehp: i32,
     pub max_def: Point,
     pub skill_point: SkillPoints,
     pub max_dam_pct: Dam,
-    pub max_exp_bonus: i32,
-    pub max_loot_bonus: i32,
 }
 impl std::fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "max_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}\nmax_exp_bonus:\t{}\nmax_loot_bonus:\t{}",
-            self.max_stat,
+            "max_common_stat:{}\nmax_sec_stat:{}\nmax_hpr:{}\nmax_hp:{}\nmax_ehp:{}\nskill_point:\n{}\nmax_def:\t{}\nmax_dam_pct:\t{}",
+            self.max_common_stat,
+            self.max_sec_stat,
             self.max_hpr,
             self.max_hp,
             self.max_ehp,
             self.skill_point,
             self.max_def,
             self.max_dam_pct,
-            self.max_exp_bonus,
-            self.max_loot_bonus,
         )
     }
 }
 
-const MIN_16: i16 = i16::MIN / 2;
 fn calculate_stats(
     config: &Config,
     combination: &[&Apparel; 8],
     weapon: &Weapon,
 ) -> Result<Status, String> {
     let max_hp = sum_hp_max(combination, weapon) + config.player.base_hp;
-    if let Some(threshold) = &config.threshold_first {
-        if let Some(v) = threshold.min_hp {
-            if max_hp < v {
-                return Err(String::new());
-            }
-        }
-    }
-
-    let max_stat = CommonStat::sum_max_stats(combination, weapon);
-    let max_hpr = max_stat.hpr();
-    if let Some(threshold) = &config.threshold_second {
-        let hpr_raw = threshold.min_hpr_raw.unwrap_or(MIN_16);
-        let hpr_pct = threshold.min_hpr_pct.unwrap_or(MIN_16);
-        let mr = threshold.min_mr.unwrap_or(MIN_16);
-        let ls = threshold.min_ls.unwrap_or(MIN_16);
-        let ms = threshold.min_ms.unwrap_or(MIN_16);
-        let spd = threshold.min_spd.unwrap_or(MIN_16);
-        let sd_raw = threshold.min_sd_raw.unwrap_or(MIN_16);
-        let sd_pct = threshold.min_sd_pct.unwrap_or(MIN_16);
-
-        if max_stat.any_lt(&CommonStat::new(
-            hpr_raw, hpr_pct, mr, ls, ms, spd, sd_raw, sd_pct,
-        )) {
+    if let Some(threshold) = &config.hp_threshold() {
+        if max_hp < *threshold {
             return Err(String::new());
         }
-        if let Some(v) = threshold.min_hpr {
-            if max_hpr < v {
-                return Err(String::new());
-            }
+    }
+    let max_common_stat = CommonStat::sum_max_stats(combination, weapon);
+    if let Some(threshold) = &config.common_stat_threshold() {
+        if max_common_stat.any_lt(threshold) {
+            return Err(String::new());
         }
     }
-
+    let max_hpr = max_common_stat.hpr();
+    if let Some(threshold) = &config.hpr_threshold() {
+        if max_hpr < *threshold {
+            return Err(String::new());
+        }
+    }
     let max_def = sum_def_max(combination, weapon);
-    if let Some(threshold) = &config.threshold_third {
-        let e = threshold.min_earth_defense.unwrap_or(MIN_16);
-        let t = threshold.min_thunder_defense.unwrap_or(MIN_16);
-        let w = threshold.min_water_defense.unwrap_or(MIN_16);
-        let f = threshold.min_fire_defense.unwrap_or(MIN_16);
-        let a = threshold.min_air_defense.unwrap_or(MIN_16);
-
-        if max_def.any_lt(&Point::new(e, t, w, f, a)) {
+    if let Some(threshold) = &config.def_threshold() {
+        if max_def.any_lt(&threshold) {
             return Err(String::new());
         }
     }
-
     let max_dam_pct = sum_dam_pct_max(combination, weapon);
-    if let Some(threshold) = &config.threshold_fourth {
-        let n = threshold.min_neutral_dam_pct.unwrap_or(MIN_16);
-        let e = threshold.min_earth_dam_pct.unwrap_or(MIN_16);
-        let t = threshold.min_thunder_dam_pct.unwrap_or(MIN_16);
-        let w = threshold.min_water_dam_pct.unwrap_or(MIN_16);
-        let f = threshold.min_fire_dam_pct.unwrap_or(MIN_16);
-        let a = threshold.min_air_dam_pct.unwrap_or(MIN_16);
-
-        if max_dam_pct.any_lt(&Dam::new(n, e, t, w, f, a)) {
+    if let Some(threshold) = &config.dam_threshold() {
+        if max_dam_pct.any_lt(threshold) {
             return Err(String::new());
         }
     }
@@ -310,56 +274,36 @@ fn calculate_stats(
     let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);
     skill_point.add_weapon(weapon);
 
-    if let Some(threshold) = &config.threshold_fifth {
-        let e = threshold.min_earth_point.unwrap_or(MIN_16);
-        let t = threshold.min_thunder_point.unwrap_or(MIN_16);
-        let w = threshold.min_water_point.unwrap_or(MIN_16);
-        let f = threshold.min_fire_point.unwrap_or(MIN_16);
-        let a = threshold.min_air_point.unwrap_or(MIN_16);
-        skill_point.assign(&Point::new(e, t, w, f, a));
+    if let Some(threshold) = &config.point_threshold() {
+        skill_point.assign(threshold);
     }
-
     if !skill_point.check(config.player.available_point) {
         return Err(String::new());
     }
 
     let max_ehp = ehp(&skill_point, max_hp, &Class::from(weapon));
-    if let Some(threshold) = &config.threshold_fifth {
-        if let Some(v) = threshold.min_ehp {
-            if max_ehp < v {
-                return Err(String::new());
-            }
+    if let Some(threshold) = &config.ehp_threshold() {
+        if max_ehp < *threshold {
+            return Err(String::new());
         }
     }
 
-    let max_exp_bonus = sum_exp_bonus_max(combination, weapon);
-    if let Some(threshold) = &config.threshold_second {
-        if let Some(v) = threshold.min_exp_bonus {
-            if max_exp_bonus < v {
-                return Err(String::new());
-            }
-        }
-    }
-
-    let max_loot_bonus = sum_loot_bonus_max(combination, weapon);
-    if let Some(threshold) = &config.threshold_second {
-        if let Some(v) = threshold.min_loot_bonus {
-            if max_loot_bonus < v {
-                return Err(String::new());
-            }
+    let max_sec_stat = SecStat::sum_max_stats(combination, weapon);
+    if let Some(threshold) = &config.sec_stat_threshold() {
+        if max_sec_stat.any_lt(threshold) {
+            return Err(String::new());
         }
     }
 
     Ok(Status {
-        max_stat,
+        max_common_stat,
+        max_sec_stat,
         max_hpr,
         max_hp,
         max_def,
         skill_point,
         max_ehp,
         max_dam_pct,
-        max_exp_bonus,
-        max_loot_bonus,
     })
 }
 

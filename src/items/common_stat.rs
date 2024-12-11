@@ -1,3 +1,4 @@
+use std::ops::AddAssign;
 use std::simd::cmp::SimdPartialEq;
 use std::simd::cmp::SimdPartialOrd;
 use std::{ops::Add, simd::i16x8};
@@ -9,6 +10,13 @@ use crate::*;
 pub struct CommonStat {
     pub inner: i16x8,
 }
+
+impl AddAssign<&CommonStat> for CommonStat {
+    fn add_assign(&mut self, rhs: &Self) {
+        self.inner += rhs.inner;
+    }
+}
+
 impl CommonStat {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
@@ -57,10 +65,10 @@ impl CommonStat {
     }
 
     pub fn sum_max_stats(apparels: &[&Apparel], weapon: &Weapon) -> Self {
-        let mut total: i16x8 = weapon.stat_max.inner;
+        let mut total: i16x8 = weapon.common_stat_max.inner;
 
         for item in apparels {
-            total += item.stat_max.inner;
+            total += item.common_stat_max.inner;
         }
         Self { inner: total }
     }
@@ -74,6 +82,15 @@ impl Add for CommonStat {
     type Output = CommonStat;
 
     fn add(self, rhs: Self) -> Self::Output {
+        Self::Output {
+            inner: self.inner + rhs.inner,
+        }
+    }
+}
+impl Add<&CommonStat> for &CommonStat {
+    type Output = CommonStat;
+
+    fn add(self, rhs: &CommonStat) -> Self::Output {
         Self::Output {
             inner: self.inner + rhs.inner,
         }

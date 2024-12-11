@@ -2,12 +2,13 @@ mod api_items;
 mod apparel;
 mod atk_spd;
 mod class;
-mod comm_stat;
+mod common_stat;
 mod dam;
 mod damages;
 mod item;
 mod point;
 mod range;
+mod sec_stat;
 mod weapon;
 
 use std::{fs::File, io::BufReader, path::Path};
@@ -16,12 +17,13 @@ pub use api_items::*;
 pub use apparel::*;
 pub use atk_spd::*;
 pub use class::*;
-pub use comm_stat::*;
+pub use common_stat::*;
 pub use dam::*;
 pub use damages::*;
 pub use item::*;
 pub use point::*;
 pub use range::*;
+pub use sec_stat::*;
 pub use weapon::*;
 
 /// Load items from a JSON file

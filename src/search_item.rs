@@ -119,22 +119,31 @@ fn compare_items(a: &Apparel, b: &Apparel, sort_by: SortAndFilterBy) -> std::cmp
         SortAndFilterBy::Lvl => a.lvl.cmp(&b.lvl),
         SortAndFilterBy::Hp => a.hp.cmp(&b.hp),
         SortAndFilterBy::Hpb => a.hp_bonus_max.cmp(&b.hp_bonus_max),
-        SortAndFilterBy::HprRaw => a.stat_max.hpr_raw().cmp(&b.stat_max.hpr_raw()),
-        SortAndFilterBy::HprPct => a.stat_max.hpr_pct().cmp(&b.stat_max.hpr_pct()),
+        SortAndFilterBy::HprRaw => a
+            .common_stat_max
+            .hpr_raw()
+            .cmp(&b.common_stat_max.hpr_raw()),
+        SortAndFilterBy::HprPct => a
+            .common_stat_max
+            .hpr_pct()
+            .cmp(&b.common_stat_max.hpr_pct()),
         SortAndFilterBy::SpAdd => a.add.all().cmp(&b.add.all()),
         SortAndFilterBy::SpReq => a.req.all().cmp(&b.req.all()),
-        SortAndFilterBy::SdRaw => a.stat_max.sd_raw().cmp(&b.stat_max.sd_raw()),
-        SortAndFilterBy::SdPct => a.stat_max.sd_pct().cmp(&b.stat_max.sd_pct()),
-        SortAndFilterBy::Mr => a.stat_max.mr().cmp(&b.stat_max.mr()),
-        SortAndFilterBy::Spd => a.stat_max.spd().cmp(&b.stat_max.spd()),
-        SortAndFilterBy::Ls => a.stat_max.ls().cmp(&b.stat_max.ls()),
+        SortAndFilterBy::SdRaw => a.common_stat_max.sd_raw().cmp(&b.common_stat_max.sd_raw()),
+        SortAndFilterBy::SdPct => a.common_stat_max.sd_pct().cmp(&b.common_stat_max.sd_pct()),
+        SortAndFilterBy::Mr => a.common_stat_max.mr().cmp(&b.common_stat_max.mr()),
+        SortAndFilterBy::Spd => a.common_stat_max.spd().cmp(&b.common_stat_max.spd()),
+        SortAndFilterBy::Ls => a.common_stat_max.ls().cmp(&b.common_stat_max.ls()),
         SortAndFilterBy::Ndmg => a.dam_pct_max.n().cmp(&b.dam_pct_max.n()),
         SortAndFilterBy::Edmg => a.dam_pct_max.e().cmp(&b.dam_pct_max.e()),
         SortAndFilterBy::Tdmg => a.dam_pct_max.t().cmp(&b.dam_pct_max.t()),
         SortAndFilterBy::Wdmg => a.dam_pct_max.w().cmp(&b.dam_pct_max.w()),
         SortAndFilterBy::Fdmg => a.dam_pct_max.f().cmp(&b.dam_pct_max.f()),
         SortAndFilterBy::Admg => a.dam_pct_max.a().cmp(&b.dam_pct_max.a()),
-        SortAndFilterBy::ExpB => a.max_exp_bonus.cmp(&b.max_exp_bonus),
-        SortAndFilterBy::LootBonus => a.max_loot_bonus.cmp(&b.max_loot_bonus),
+        SortAndFilterBy::ExpB => a.sec_stat_max.exp_bonus().cmp(&b.sec_stat_max.exp_bonus()),
+        SortAndFilterBy::LootBonus => a
+            .sec_stat_max
+            .loot_bonus()
+            .cmp(&b.sec_stat_max.loot_bonus()),
     }
 }
