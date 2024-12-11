@@ -129,8 +129,7 @@ pub struct Player {
 }
 #[derive(Debug, Deserialize, Clone)]
 pub struct Hppeng {
-    pub url_prefix: String,
-    pub url_suffix: String,
+    pub template_url: String,
     pub log_builds: bool,
     pub db_path: String,
     pub migrations_path: String,

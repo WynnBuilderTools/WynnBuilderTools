@@ -19,6 +19,7 @@ use wynn_build_tools::*;
 #[tokio::main]
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
+    let hppeng_codes: HppengCodes = HppengCodes::split_hppeng_url(&config.hppeng.template_url);
 
     let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
         Ok(v) => v,
@@ -94,8 +95,9 @@ async fn main() {
                 combination[..2].copy_from_slice(&ring_combination);
 
                 if let Ok(stat) = calculate_stats(&config, &combination, weapon) {
-                    let code = encode_build(
-                        [
+                    let url = hppeng_codes.generate_url(
+                        Some("9"),
+                        Some([
                             combination[2].id,
                             combination[3].id,
                             combination[4].id,
@@ -104,21 +106,16 @@ async fn main() {
                             combination[1].id,
                             combination[6].id,
                             combination[7].id,
-                        ],
-                        config.player.lvl,
-                        weapon.id,
-                        [
+                            weapon.id,
+                        ]),
+                        Some([
                             stat.skill_point.original.e() as i32,
                             stat.skill_point.original.t() as i32,
                             stat.skill_point.original.w() as i32,
                             stat.skill_point.original.f() as i32,
                             stat.skill_point.original.a() as i32,
-                        ],
-                    );
-
-                    let url = format!(
-                        "{}{}{}",
-                        config.hppeng.url_prefix, code, config.hppeng.url_suffix
+                        ]),
+                        Some(config.player.lvl),
                     );
                     if config.hppeng.log_builds {
                         println!("{}", url);
