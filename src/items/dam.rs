@@ -1,3 +1,4 @@
+use std::ops::Add;
 use std::{ops::AddAssign, simd::i16x8};
 
 use std::simd::cmp::SimdPartialOrd;
@@ -37,6 +38,15 @@ impl Dam {
 impl AddAssign<&Dam> for Dam {
     fn add_assign(&mut self, rhs: &Dam) {
         self.inner += rhs.inner;
+    }
+}
+impl<'a> Add<&'a Dam> for &Dam {
+    type Output = Dam;
+
+    fn add(self, rhs: &'a Dam) -> Self::Output {
+        Self::Output {
+            inner: self.inner + rhs.inner,
+        }
     }
 }
 impl std::fmt::Display for Dam {

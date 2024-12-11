@@ -1,56 +1,42 @@
 use crate::*;
 
-#[allow(dead_code)]
-struct Statistics {
-    // "nConvBase:4.Ice Snake Damage"
-    // "wConvBase:4.Ice Snake Damage"
-    ability_dam_convert: DamagesConvert,
-    // "nConvBase"
-    // "wConvBase"
-    dam_convert: DamagesConvert,
-    // str dex int def agi
-    skill_point: [i32; 6],
-    // sdPct
-    sd_pct: f64,
-    // nSdPct
-    // wSdPct
-    sd_pct_s: DamagesConvert,
-    dam_pct: f64,
-    dam_pct_s: DamagesConvert,
-    r_sd_pct: f64,
-    r_dam_pct: f64,
-    // rSdRaw
-    r_sd_raw: i32,
-    // rDamRaw
-    r_dam_raw: i32,
-    sd_raw: i32,
-    sd_raw_s: [i32; 6],
-    // damRaw
-    dam_raw: i32,
-    dam_raw_s: [i32; 6],
-    // critDamPct
-    crit_dam_pct: f64,
-    // tDamAddMin tDamAddMax
-    // wDamAddMin wDamAddMax
-    dam_add: Damages,
-}
-#[allow(dead_code)]
-struct Weapon {
-    // "nDam_"
-    // "eDam_"
-    // "tDam_"
-    // "wDam_"
-    // "fDam_"
-    // "aDam_"
-    pub damage: Damages,
-    // damagePresent
-    pub damage_present: Mask,
-    pub atk_spd: AtkSpd,
+pub struct Statistics {
+    /// "nConvBase:4.Ice Snake Damage"
+    /// "wConvBase:4.Ice Snake Damage"
+    pub ability_dam_convert: DamagesConvert,
+    /// "nConvBase"
+    /// "wConvBase"
+    pub dam_convert: DamagesConvert,
+    /// str dex int def agi
+    /// (e t w f a)
+    pub skill_point: Point,
+    /// sdPct
+    pub sd_pct: f64,
+    /// nSdPct
+    /// wSdPct
+    pub sd_pct_s: DamagesConvert,
+    pub dam_pct: f64,
+    pub dam_pct_s: DamagesConvert,
+    pub r_sd_pct: f64,
+    pub r_dam_pct: f64,
+    /// rSdRaw
+    pub r_sd_raw: i32,
+    /// rDamRaw
+    pub r_dam_raw: i32,
+    pub sd_raw: i32,
+    pub sd_raw_s: [i32; 6],
+    /// damRaw
+    pub dam_raw: i32,
+    pub dam_raw_s: [i32; 6],
+    /// critDamPct
+    pub crit_dam_pct: f64,
+    /// tDamAddMin tDamAddMax
+    /// wDamAddMin wDamAddMax
+    pub dam_add: Damages,
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/damage_calc.js#L31
-#[allow(dead_code)]
-fn damage_calculate(
+pub fn damage_calculate(
     stats: &Statistics,
     weapon: &Weapon,
     dam_convert: &DamagesConvert,
@@ -96,12 +82,12 @@ fn damage_calculate(
     let skill_point_damage_convert: DamagesConvert =
         DamagesConvert::from_slice([0.0, 1.0, 1.0, 1.0, 0.867, 0.951]);
     let skill_boost = &DamagesConvert::from_slice([
-        skill_points_to_percentage(stats.skill_point[0]),
-        skill_points_to_percentage(stats.skill_point[1]),
-        skill_points_to_percentage(stats.skill_point[2]),
-        skill_points_to_percentage(stats.skill_point[3]),
-        skill_points_to_percentage(stats.skill_point[4]),
-        skill_points_to_percentage(stats.skill_point[5]),
+        0.0,
+        skill_points_to_percentage(stats.skill_point.e()),
+        skill_points_to_percentage(stats.skill_point.t()),
+        skill_points_to_percentage(stats.skill_point.w()),
+        skill_points_to_percentage(stats.skill_point.f()),
+        skill_points_to_percentage(stats.skill_point.a()),
     ]) * &skill_point_damage_convert;
 
     let mut damage_pct_s = DamagesConvert::splat(1.0);
@@ -166,11 +152,26 @@ mod tests {
     #[test]
     fn calculate_damage_works() {
         // test case use: https://hppeng-wynn.github.io/builder/?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf0P0e2I1Q0e1g00010039I1004fI0z0z0+0+0+0+0---hOsKbv3 (Remix, original by RawFish)
+        let mut weapon = Weapon::default();
+        weapon.damage = Damages::from_slice([
+            Default::default(),
+            Default::default(),
+            Default::default(),
+            Range {
+                min: 257.0,
+                max: 363.0,
+            },
+            Default::default(),
+            Default::default(),
+        ]);
+        weapon.damage_present = Mask::from_slice([false, false, false, true, false, false]);
+        weapon.atk_spd = AtkSpd::Normal;
+
         let (normal_damage, crit_damage) = damage_calculate(
             &Statistics {
                 ability_dam_convert: Default::default(),
                 dam_convert: Default::default(),
-                skill_point: [0, 25, 40, 146, 90, 40],
+                skill_point: Point::new(25, 40, 146, 90, 40),
                 sd_pct: 0.16,
                 sd_pct_s: Default::default(),
                 dam_pct: 0.0,
@@ -193,21 +194,7 @@ mod tests {
                     Range { min: 3.0, max: 4.0 },
                 ]),
             },
-            &Weapon {
-                damage: Damages::from_slice([
-                    Default::default(),
-                    Default::default(),
-                    Default::default(),
-                    Range {
-                        min: 257.0,
-                        max: 363.0,
-                    },
-                    Default::default(),
-                    Default::default(),
-                ]),
-                damage_present: Mask::from_slice([false, false, false, true, false, false]),
-                atk_spd: AtkSpd::Normal,
-            },
+            &weapon,
             &DamagesConvert::from_slice([1.1, 0.3, 0.0, 0.0, 0.0, 0.0]),
         );
         assert_eq!(

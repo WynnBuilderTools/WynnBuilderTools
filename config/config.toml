@@ -69,6 +69,18 @@ db_retry_count = 3                                                              
 # min_exp_bonus = 0
 # min_loot_bonus = 0
 
+[[threshold_damages]]
+name = "Uppercut.Uppercut"
+min_normal = 7000
+# min_crit = 10000
+min_avg = 9000
+
+[[threshold_damages]]
+name = "Uppercut.Fireworks"
+# min_normal = 1000
+# min_crit = 2000
+# min_avg = 1500
+
 [items] # Equipment list; multiple items can be specified for all slots except weapon
 helmets = ["Blue Mask"]
 chest_plates = ["Soulflare"]

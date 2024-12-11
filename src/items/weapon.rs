@@ -16,7 +16,7 @@ pub struct Weapon {
     // "wDam_"
     // "fDam_"
     // "aDam_"
-    pub damage: [Range; 6],
+    pub damage: Damages,
     pub atk_spd: AtkSpd,
 
     pub req: Point,
@@ -29,6 +29,8 @@ pub struct Weapon {
     pub def_pct_min: Point,
     pub dam_pct_max: Dam,
     pub dam_pct_min: Dam,
+
+    pub damage_present: Mask,
 
     pub fix_id: bool,
 }
@@ -61,14 +63,22 @@ impl TryFrom<&Item> for Weapon {
             def_pct_min: min_roll(&def_pct, fix_id),
             dam_pct_max: max_roll(&dam_pct, fix_id),
             dam_pct_min: min_roll(&dam_pct, fix_id),
-            damage: [
+            damage: Damages::from_slice([
                 Range::from_str(value.n_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
                 Range::from_str(value.e_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
                 Range::from_str(value.t_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
                 Range::from_str(value.w_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
                 Range::from_str(value.f_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
                 Range::from_str(value.a_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-            ],
+            ]),
+            damage_present: Mask::from_slice([
+                value.n_dam.is_some(),
+                value.e_dam.is_some(),
+                value.t_dam.is_some(),
+                value.w_dam.is_some(),
+                value.f_dam.is_some(),
+                value.a_dam.is_some(),
+            ]),
             r#type: WeaponTypes::from_str(value.r#type.as_str())?,
             atk_spd: AtkSpd::from_str(
                 value

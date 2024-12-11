@@ -8,6 +8,31 @@ impl Damages {
     pub fn from_slice(damages: [Range; 6]) -> Self {
         Self { inner: damages }
     }
+    pub fn new(
+        n_min: f64,
+        e_min: f64,
+        t_min: f64,
+        w_min: f64,
+        f_min: f64,
+        a_min: f64,
+        n_max: f64,
+        e_max: f64,
+        t_max: f64,
+        w_max: f64,
+        f_max: f64,
+        a_max: f64,
+    ) -> Self {
+        Self {
+            inner: [
+                Range::new(n_min, n_max),
+                Range::new(e_min, e_max),
+                Range::new(t_min, t_max),
+                Range::new(w_min, w_max),
+                Range::new(f_min, f_max),
+                Range::new(a_min, a_max),
+            ],
+        }
+    }
     pub fn splat(damage: &Range) -> Self {
         Self::from_slice([
             damage.clone(),
@@ -149,13 +174,38 @@ impl PartialEq for Damages {
     }
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct DamagesConvert {
     inner: [f64; 6],
 }
+impl From<&Dam> for DamagesConvert {
+    fn from(value: &Dam) -> Self {
+        Self::from_slice([
+            value.inner[0] as f64 / 100.0,
+            value.inner[1] as f64 / 100.0,
+            value.inner[2] as f64 / 100.0,
+            value.inner[3] as f64 / 100.0,
+            value.inner[4] as f64 / 100.0,
+            value.inner[5] as f64 / 100.0,
+        ])
+    }
+}
 impl DamagesConvert {
+    /// n e t w f a
     pub fn from_slice(items: [f64; 6]) -> Self {
         Self { inner: items }
+    }
+    pub fn from_slice_i32(items: &[i32; 6]) -> Self {
+        Self {
+            inner: [
+                (items[0] as f64) / 100.0,
+                (items[1] as f64) / 100.0,
+                (items[2] as f64) / 100.0,
+                (items[3] as f64) / 100.0,
+                (items[4] as f64) / 100.0,
+                (items[5] as f64) / 100.0,
+            ],
+        }
     }
     pub fn splat(item: f64) -> Self {
         Self::from_slice([item, item, item, item, item, item])

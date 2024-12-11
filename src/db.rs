@@ -201,8 +201,8 @@ pub async fn save_build(
             .execute(&mut *tx)
             .await;
 
-            match result {
-                Ok(_) => (),
+            let row_id = match result {
+                Ok(value) => value.last_insert_rowid(),
                 Err(sqlx::Error::Database(e)) => {
                     // continue UNIQUE url
                     if e.code() == Some("2067".into()) {
@@ -212,6 +212,33 @@ pub async fn save_build(
                 }
                 Err(e) => return Err(e),
             };
+
+            for v in &status.spell_damages {
+                sqlx::query(
+                    r#"
+                    INSERT INTO damage(
+                    build_id,
+                    name,
+                    normal,
+                    crit,
+                    avg
+                    ) VALUES (
+                    $1,
+                    $2,
+                    $3,
+                    $4,
+                    $5
+                    )
+                "#,
+                )
+                .bind(row_id)
+                .bind(v.name.clone())
+                .bind(v.normal)
+                .bind(v.crit)
+                .bind(v.avg)
+                .execute(&mut *tx)
+                .await?;
+            }
 
             tx.commit().await
         },

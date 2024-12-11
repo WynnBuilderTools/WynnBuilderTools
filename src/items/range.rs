@@ -9,6 +9,9 @@ pub struct Range {
     pub max: f64,
 }
 impl Range {
+    pub fn new(min: f64, max: f64) -> Range {
+        Range { min, max }
+    }
     pub fn avg(&self) -> f64 {
         (self.min + self.max) / 2.0
     }

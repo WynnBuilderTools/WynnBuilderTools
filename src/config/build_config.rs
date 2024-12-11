@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{path::Path, str};
+use std::{collections::HashMap, path::Path, str};
 use tokio::{fs::File, io::AsyncReadExt};
 
 use crate::{CommonStat, Dam, Point, SecStat};
@@ -18,6 +18,8 @@ pub struct Config {
     pub threshold_sixth: Option<ThresholdSixth>,
     pub threshold_seventh: Option<ThresholdSeventh>,
     pub threshold_eighth: Option<ThresholdEighth>,
+    #[serde(default)]
+    pub threshold_damages: Vec<Damage>,
 }
 const MIN_16: i16 = i16::MIN / 2;
 impl Config {
@@ -108,6 +110,22 @@ impl Config {
             None
         }
     }
+    // (name, normal, crit, avg)
+    pub fn damage_threshold(&self) -> HashMap<&str, (i32, i32, i32)> {
+        self.threshold_damages
+            .iter()
+            .map(|damage| {
+                (
+                    damage.name.as_str(),
+                    (
+                        damage.min_normal.unwrap_or(0),
+                        damage.min_crit.unwrap_or(0),
+                        damage.min_avg.unwrap_or(0),
+                    ),
+                )
+            })
+            .collect()
+    }
 }
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct Items {
@@ -196,6 +214,13 @@ pub struct ThresholdSeventh {
 pub struct ThresholdEighth {
     pub min_exp_bonus: Option<i16>,
     pub min_loot_bonus: Option<i16>,
+}
+#[derive(Debug, Deserialize, Clone)]
+pub struct Damage {
+    pub name: String,
+    pub min_normal: Option<i32>,
+    pub min_crit: Option<i32>,
+    pub min_avg: Option<i32>,
 }
 
 pub async fn load_config(path: impl AsRef<Path>) -> Result<Config, String> {

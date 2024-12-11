@@ -1,8 +1,10 @@
 use std::str::FromStr;
 
+use serde::{de, Deserialize};
+
 use super::*;
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Eq, PartialEq, Default, Hash)]
 pub enum Class {
     #[default]
     Mage,
@@ -11,6 +13,7 @@ pub enum Class {
     Assassin,
     Shaman,
 }
+
 impl Class {
     pub fn def_mult(&self) -> f64 {
         match &self {
@@ -53,6 +56,18 @@ impl FromStr for Class {
             "Assassin" => Ok(Class::Assassin),
             "Warrior" => Ok(Class::Warrior),
             _ => Err(format!("Invalid value for class, found '{}'", s)),
+        }
+    }
+}
+impl<'de> Deserialize<'de> for Class {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: de::Deserializer<'de>,
+    {
+        let s: String = Deserialize::deserialize(deserializer)?;
+        match Class::from_str(&s) {
+            Ok(v) => Ok(v),
+            Err(err) => Err(de::Error::custom(err)),
         }
     }
 }
