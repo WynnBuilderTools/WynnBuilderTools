@@ -1,3 +1,5 @@
+use std::error;
+use std::future::Future;
 use std::io::Write;
 
 use rand::Rng;
@@ -10,7 +12,7 @@ use crate::*;
 pub async fn init(config: &Config) -> Pool<Sqlite> {
     // Create the database file if it doesn't exist
     if metadata(&config.hppeng.db_path).await.is_err() {
-        let dirbuilder = DirBuilder::new();
+        let dir_builder = DirBuilder::new();
         let db_folder_path = std::path::Path::new(&config.hppeng.db_path)
             .parent()
             .unwrap();
@@ -20,7 +22,7 @@ pub async fn init(config: &Config) -> Pool<Sqlite> {
                 "trying to create missing db folder at path: {}",
                 db_folder_path.display()
             );
-            dirbuilder
+            dir_builder
                 .create(db_folder_path)
                 .await
                 .expect("tokio fs should be able to create missing db folder.");
@@ -66,14 +68,14 @@ pub async fn init(config: &Config) -> Pool<Sqlite> {
 }
 
 pub async fn save_build(
-    pool: Pool<Sqlite>,
+    pool: sqlx::SqlitePool,
     url: String,
     status: Status,
     combination: [&Apparel; 8],
 ) {
     let config = load_config("config/config.toml").await.unwrap();
 
-    // why use 'let' see:
+    // why use 'let':
     // [Cannot use temporaries as query! arguments when using SQLite](https://github.com/launchbadge/sqlx/issues/1430)
     let assign_strength = status.skill_point.assign.e();
     let assign_dexterity = status.skill_point.assign.t();
@@ -110,10 +112,14 @@ pub async fn save_build(
     let max_dam_pct_a = status.max_dam_pct.a();
 
     let max_exp_bonus = status.max_sec_stat.exp_bonus();
+    let max_loot_bonus = status.max_sec_stat.loot_bonus();
 
-    loop {
-        let query = sqlx::query(
-            r#"
+    retry_with_backoff(
+        || async {
+            let mut tx = pool.begin().await?;
+
+            let result = sqlx::query(
+                r#"
         INSERT INTO build (
             url,
             helmet,
@@ -124,21 +130,9 @@ pub async fn save_build(
             ring_2,
             bracelet,
             necklace,
-            earth_assign,
-            thunder_assign,
-            water_assign,
-            fire_assign,
-            air_assign,
-            earth_original,
-            thunder_original,
-            water_original,
-            fire_original,
-            ari_original,
-            earth_def,
-            thunder_def,
-            water_def,
-            fire_def,
-            air_def,
+            earth_assign,thunder_assign,water_assign,fire_assign,air_assign,
+            earth_original,thunder_original,water_original,fire_original,ari_original,
+            earth_def,thunder_def,water_def,fire_def,air_def,
             max_mr,
             max_ms,
             max_spd,
@@ -150,143 +144,129 @@ pub async fn save_build(
             max_ehp,
             max_hp,
             max_hpr,
-            max_neutral_dam_pct,
-            max_earth_dam_pct,
-            max_thunder_dam_pct,
-            max_water_dam_pct,
-            max_fire_dam_pct,
-            max_air_dam_pct,
-            max_exp_bonus
+            max_neutral_dam_pct,max_earth_dam_pct,max_thunder_dam_pct,max_water_dam_pct,max_fire_dam_pct,max_air_dam_pct,
+            max_exp_bonus,max_loot_bonus
         ) VALUES (
-                    $1,
-                    $2,
-                    $3,
-                    $4,
-                    $5,
-                    $6,
-                    $7,
-                    $8,
-                    $9,
-                    $10,
-                    $11,
-                    $12,
-                    $13,
-                    $14,
-                    $15,
-                    $16,
-                    $17,
-                    $18,
-                    $19,
-                    $20,
-                    $21,
-                    $22,
-                    $23,
-                    $24,
-                    $25,
-                    $26,
-                    $27,
-                    $28,
-                    $29,
-                    $30,
-                    $31,
-                    $32,
-                    $33,
-                    $34,
-                    $35,
-                    $36,
-                    $37,
-                    $38,
-                    $39,
-                    $40,
-                    $41,
-                    $42
-                );
+            $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+            $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+            $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,
+            $31,$32,$33,$34,$35,$36,$37,$38,$39,$40,
+            $41,$42,$43
+        );
         "#,
-        )
-        .bind(url.clone())
-        .bind(combination[2].name.clone())
-        .bind(combination[3].name.clone())
-        .bind(combination[4].name.clone())
-        .bind(combination[5].name.clone())
-        .bind(combination[0].name.clone())
-        .bind(combination[1].name.clone())
-        .bind(combination[6].name.clone())
-        .bind(combination[7].name.clone())
-        .bind(assign_strength)
-        .bind(assign_dexterity)
-        .bind(assign_intelligence)
-        .bind(assign_defense)
-        .bind(assign_agility)
-        .bind(original_e)
-        .bind(original_t)
-        .bind(original_w)
-        .bind(original_f)
-        .bind(original_a)
-        .bind(max_def_e)
-        .bind(max_def_t)
-        .bind(max_def_w)
-        .bind(max_def_f)
-        .bind(max_def_a)
-        .bind(mr)
-        .bind(ms)
-        .bind(spd)
-        .bind(ls)
-        .bind(hpr_raw)
-        .bind(hpr_pct)
-        .bind(sd_raw)
-        .bind(sd_pct)
-        .bind(status.max_ehp)
-        .bind(status.max_hp)
-        .bind(status.max_hpr)
-        .bind(max_dam_pct_n)
-        .bind(max_dam_pct_e)
-        .bind(max_dam_pct_t)
-        .bind(max_dam_pct_w)
-        .bind(max_dam_pct_f)
-        .bind(max_dam_pct_a)
-        .bind(max_exp_bonus);
+            )
+            .bind(url.clone())
+            .bind(combination[2].name.clone())
+            .bind(combination[3].name.clone())
+            .bind(combination[4].name.clone())
+            .bind(combination[5].name.clone())
+            .bind(combination[0].name.clone())
+            .bind(combination[1].name.clone())
+            .bind(combination[6].name.clone())
+            .bind(combination[7].name.clone())
+            .bind(assign_strength)
+            .bind(assign_dexterity)
+            .bind(assign_intelligence)
+            .bind(assign_defense)
+            .bind(assign_agility)
+            .bind(original_e)
+            .bind(original_t)
+            .bind(original_w)
+            .bind(original_f)
+            .bind(original_a)
+            .bind(max_def_e)
+            .bind(max_def_t)
+            .bind(max_def_w)
+            .bind(max_def_f)
+            .bind(max_def_a)
+            .bind(mr)
+            .bind(ms)
+            .bind(spd)
+            .bind(ls)
+            .bind(hpr_raw)
+            .bind(hpr_pct)
+            .bind(sd_raw)
+            .bind(sd_pct)
+            .bind(status.max_ehp)
+            .bind(status.max_hp)
+            .bind(status.max_hpr)
+            .bind(max_dam_pct_n)
+            .bind(max_dam_pct_e)
+            .bind(max_dam_pct_t)
+            .bind(max_dam_pct_w)
+            .bind(max_dam_pct_f)
+            .bind(max_dam_pct_a)
+            .bind(max_exp_bonus)
+            .bind(max_loot_bonus)
+            .execute(&mut *tx)
+            .await;
 
-        let result = query.execute(&pool).await;
+            match result {
+                Ok(_) => (),
+                Err(sqlx::Error::Database(e)) => {
+                    // continue UNIQUE url
+                    if e.code() == Some("2067".into()) {
+                        return tx.rollback().await;
+                    }
+                    return Err(sqlx::Error::Database(e));
+                }
+                Err(e) => return Err(e),
+            };
 
-        let mut retry_count = 0;
+            tx.commit().await
+        },
+        &config,
+    )
+    .await;
+}
 
-        let mut rng = rand::thread_rng();
+async fn retry_with_backoff<F, FUT>(func: F, config: &Config)
+where
+    F: Fn() -> FUT,
+    FUT: Future<Output = Result<(), sqlx::Error>>,
+{
+    let mut retry_count = 0;
+    let mut rng = rand::thread_rng();
 
-        // Much cleaner than what we had before
-        match result {
-            Ok(_) => break,
+    loop {
+        match func().await {
+            Ok(_result) => return,
             Err(err) => {
-                // Log error to an error_log file
-                let mut file = std::fs::OpenOptions::new()
-                    .create(true)
-                    .append(true)
-                    .open("db/db_error.log")
-                    .unwrap();
-                let error = format!("{}\n", err);
-                file.write_all(error.as_bytes()).unwrap();
-
+                log_db_error(&err);
                 if config.hppeng.log_db_errors {
                     println!("error on sql query: {}, retrying...", err);
                 }
 
                 retry_count += 1;
+                // Maximum retries defined in config
                 if retry_count > config.hppeng.db_retry_count {
-                    // Maximum retries defined in config
                     if config.hppeng.log_db_errors {
                         println!(
-                            "max retries exceeded. giving up on writing to db.\nerror: {:?}",
+                            "max retries exceeded. giving up on writing to db.\nerror: {}",
                             err
                         );
                     }
-                    break;
+                    return;
                 }
 
                 // Exponential backoff with jitter
-                let base_wait_ms = 2u64.pow(retry_count.into()) * 100; // 100ms, 200ms, 400ms...
-                let jitter = rng.gen_range(0..100); // Add random jitter
+                let base_wait_ms = 2u64.pow(retry_count.into()) * 100;
+                let jitter = rng.gen_range(0..100);
                 let wait_duration = Duration::from_millis(base_wait_ms + jitter);
+
                 tokio::time::sleep(wait_duration).await;
             }
         }
+    }
+}
+
+/// Log error to an error_log file
+fn log_db_error<E: error::Error>(err: &E) {
+    if let Ok(mut file) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open("db/db_error.log")
+    {
+        let _ = writeln!(file, "{}", err);
     }
 }
