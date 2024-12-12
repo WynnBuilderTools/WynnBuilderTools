@@ -55,6 +55,7 @@ jobs:
           mkdir -pv temp_package/assets
           cp -v config/config.toml temp_package/config/
           cp -v assets/id_map.json temp_package/assets/
+          cp -v assets/atree.json temp_package/assets/
           cp -v migrations/*.sql temp_package/migrations/
           find ./target/${{ matrix.target }}/release -type f \( -name "builder" -o -name "builder.exe" \) -exec cp -v {} temp_package/ \; || echo "Builder not found"
           find ./target/${{ matrix.target }}/release -type f \( -name "search_item" -o -name "search_item.exe" \) -exec cp -v {} temp_package/ \; || echo "Search item not found"
