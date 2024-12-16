@@ -14,7 +14,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("index map 2", |b| {
         b.iter(|| {
             let counter = Arc::new(AtomicUsize::new(0));
-            generate_full_combinations_with_random(100, counter, &arrays, |_| {}, None);
+            generate_full_combinations_with_random(100, counter, &arrays, |_| {});
         })
     });
     group.bench_function("get_combinations 2", |b| {
@@ -30,7 +30,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("index map 3", |b| {
         b.iter(|| {
             let counter = Arc::new(AtomicUsize::new(0));
-            generate_full_combinations_with_random(100, counter, &arrays, |_| {}, None);
+            generate_full_combinations_with_random(100, counter, &arrays, |_| {});
         })
     });
     group.bench_function("get_combinations 3", |b| {
@@ -47,7 +47,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("index map 4", |b| {
         b.iter(|| {
             let counter = Arc::new(AtomicUsize::new(0));
-            generate_full_combinations_with_random(100, counter, &arrays, |_| {}, None);
+            generate_full_combinations_with_random(100, counter, &arrays, |_| {});
         })
     });
     group.bench_function("get_combinations 4", |b| {
@@ -65,7 +65,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("index map 5", |b| {
         b.iter(|| {
             let counter = Arc::new(AtomicUsize::new(0));
-            generate_full_combinations_with_random(100, counter, &arrays, |_| {}, None);
+            generate_full_combinations_with_random(100, counter, &arrays, |_| {});
         })
     });
     group.bench_function("get_combinations 5", |b| {

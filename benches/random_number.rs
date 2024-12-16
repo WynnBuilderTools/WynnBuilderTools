@@ -8,9 +8,9 @@ use wynn_build_tools::*;
 fn criterion_benchmark(c: &mut Criterion) {
     let max = 10000000000;
     let counter = Arc::new(AtomicUsize::new(0));
-    let mut x_1 = segmented_random_numbers(max, 10000, counter.clone(), None);
-    let mut x_2 = segmented_random_numbers(max, 1000000, counter.clone(), None);
-    let mut x_3 = segmented_random_numbers(max, 1000, counter.clone(), None);
+    let mut x_1 = segmented_random_numbers(max, 10000, counter.clone());
+    let mut x_2 = segmented_random_numbers(max, 1000000, counter.clone());
+    let mut x_3 = segmented_random_numbers(max, 1000, counter.clone());
     let mut y = random_numbers(10000000000);
     let rng = fastrand::Rng::default();
 

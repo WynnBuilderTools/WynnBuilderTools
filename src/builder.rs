@@ -3,7 +3,6 @@ mod db;
 use build_config::{load_config, Config};
 use std::fmt::Write;
 use std::{
-    borrow::BorrowMut,
     collections::{HashMap, HashSet, VecDeque},
     fmt,
     fs::File,
@@ -14,7 +13,6 @@ use std::{
     },
     time::Duration,
 };
-use tokio::sync::Mutex;
 
 use tokio::{runtime::Runtime, spawn, time::sleep};
 use wynn_build_tools::*;
@@ -85,15 +83,7 @@ async fn main() {
     println!("total combinations: {}", total_combinations);
 
     let counter = Arc::new(AtomicUsize::new(0));
-    let remaining_builds = Arc::new(AtomicUsize::new(total_combinations));
-    let last_10_speeds = Arc::new(Mutex::new(VecDeque::with_capacity(10)));
-    spawn_speed_watcher(
-        counter.clone(),
-        remaining_builds.clone(),
-        ring_combinations.len(),
-        last_10_speeds,
-        total_combinations,
-    );
+    spawn_speed_watcher(counter.clone(), ring_combinations.len(), total_combinations);
 
     let db_pool = db::init(&config).await;
     generate_full_combinations_with_random(
@@ -160,28 +150,23 @@ async fn main() {
                 };
             }
         },
-        Option::Some(remaining_builds.clone()),
     );
 
     println!("done");
 }
 
-fn spawn_speed_watcher(
-    counter: Arc<AtomicUsize>,
-    remaining_builds: Arc<AtomicUsize>,
-    coefficient: usize,
-    mut last_10_speeds: Arc<Mutex<VecDeque<usize>>>,
-    combinations: usize,
-) {
+fn spawn_speed_watcher(counter: Arc<AtomicUsize>, coefficient: usize, combinations: usize) {
     spawn(async move {
+        let mut total = 0;
+        // Keep track of past 10 speeds and calculate the avg
+        let mut last_10_speeds = VecDeque::with_capacity(10);
         loop {
             sleep(Duration::from_secs(1)).await;
 
             let counter_val = counter.load(Ordering::Acquire);
 
-            // Keep track of past 10 speeds and calculate the avg
             let speed = counter_val * coefficient;
-            let mut last_10_speeds = last_10_speeds.borrow_mut().lock().await;
+            total += speed;
 
             // Remove 1 from 10 to see if we're nearly at capacity, then pop the last value
             if last_10_speeds.get(10 - 1).is_some() {
@@ -197,13 +182,12 @@ fn spawn_speed_watcher(
                 }
             }
 
-            // Uncommented because we're doing fetch_sub in SegmentedRandomNumbers's Iterator
-            let remaining_builds_val = remaining_builds.load(Ordering::Acquire)/* - counter_val */;
-            // remaining_builds.store(remaining_builds_val, Ordering::Release);
-
             println!("speed: {}/builds per second", speed);
-            println!("remaining time: {}h left", remaining_time / 3600);
-            println!("remaining builds: {}", remaining_builds_val);
+            println!(
+                "remaining time: {:.2}h left",
+                remaining_time as f32 / 3600.0
+            );
+            println!("remaining builds: {}", combinations - total);
             counter.store(0, Ordering::Release);
         }
     });
