@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use crate::*;
 
@@ -7,7 +7,7 @@ use crate::*;
 pub fn atree_merge<'a>(
     active_abilities: &Vec<&ATreeNodeData>,
 ) -> (CommonStat, i32, Dam, Damages, Vec<Spell>) {
-    let mut abilities_merged = HashMap::<i32, ATreeNodeData>::new();
+    let mut abilities_merged = BTreeMap::<i32, ATreeNodeData>::new();
     for ability in active_abilities {
         merge_ability(&mut abilities_merged, ability)
     }
@@ -23,33 +23,34 @@ pub fn atree_merge<'a>(
                 acc
             });
 
-    let (mut merged_spells, merged_spell_adds): (
+    let (mut base_spells, merged_spell_properties): (
         HashMap<i32, Spell>,
         HashMap<i32, (i32, Vec<DamagePart>)>,
-    ) = abilities_merged.iter().fold(
+        // reverses abilities, only uses the last spell(replace_spell) as the base spell
+    ) = abilities_merged.iter().rev().fold(
         (HashMap::new(), HashMap::new()),
-        |(mut acc_spells, mut acc_spell_adds), (_, v)| {
-            let spells = v.join_spell();
-            let spell_adds = v.join_spell_add();
+        |(mut base_spells, mut merged_spell_properties), (_, ability)| {
+            let spells = ability.join_spell();
+            let spell_properties = ability.join_spell_add();
 
-            for (key, spell) in spells {
-                acc_spells.entry(key).or_insert(spell);
+            for (base_id, spell) in spells {
+                base_spells.entry(base_id).or_insert(spell);
             }
-            for (key, (cost, mut parts)) in spell_adds {
-                acc_spell_adds
-                    .entry(key)
+            for (base_id, (cost, mut parts)) in spell_properties {
+                merged_spell_properties
+                    .entry(base_id)
                     .and_modify(|(cost_modify, parts_modify)| {
                         *cost_modify += cost;
                         parts_modify.append(&mut parts);
                     })
                     .or_insert((cost, parts));
             }
-            (acc_spells, acc_spell_adds)
+            (base_spells, merged_spell_properties)
         },
     );
 
-    for (base_id, (cost, add_parts)) in merged_spell_adds {
-        if let Some(value) = merged_spells.get_mut(&base_id) {
+    for (base_id, (cost, add_parts)) in merged_spell_properties {
+        if let Some(value) = base_spells.get_mut(&base_id) {
             value.cost += cost;
             for add_part in add_parts {
                 if let Some(v) = value.parts.iter_mut().find(|v| v.name == add_part.name) {
@@ -68,15 +69,12 @@ pub fn atree_merge<'a>(
         dam_raw,
         dam_pct,
         dam_add,
-        merged_spells
-            .into_iter()
-            .map(|(_key, value)| value)
-            .collect(),
+        base_spells.into_iter().map(|(_key, value)| value).collect(),
     )
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L464
-pub fn merge_ability(abilities_merged: &mut HashMap<i32, ATreeNodeData>, abil: &ATreeNodeData) {
+pub fn merge_ability(abilities_merged: &mut BTreeMap<i32, ATreeNodeData>, abil: &ATreeNodeData) {
     if let Some(base_abil_id) = &abil.base_abil {
         if let Some(base_ability) = abilities_merged.get_mut(base_abil_id) {
             base_ability.effects.extend(abil.effects.clone());
