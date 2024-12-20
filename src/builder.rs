@@ -17,6 +17,8 @@ use std::{
 use tokio::{runtime::Runtime, spawn, time::sleep};
 use wynn_build_tools::*;
 
+const SPLIT_STR: &str = ".";
+
 #[tokio::main]
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
@@ -207,7 +209,7 @@ fn validate_config_damages(spells: &[Spell], config: &Config) -> Result<(), Stri
             spell
                 .parts
                 .iter()
-                .map(|part| format!("{}.{}", spell.name, part.name))
+                .map(|part| format!("{}{SPLIT_STR}{}", spell.name, part.name))
         })
         .collect();
 
@@ -244,7 +246,7 @@ fn retain_spells(spells: &mut Vec<Spell>, config: &Config) {
     let threshold_map: HashMap<&str, HashSet<&str>> = config
         .threshold_damages
         .iter()
-        .filter_map(|damage| damage.name.split_once("."))
+        .filter_map(|damage| damage.name.split_once(SPLIT_STR))
         .fold(HashMap::new(), |mut map, (spell, part)| {
             map.entry(spell).or_insert_with(HashSet::new).insert(part);
             map
@@ -351,7 +353,7 @@ fn calculate_spell_damage(
                 &part.dam_convert,
             );
             spell_damage.push((
-                format!("{}.{}", spell.name, part.name),
+                format!("{}{SPLIT_STR}{}", spell.name, part.name),
                 normal_damage.total().avg(),
                 crit_damage.total().avg(),
             ));
