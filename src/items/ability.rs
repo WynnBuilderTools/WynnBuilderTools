@@ -73,11 +73,10 @@ impl ATreeNodeData {
         for effect in &self.effects {
             if let Effect::AddSpellProp(add_spell_prop) = effect {
                 match add_spell_prop.behavior {
-                    Behavior::Merge => (),
-                    // "modify" not work?
                     // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/a30a0aa1a8b9f857ae66d31e67bdc5df0a4d0cfc/js/builder/atree.js#L941
-                    Behavior::Modify => continue,
-                    Behavior::Overwrite => continue,
+                    Behavior::Merge => (),
+                    Behavior::Modify => (),
+                    Behavior::Overwrite => panic!("add_spell_prop should not have overwrite"),
                 }
 
                 let (cost, parts) = part_add
@@ -399,7 +398,7 @@ pub struct RawStat {
 pub enum Behavior {
     Merge,
     Modify,
-    // only majid.json use overwrite
+    /// only majid.json use overwrite
     Overwrite,
 }
 impl Default for Behavior {
