@@ -67,7 +67,7 @@ impl ATreeNodeData {
         spell
     }
     /// return Map<id,(cost,parts)>
-    pub fn join_spell_add(&self) -> HashMap<i32, (i32, Vec<DamagePart>)> {
+    pub fn join_spell_property(&self) -> HashMap<i32, (i32, Vec<DamagePart>)> {
         let mut part_add: HashMap<i32, (i32, Vec<DamagePart>)> = HashMap::new();
 
         for effect in &self.effects {
@@ -125,9 +125,9 @@ impl ATreeNodeData {
                                         value: _,
                                     } => continue,
                                     StatBonus::Stat { name, value } => match name {
-                                        StatName::DamMult(_) => continue,
-                                        StatName::DefMult(_) => continue,
-                                        StatName::HealMult(_) => continue,
+                                        StatName::DamMulti(_) => continue,
+                                        StatName::DefMulti(_) => continue,
+                                        StatName::HealMulti(_) => continue,
                                         // TODO: support jump height
                                         StatName::JH => continue,
                                         StatName::SPD => {
@@ -426,9 +426,9 @@ pub enum StatBonus {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum StatName {
-    DamMult(String),
-    DefMult(String),
-    HealMult(String),
+    DamMulti(String),
+    DefMulti(String),
+    HealMulti(String),
 
     JH,
     SPD,
@@ -468,9 +468,9 @@ where
         let parts: Vec<&str> = type_str.split('.').collect();
         let sub = parts[1..].join(".").to_string();
         return match parts[0] {
-            "damMult" => Ok(StatName::DamMult(sub)),
-            "defMult" => Ok(StatName::DefMult(sub)),
-            "healMult" => Ok(StatName::HealMult(sub)),
+            "damMult" => Ok(StatName::DamMulti(sub)),
+            "defMult" => Ok(StatName::DefMulti(sub)),
+            "healMult" => Ok(StatName::HealMulti(sub)),
             _ => Err(serde::de::Error::custom(format!(
                 "Unknown type: {}",
                 type_str

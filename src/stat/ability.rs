@@ -31,7 +31,7 @@ pub fn atree_merge<'a>(
         (HashMap::new(), HashMap::new()),
         |(mut base_spells, mut merged_spell_properties), (_, ability)| {
             let spells = ability.join_spell();
-            let spell_properties = ability.join_spell_add();
+            let spell_properties = ability.join_spell_property();
 
             for (base_id, spell) in spells {
                 base_spells.entry(base_id).or_insert(spell);
