@@ -33,12 +33,16 @@ pub struct ATreeNodeData {
 impl ATreeNodeData {
     pub fn join_spell(&self) -> HashMap<i32, Spell> {
         let mut spell: HashMap<i32, Spell> = HashMap::new();
-        // name base_id damage cost
         for effect in &self.effects {
             match effect {
                 Effect::ReplaceSpell(replace_spell) => {
-                    if let Some(spell) = spell.get(&replace_spell.base_spell) {
-                        println!("{:?}\n{:?}", spell, replace_spell)
+                    if spell.contains_key(&replace_spell.base_spell) {
+                        panic!(
+                            "Duplicate spell detected: {:?}, replace_spell: {:?}, spell name: {}",
+                            spell.get(&replace_spell.base_spell),
+                            replace_spell,
+                            self.display_name
+                        );
                     }
                     spell.insert(
                         replace_spell.base_spell,
