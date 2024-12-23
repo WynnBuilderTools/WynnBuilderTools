@@ -7,10 +7,8 @@ use crate::*;
 pub fn atree_merge<'a>(
     active_abilities: &Vec<&ATreeNodeData>,
 ) -> (CommonStat, i32, Dam, Damages, Vec<Spell>) {
-    let mut abilities_merged = BTreeMap::<i32, ATreeNodeData>::new();
-    for ability in active_abilities {
-        merge_ability(&mut abilities_merged, ability)
-    }
+    let abilities_merged = merge_ability(active_abilities);
+
     let (common_stat, dam_raw, dam_pct, dam_add): (CommonStat, i32, Dam, Damages) =
         abilities_merged
             .values()
@@ -74,31 +72,47 @@ pub fn atree_merge<'a>(
 }
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L464
-pub fn merge_ability(abilities_merged: &mut BTreeMap<i32, ATreeNodeData>, abil: &ATreeNodeData) {
-    if let Some(base_abil_id) = &abil.base_abil {
-        if let Some(base_ability) = abilities_merged.get_mut(base_abil_id) {
-            base_ability.effects.extend(abil.effects.clone());
-        } else {
-            // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/f29e47836e7469bae4eed1264ccc113c516fc73c/js/builder/atree.js#L131
-            // 999 is Melee
-            if base_abil_id == &999 {
-                return;
-            }
-            // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/f29e47836e7469bae4eed1264ccc113c516fc73c/js/builder/atree.js#L128
-            // 998 is "Elemental Mastery"
-            if base_abil_id == &998 {
-                abilities_merged.insert(abil.id, abil.clone());
-                return;
-            }
+pub fn merge_ability(active_abilities: &Vec<&ATreeNodeData>) -> BTreeMap<i32, ATreeNodeData> {
+    let mut abilities_merged = BTreeMap::<i32, ATreeNodeData>::new();
 
-            println!(
-                "Base ability not found, base_abil_id: {}, abil is {}",
-                base_abil_id, abil.display_name,
-            );
-        }
-    } else {
-        abilities_merged.insert(abil.id, abil.clone());
-    }
+    // insert base ability
+    active_abilities
+        .iter()
+        .filter(|v| v.base_abil.is_none())
+        .for_each(|&v| {
+            abilities_merged.insert(v.id, v.clone());
+        });
+
+    // merge not base ability
+    active_abilities
+        .iter()
+        .filter_map(|v| v.base_abil.map(|base_abil_id| (base_abil_id, v)))
+        .for_each(|(base_id, &v)| {
+            if let Some(base_ability) = abilities_merged.get_mut(&base_id) {
+                base_ability.effects.extend(v.effects.clone());
+            } else {
+                // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/f29e47836e7469bae4eed1264ccc113c516fc73c/js/builder/atree.js#L131
+                // 999 is "Melee", this type of calculation is not currently supported
+                if base_id == 999 {
+                    return;
+                }
+                // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/f29e47836e7469bae4eed1264ccc113c516fc73c/js/builder/atree.js#L128
+                // 998 is "Elemental Mastery",
+                // for example, "Air Mastery": "Increase your base damage from all Air attacks"
+                // it has same effect as a base ability
+                if base_id == 998 {
+                    abilities_merged.insert(v.id, v.clone());
+                    return;
+                }
+
+                println!(
+                    "Base ability not found, base_abil_id: {}, abil is {}",
+                    base_id, v.display_name,
+                );
+            }
+        });
+
+    abilities_merged
 }
 
 // TODO merge_major_id
