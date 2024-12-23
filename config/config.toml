@@ -5,8 +5,6 @@
 # 2. Define filtering conditions.
 # The tool will traverse all possible equipment combinations, check if their attribute points are valid, and store valid builds in the database.
 # If the generation process is slow or results in numerous builds with inadequate attributes, filtering conditions can be applied.
-#
-# The provided example uses RawFish's [Idol build](https://hppeng-wynn.github.io/builder?v=4#8_0Au0K70r50Qr0OK0K20K40OH0Qf160e2I1S0e1g00010039I1004fI18180H0I0I0E0o--hOsKbv3)
 
 [player] # Player attribute settings
 lvl = 106             # Level
@@ -14,13 +12,13 @@ available_point = 200 # Available attribute points; not tied to the level here f
 base_hp = 500         # Base health points; typically 500
 
 [hppeng] # hppeng related settings
-template_url = "https://hppeng-wynn.github.io/builder/?v=10#9_2SG2SH2SI2SJ2SK2SL2SM2SN0Qf00002I00001g000000z0z0+0+0+0+0-1T--hOsK5v3"
-db_path = "db/data.db"                                                                                                               # Database path
-migrations_path = "migrations"                                                                                                       # Database migration path
-items_file = "config/items.json"                                                                                                     # Database migration path
-log_builds = true                                                                                                                    # Whether to log builds to the console; useful for debugging
-log_db_errors = true                                                                                                                 # Whether to log database errors to the console; useful for debugging
-db_retry_count = 3                                                                                                                   # Number of retries for database operations
+template_url = "https://hppeng-wynn.github.io/builder?v=11#9_0cD0F+0uj0wh0Fx0Fx0Wf0OH0QY0l270y0l0+1g000000z0z0+0+0+0+0h1TzZddqwtn2"
+db_path = "db/data.db"                                                                                                              # Database path
+migrations_path = "migrations"                                                                                                      # Database migration path
+items_file = "config/items.json"                                                                                                    # Database migration path
+log_builds = true                                                                                                                   # Whether to log builds to the console; useful for debugging
+log_db_errors = true                                                                                                                # Whether to log database errors to the console; useful for debugging
+db_retry_count = 3                                                                                                                  # Number of retries for database operations
 
 [threshold_first] # First filtering threshold; attributes here are calculated first, and most builds can be filtered out here to improve speed
 # Optional configuration items in this file are commented out; uncomment to apply
@@ -70,26 +68,26 @@ db_retry_count = 3                                                              
 # min_loot_bonus = 0
 
 [[threshold_damages]]
-name = "Uppercut.Uppercut"
-min_normal = 7000
-# min_crit = 10000
-min_avg = 9000
+name = "Ophanim.Per Orb"
+min_normal = 2500
+# min_crit = 4500
+min_avg = 4000
 
 [[threshold_damages]]
-name = "Uppercut.Fireworks"
+name = "Ice Snake.Ice Snake Damage"
 # min_normal = 1000
 # min_crit = 2000
 # min_avg = 1500
 
 [items] # Equipment list; multiple items can be specified for all slots except weapon
-helmets = ["Blue Mask"]
-chest_plates = ["Soulflare"]
-leggings = ["Vaward"]
-boots = ["Resurgence"]
-rings = ["Diamond Hydro Ring", "Moon Pool Circlet"]
-bracelets = ["Prowess"]
+helmets = ["Morph-Stardust"]
+chest_plates = ["Far Cosmos"]
+leggings = ["Anxiolytic"]
+boots = ["Violet-Shift"]
+rings = ["Facile"]
+bracelets = ["Pandemonium"]
 necklaces = ["Diamond Fusion Necklace"]
-weapon = "Idol"
+weapon = "Fatal"
 
 illegal_combinations = [ # Illegal equipment combination inspections are used to check the equipment that cannot exist at the same time, such as Hive
     [
