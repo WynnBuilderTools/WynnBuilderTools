@@ -16,14 +16,6 @@ pub use hppeng::*;
 pub use rolls::*;
 pub use skill_point::*;
 
-use crate::*;
-use std::fs;
-
-pub fn gen_test_apparels() -> [Apparel; 8] {
-    let file = fs::read("assets/apparels.json").unwrap();
-    let items: [Item; 8] = serde_json::from_slice(&file).unwrap();
-    items.map(|v| Apparel::try_from(&v).unwrap())
-}
 
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/build_utils.js#L8
 pub fn skill_points_to_percentage(skp: i16) -> f64 {

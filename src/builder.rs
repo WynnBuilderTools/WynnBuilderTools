@@ -408,7 +408,12 @@ fn calculate_stats(
         }
     }
 
-    if SkillPoints::fast_gap(combination) < -config.player.available_point {
+    if SkillPoints::fast_gap(combination)
+        .only_negative()
+        .sum()
+        .abs()
+        < -config.player.available_point
+    {
         return Err(String::new());
     }
     let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);

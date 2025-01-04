@@ -15,7 +15,7 @@ pub enum Class {
 }
 
 impl Class {
-    pub fn def_mult(&self) -> f64 {
+    pub fn def_multi(&self) -> f64 {
         match &self {
             Class::Shaman => 0.60,
             Class::Archer => 0.70,

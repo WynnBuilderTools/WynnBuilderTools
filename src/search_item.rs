@@ -127,8 +127,8 @@ fn compare_items(a: &Apparel, b: &Apparel, sort_by: SortAndFilterBy) -> std::cmp
             .common_stat_max
             .hpr_pct()
             .cmp(&b.common_stat_max.hpr_pct()),
-        SortAndFilterBy::SpAdd => a.add.all().cmp(&b.add.all()),
-        SortAndFilterBy::SpReq => a.req.all().cmp(&b.req.all()),
+        SortAndFilterBy::SpAdd => a.add.sum().cmp(&b.add.sum()),
+        SortAndFilterBy::SpReq => a.req.sum().cmp(&b.req.sum()),
         SortAndFilterBy::SdRaw => a.common_stat_max.sd_raw().cmp(&b.common_stat_max.sd_raw()),
         SortAndFilterBy::SdPct => a.common_stat_max.sd_pct().cmp(&b.common_stat_max.sd_pct()),
         SortAndFilterBy::Mr => a.common_stat_max.mr().cmp(&b.common_stat_max.mr()),

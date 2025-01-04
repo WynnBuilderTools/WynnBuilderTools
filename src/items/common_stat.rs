@@ -42,6 +42,7 @@ impl CommonStat {
     pub fn hpr_pct(&self) -> i16 {
         self.inner[1]
     }
+    // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/f01c29a099ee21ed57bed9054b4651a311ee40cd/js/builder/builder_graph.js#L528
     pub fn hpr(&self) -> i32 {
         self.hpr_raw() as i32 + self.hpr_pct() as i32 * self.hpr_raw().abs() as i32 / 100
     }
@@ -112,20 +113,49 @@ impl std::fmt::Display for CommonStat {
         )
     }
 }
+#[derive(serde::Deserialize)]
+struct CommonStatJson {
+    hpr_raw: i16,
+    hpr_pct: i16,
+    mr: i16,
+    ls: i16,
+    ms: i16,
+    spd: i16,
+    sd_raw: i16,
+    sd_pct: i16,
+}
+impl<'de> serde::Deserialize<'de> for CommonStat {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let json_representation = CommonStatJson::deserialize(deserializer)?;
+        Ok(CommonStat::new(
+            json_representation.hpr_raw,
+            json_representation.hpr_pct,
+            json_representation.mr,
+            json_representation.ls,
+            json_representation.ms,
+            json_representation.spd,
+            json_representation.sd_raw,
+            json_representation.sd_pct,
+        ))
+    }
+}
 #[cfg(test)]
 mod tests {
-    use crate::gen_test_apparels;
-
     use super::*;
 
     #[test]
     fn sum_max_stats_works() {
         let apparels = gen_test_apparels();
-        let apparels: Vec<&Apparel> = apparels.iter().collect();
-        assert_eq!(
-            CommonStat::sum_max_stats(apparels.as_slice(), &Default::default()),
-            CommonStat::new(130, 30, 77, 214, -8, 16, 621, 77)
-        )
+        for v in apparels {
+            let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
+            assert_eq!(
+                CommonStat::sum_max_stats(apparels.as_slice(), &Default::default()),
+                v.common_stat
+            )
+        }
     }
 
     #[test]

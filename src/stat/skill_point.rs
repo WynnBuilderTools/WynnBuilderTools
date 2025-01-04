@@ -1,95 +1,74 @@
 use std::{fmt, simd::i16x8};
 
-use std::simd::cmp::SimdPartialOrd;
+use std::simd::cmp::{SimdOrd, SimdPartialEq, SimdPartialOrd};
 use std::simd::num::SimdInt;
 
 use crate::*;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, serde::Deserialize, Clone)]
 pub struct SkillPoints {
     pub assign: Point,
     pub original: Point,
 }
 impl SkillPoints {
-    pub fn fast_put_calculate<'a, const LEN: usize>(
-        items: &'a [&Apparel; LEN],
-    ) -> (SkillPoints, [&'a Apparel; LEN]) {
-        let zero = i16x8::splat(0);
-        let mut put_perm: [&Apparel; LEN] = *items;
-        let mut best_put_perm: [&Apparel; LEN] = put_perm;
-        let mut best_assign: Point = Point::new(i16::MAX, i16::MAX, i16::MAX, i16::MAX, i16::MAX);
-        let mut best_original: Point = Default::default();
-
-        for i in 0..5 {
-            let mut assign: Point = Default::default();
-            let mut original: Point = Default::default();
-
-            put_perm.sort_unstable_by_key(|v| v.req.inner[i]);
-            for v in put_perm {
-                let mask = original.inner.simd_lt(v.req.inner);
-                let gap = mask.select(v.req.inner - original.inner, zero);
-                assign.inner += gap;
-                original.inner += gap;
-                original.inner += v.add.inner;
-            }
-
-            if assign.all() < best_assign.all() {
-                best_assign = assign;
-                best_original = original;
-                best_put_perm = put_perm;
-            }
-        }
-
-        (
-            SkillPoints {
-                assign: best_assign,
-                original: best_original,
-            },
-            best_put_perm,
-        )
-    }
     pub fn full_put_calculate<'a, const LEN: usize>(
         items: &'a [&'a Apparel; LEN],
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
         // TODO: perf
         // ## first
-        // - req is 0
+        // - all req is 0
         // - The attributes of req are not added to other items
-        // - all reqs are minimal (add is not negative?)
+        // - all req are minimal (add has negative)
         //
         // ## sort
-        // 1. All reqs are the smallest
+        // 1. All req are the smallest
         // 1. Items with the same req attribute and whose req attribute add are all 0 are merged into one item
         // 1. With the same req attribute, all items with the smallest req are in front
         // 1. Which one has the highest add of req in the same attribute? Maybe the other two sum req is less than but add is greater than
         //
         // ## last
-        // - all reqs are maximal
+        // - all req are maximal
         // - The properties of add and other items do not have req
-        // - add is 0
+        // - all add is 0
         let zero = i16x8::splat(0);
+        let items_req = Point::from(items.iter().fold(zero, |acc, x| acc.simd_max(x.req.inner)));
 
-        let mut best_perm: [&Apparel; LEN] = *items;
-        let mut best_assign: Point = Point::new(i16::MAX, i16::MAX, i16::MAX, i16::MAX, i16::MAX);
-        let mut best_original: Point = Default::default();
+        let mut best_permutation: [&Apparel; LEN] = *items;
+        let mut best_assign = Point::splat(i16::MAX);
+        let mut best_original = Point::default();
 
-        let mut put_perm: [&Apparel; LEN] = *items;
+        let mut permutation: [&Apparel; LEN] = *items;
         loop {
-            let mut assign: Point = Default::default();
-            let mut original: Point = Default::default();
-            for v in put_perm {
-                let mask = original.inner.simd_lt(v.req.inner);
-                let gap = mask.select(v.req.inner - original.inner, zero);
-                assign.inner += gap;
-                original.inner += gap;
-                original.inner += v.add.inner;
+            let mut assign = Point::default();
+            let mut original = Point::default();
+
+            for item in permutation {
+                let req_gap = item
+                    .req
+                    .inner
+                    .simd_ne(zero) // ignore zero req point
+                    .select((item.req.inner - original.inner).simd_max(zero), zero);
+
+                assign.inner += req_gap;
+                original.inner += req_gap;
+
+                original.inner += item.add.inner;
             }
-            if assign.all() < best_assign.all() {
-                best_perm = put_perm;
+
+            // add has negative, fill it
+            let negative_add_gap = items_req
+                .inner
+                .simd_ne(zero) // ignore zero req point
+                .select((items_req.inner - original.inner).simd_max(zero), zero);
+            assign.inner += negative_add_gap;
+            original.inner += negative_add_gap;
+
+            if assign.sum() < best_assign.sum() {
+                best_permutation = permutation;
                 best_assign = assign;
                 best_original = original;
             }
-            if !next_permutation_ptr(&mut put_perm) {
+            if !next_permutation_ptr(&mut permutation) {
                 break;
             }
         }
@@ -99,20 +78,19 @@ impl SkillPoints {
                 assign: best_assign,
                 original: best_original,
             },
-            best_perm,
+            best_permutation,
         )
     }
-    pub fn fast_gap<const LEN: usize>(items: &[&Apparel; LEN]) -> i16 {
-        let mut req: Point = Default::default();
-        let mut add: Point = Default::default();
+    pub fn fast_gap<const LEN: usize>(items: &[&Apparel; LEN]) -> Point {
+        let mut req = Point::default();
+        let mut add = Point::default();
         for item in items {
             add += &item.add;
 
-            let mask = req.inner.simd_lt(item.req.inner);
-            req.inner = mask.select(item.req.inner, req.inner)
+            req.inner = req.inner.simd_max(item.req.inner);
         }
         let gap = add - req;
-        gap.all()
+        gap
     }
     pub fn add_weapon(&mut self, weapon: &Weapon) -> &Self {
         let zero = i16x8::splat(0);
@@ -167,36 +145,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn fast_put_calculate_works() {
-        let apparels = gen_test_apparels();
-        let apparels: [&Apparel; 8] = apparels.iter().collect::<Vec<_>>().try_into().unwrap();
-        let (req, _) = SkillPoints::fast_put_calculate(&apparels);
-        assert_eq!(
-            req,
-            SkillPoints {
-                assign: Point::new(30, 50, 49, 30, 45),
-                original: Point::new(30, 57, 65, 30, 45),
-            }
-        )
-    }
-    #[test]
     fn full_put_calculate_works() {
         let apparels = gen_test_apparels();
-        let apparels: [&Apparel; 8] = apparels.iter().collect::<Vec<_>>().try_into().unwrap();
-        let (req, _) = SkillPoints::full_put_calculate(&apparels);
-        assert_eq!(
-            req,
-            SkillPoints {
-                assign: Point::new(30, 50, 49, 30, 45),
-                original: Point::new(30, 57, 65, 30, 45),
-            }
-        )
+        for v in apparels {
+            let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
+            let (req, _) = SkillPoints::full_put_calculate(&apparels);
+            assert_eq!(req, v.skill_point)
+        }
     }
     #[test]
     fn fast_gap_works() {
         let apparels = gen_test_apparels();
-        let apparels: [&Apparel; 8] = apparels.iter().collect::<Vec<_>>().try_into().unwrap();
-        assert_eq!(SkillPoints::fast_gap(&apparels), -192)
+        for v in apparels {
+            let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
+            assert_eq!(SkillPoints::fast_gap(&apparels), v.skill_point_gap)
+        }
     }
 
     #[test]
@@ -235,7 +198,7 @@ mod tests {
     fn with_weapon_works() {
         let weapon = Weapon {
             req: Point::new(10, 5, 0, 5, 0),
-            add : Point::new(0, 0, 5, 5, 0),
+            add: Point::new(0, 0, 5, 5, 0),
             ..Default::default()
         };
 

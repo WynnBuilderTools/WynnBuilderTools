@@ -16,6 +16,11 @@ impl Point {
             inner: i16x8::from_slice(&[e, t, w, f, a, 0, 0, 0]),
         }
     }
+    pub fn splat(value: i16) -> Self {
+        Self {
+            inner: i16x8::from_slice(&[value, value, value, value, value, 0, 0, 0]),
+        }
+    }
     pub fn any_lt(&self, other: &Self) -> bool {
         self.inner.simd_lt(other.inner).any()
     }
@@ -40,8 +45,16 @@ impl Point {
     pub fn a(&self) -> i16 {
         self.inner[4]
     }
-    pub fn all(&self) -> i16 {
+    pub fn sum(&self) -> i16 {
         self.inner.reduce_sum()
+    }
+    pub fn only_negative(&self) -> Point {
+        let zero = i16x8::splat(0);
+        // mask = data < 0
+        let mask = self.inner.simd_lt(zero);
+        Point {
+            inner: mask.select(self.inner, zero),
+        }
     }
 }
 impl AddAssign<&Point> for Point {
@@ -78,6 +91,34 @@ impl std::fmt::Display for Point {
             self.f(),
             self.a()
         )
+    }
+}
+impl From<i16x8> for Point {
+    fn from(value: i16x8) -> Self {
+        Self { inner: value }
+    }
+}
+#[derive(serde::Deserialize)]
+struct PointJson {
+    e: i16,
+    t: i16,
+    w: i16,
+    f: i16,
+    a: i16,
+}
+impl<'de> serde::Deserialize<'de> for Point {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let json_representation = PointJson::deserialize(deserializer)?;
+        Ok(Point::new(
+            json_representation.e,
+            json_representation.t,
+            json_representation.w,
+            json_representation.f,
+            json_representation.a,
+        ))
     }
 }
 

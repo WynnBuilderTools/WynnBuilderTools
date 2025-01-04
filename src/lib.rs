@@ -12,3 +12,7 @@ pub use items::*;
 pub use network::*;
 pub use stat::*;
 pub use util::*;
+
+pub mod tests;
+#[cfg(test)]
+pub use tests::*;
