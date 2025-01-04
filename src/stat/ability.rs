@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn test_atree_merge() {
-        let file = File::open("assets/atree.json")
+        let file = File::open("assets/atree_test_case.json")
             .expect("The file `atree.json` should exist in the folder assets.");
         let reader = BufReader::new(file);
 
