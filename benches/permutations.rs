@@ -16,9 +16,9 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     group.bench_function("lexicographic", |b| {
         b.iter(|| {
-            let mut array: [usize; 8] = black_box(std::array::from_fn(|i| i));
+            let mut array: [usize; 8] = std::array::from_fn(|i| i);
             loop {
-                if !next_permutation(&mut array) {
+                if !next_permutation(black_box(&mut array)) {
                     break;
                 }
             }
@@ -27,9 +27,9 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     group.bench_function("lexicographic with ref", |b| {
         b.iter(|| {
-            let mut array: [&str; 8] = black_box(["a", "b", "c", "d", "e", "f", "g", "h"]);
+            let mut array: [&str; 8] = ["a", "b", "c", "d", "e", "f", "g", "h"];
             loop {
-                if !next_permutation(&mut array) {
+                if !next_permutation(black_box(&mut array)) {
                     break;
                 }
             }
@@ -38,9 +38,9 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     group.bench_function("lexicographic with ptr", |b| {
         b.iter(|| {
-            let mut array: [&str; 8] = black_box(["a", "b", "c", "d", "e", "f", "g", "h"]);
+            let mut array: [&str; 8] = ["a", "b", "c", "d", "e", "f", "g", "h"];
             loop {
-                if !next_permutation_ptr(&mut array) {
+                if !next_permutation_ptr(black_box(&mut array)) {
                     break;
                 }
             }
@@ -51,10 +51,22 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter(|| {
             let mut array: [&usize; 8] = black_box([&0, &1, &2, &3, &4, &5, &6, &7]);
             loop {
-                if !next_permutation_ptr(&mut array) {
+                if !next_permutation_ptr(black_box(&mut array)) {
                     break;
                 }
             }
+        })
+    });
+
+    group.bench_function("bfs_permutation_with_pruning with ptr", |b| {
+        b.iter(|| {
+            let array: [&str; 8] = ["a", "b", "c", "d", "e", "f", "g", "h"];
+            let initial_context = ();
+            fn example_pruning(context: (), _depth: usize, _item: &str) -> Option<()> {
+                Some(context)
+            }
+
+            bfs_permutation_with_prune(&array, initial_context, example_pruning);
         })
     });
 

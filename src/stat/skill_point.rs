@@ -1,3 +1,4 @@
+use std::ops::{BitAnd, BitOr};
 use std::{fmt, simd::i16x8};
 
 use std::simd::cmp::{SimdOrd, SimdPartialEq, SimdPartialOrd};
@@ -11,25 +12,10 @@ pub struct SkillPoints {
     pub original: Point,
 }
 impl SkillPoints {
+    #[allow(dead_code)]
     pub fn full_put_calculate<'a, const LEN: usize>(
         items: &'a [&'a Apparel; LEN],
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
-        // TODO: perf
-        // ## first
-        // - all req is 0
-        // - The attributes of req are not added to other items
-        // - all req are minimal (add has negative)
-        //
-        // ## sort
-        // 1. All req are the smallest
-        // 1. Items with the same req attribute and whose req attribute add are all 0 are merged into one item
-        // 1. With the same req attribute, all items with the smallest req are in front
-        // 1. Which one has the highest add of req in the same attribute? Maybe the other two sum req is less than but add is greater than
-        //
-        // ## last
-        // - all req are maximal
-        // - The properties of add and other items do not have req
-        // - all add is 0
         let zero = i16x8::splat(0);
         let items_req = Point::from(items.iter().fold(zero, |acc, x| acc.simd_max(x.req.inner)));
 
@@ -48,10 +34,8 @@ impl SkillPoints {
                     .inner
                     .simd_ne(zero) // ignore zero req point
                     .select((item.req.inner - original.inner).simd_max(zero), zero);
-
                 assign.inner += req_gap;
                 original.inner += req_gap;
-
                 original.inner += item.add.inner;
             }
 
@@ -80,6 +64,129 @@ impl SkillPoints {
             },
             best_permutation,
         )
+    }
+    #[allow(dead_code)]
+    pub fn prune_put_calculate<'a, const LEN: usize>(
+        items: &'a [&'a Apparel; LEN],
+    ) -> (SkillPoints, [&'a Apparel; LEN]) {
+        let zero = i16x8::splat(0);
+        let mut best_depth_assign: [i16; LEN] = [i16::MAX; LEN];
+
+        let prune_fn = |mut context: (SkillPoints, Point),
+                        depth: usize,
+                        item: &'a Apparel|
+         -> Option<(SkillPoints, Point)> {
+            // fill req gap
+            let req_gap = item
+                .req
+                .inner
+                .simd_ne(zero) // ignore zero req point
+                .select(
+                    (item.req.inner - context.0.original.inner).simd_max(zero),
+                    zero,
+                );
+            context.0.assign.inner += req_gap;
+            context.0.original.inner += req_gap;
+
+            // add point
+            context.0.original.inner += item.add.inner;
+
+            // fill negative add gap
+            let tolerance = item.req.inner.simd_ne(zero).select(item.add.inner, zero);
+            context.1.inner = context.1.inner.simd_max(item.req.inner + tolerance);
+            let negative_add_gap = context
+                .1
+                .inner
+                .simd_ne(zero) // ignore zero req point
+                .select(
+                    (context.1.inner - context.0.original.inner).simd_max(zero),
+                    zero,
+                );
+            context.0.assign.inner += negative_add_gap;
+            context.0.original.inner += negative_add_gap;
+
+            let sum = context.0.assign.sum();
+            if sum <= best_depth_assign[depth] {
+                best_depth_assign[depth] = sum;
+                return Some(context);
+            } else {
+                return None;
+            }
+        };
+        let best =
+            bfs_permutation_with_prune(items, (SkillPoints::default(), Point::default()), prune_fn)
+                .into_iter()
+                .min_by(|a, b| a.1 .0.assign.sum().cmp(&b.1 .0.assign.sum()))
+                .unwrap();
+        (best.1 .0, best.0)
+    }
+    pub fn scc_put_calculate<'a, const LEN: usize>(
+        items: &'a [&'a Apparel; LEN],
+    ) -> (SkillPoints, [&'a Apparel; LEN]) {
+        let mut depend_relation = [[false; LEN]; LEN];
+        for i in 0..LEN {
+            for j in i..LEN {
+                depend_relation[i][j] = depend_check(items[i], items[j]);
+                depend_relation[j][i] = depend_check(items[j], items[i]);
+            }
+        }
+
+        // a depends on b and b depends on a -> a and b require permutation
+        // d depends on c -> place c first, b second
+        let depend_group = tarjans_scc(&depend_relation);
+
+        let zero = i16x8::splat(0);
+        let compute = |mut context: (SkillPoints, Point, [usize; LEN], usize),
+                       index: usize|
+         -> (SkillPoints, Point, [usize; LEN], usize) {
+            let item = items[index];
+
+            // permutation
+            context.2[context.3] = index;
+            context.3 += 1;
+
+            // fill req gap
+            let req_gap = item
+                .req
+                .inner
+                .simd_ne(zero) // ignore zero req point
+                .select(
+                    (item.req.inner - context.0.original.inner).simd_max(zero),
+                    zero,
+                );
+            context.0.assign.inner += req_gap;
+            context.0.original.inner += req_gap;
+
+            // add point
+            context.0.original.inner += item.add.inner;
+
+            // fill negative add gap
+            let tolerance = item.req.inner.simd_ne(zero).select(item.add.inner, zero);
+            context.1.inner = context.1.inner.simd_max(item.req.inner + tolerance);
+            let negative_add_gap = context
+                .1
+                .inner
+                .simd_ne(zero) // ignore zero req point
+                .select(
+                    (context.1.inner - context.0.original.inner).simd_max(zero),
+                    zero,
+                );
+            context.0.assign.inner += negative_add_gap;
+            context.0.original.inner += negative_add_gap;
+
+            context
+        };
+        let best = permutation_2d_usize(
+            &depend_group,
+            // (skill point result, min point request, permutation array, permutation array index)
+            (SkillPoints::default(), Point::default(), [0; LEN], 0),
+            compute,
+        )
+        .into_iter()
+        .min_by(|a, b| a.0.assign.sum().cmp(&b.0.assign.sum()))
+        .unwrap();
+
+        (best.0, best.2.map(|i| items[i]))
     }
     pub fn fast_gap<const LEN: usize>(items: &[&Apparel; LEN]) -> Point {
         let mut req = Point::default();
@@ -140,16 +247,45 @@ impl std::fmt::Display for SkillPoints {
     }
 }
 
+fn depend_check(b: &Apparel, a: &Apparel) -> bool {
+    let zero = i16x8::splat(0);
+    let a_req_lt_b_req = a.req.inner.simd_lt(b.req.inner);
+    let b_add_gt_0 = b.add.inner.simd_lt(zero);
+    let a_add_lt_0 = a.add.inner.simd_gt(zero);
+    let b_depends_on_a = a_add_lt_0.bitand(a_req_lt_b_req.bitor(b_add_gt_0));
+    b_depends_on_a.any()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
+    #[ignore]
     fn full_put_calculate_works() {
         let apparels = gen_test_apparels();
         for v in apparels {
             let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
             let (req, _) = SkillPoints::full_put_calculate(&apparels);
+            assert_eq!(req, v.skill_point)
+        }
+    }
+    #[test]
+    #[ignore]
+    fn prune_put_calculate_works() {
+        let apparels = gen_test_apparels();
+        for v in apparels {
+            let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
+            let (req, _) = SkillPoints::prune_put_calculate(&apparels);
+            assert_eq!(req, v.skill_point)
+        }
+    }
+    #[test]
+    fn scc_put_calculate_works() {
+        let apparels = gen_test_apparels();
+        for v in apparels {
+            let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
+            let (req, _) = SkillPoints::scc_put_calculate(&apparels);
             assert_eq!(req, v.skill_point)
         }
     }

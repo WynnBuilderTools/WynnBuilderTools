@@ -21,10 +21,24 @@ fn criterion_benchmark(c: &mut Criterion) {
             }
         })
     });
+    group.bench_function("prune_put", |b| {
+        b.iter(|| {
+            for v in apparels.clone() {
+                SkillPoints::prune_put_calculate(&v);
+            }
+        })
+    });
+    group.bench_function("scc_put", |b| {
+        b.iter(|| {
+            for v in apparels.clone() {
+                SkillPoints::scc_put_calculate(&v);
+            }
+        })
+    });
     group.bench_function("fast_gap", |b| {
         b.iter(|| {
             for v in apparels.clone() {
-                SkillPoints::fast_gap(&v);
+                let _ = SkillPoints::fast_gap(&v).only_negative().sum().abs();
             }
         })
     });

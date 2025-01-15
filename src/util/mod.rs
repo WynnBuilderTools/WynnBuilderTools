@@ -139,6 +139,80 @@ where
 
     threshold
 }
+pub fn tarjans_scc<const LEN: usize>(adjacency_matrix: &[[bool; LEN]; LEN]) -> Vec<Vec<usize>> {
+    let mut index = 0;
+    let mut stack = Vec::new();
+    let mut indices = [-1; LEN];
+    let mut low_link = [-1; LEN];
+    let mut on_stack = [false; LEN];
+    let mut sccs = Vec::new();
+
+    fn strong_connect<const LEN: usize>(
+        v: usize,
+        index: &mut i32,
+        stack: &mut Vec<usize>,
+        indices: &mut [i32],
+        low_link: &mut [i32],
+        on_stack: &mut [bool],
+        sccs: &mut Vec<Vec<usize>>,
+        adjacency_matrix: &[[bool; LEN]; LEN],
+    ) {
+        indices[v] = *index;
+        low_link[v] = *index;
+        *index += 1;
+        stack.push(v);
+        on_stack[v] = true;
+
+        for neighbor in 0..LEN {
+            if adjacency_matrix[v][neighbor] {
+                if indices[neighbor] == -1 {
+                    strong_connect(
+                        neighbor,
+                        index,
+                        stack,
+                        indices,
+                        low_link,
+                        on_stack,
+                        sccs,
+                        adjacency_matrix,
+                    );
+                    low_link[v] = low_link[v].min(low_link[neighbor]);
+                } else if on_stack[neighbor] {
+                    low_link[v] = low_link[v].min(indices[neighbor]);
+                }
+            }
+        }
+
+        if low_link[v] == indices[v] {
+            let mut scc = Vec::new();
+            while let Some(w) = stack.pop() {
+                on_stack[w] = false;
+                scc.push(w);
+                if w == v {
+                    break;
+                }
+            }
+            sccs.push(scc);
+        }
+    }
+
+    for v in 0..LEN {
+        if indices[v] == -1 {
+            strong_connect(
+                v,
+                &mut index,
+                &mut stack,
+                &mut indices,
+                &mut low_link,
+                &mut on_stack,
+                &mut sccs,
+                adjacency_matrix,
+            );
+        }
+    }
+
+    sccs
+}
 
 #[cfg(test)]
 mod tests {
