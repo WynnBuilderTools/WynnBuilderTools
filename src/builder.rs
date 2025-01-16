@@ -416,7 +416,7 @@ fn calculate_stats(
     {
         return Err(String::new());
     }
-    let (mut skill_point, _) = SkillPoints::full_put_calculate(combination);
+    let (mut skill_point, _) = SkillPoints::scc_put_calculate(combination);
     skill_point.add_weapon(weapon);
 
     if let Some(threshold) = &config.point_threshold() {
