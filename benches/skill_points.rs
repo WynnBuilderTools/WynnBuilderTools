@@ -17,6 +17,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("full_put", |b| {
         b.iter(|| {
             for v in apparels.clone() {
+                #[allow(deprecated)]
                 SkillPoints::full_put_calculate(&v);
             }
         })
@@ -24,6 +25,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("prune_put", |b| {
         b.iter(|| {
             for v in apparels.clone() {
+                #[allow(deprecated)]
                 SkillPoints::prune_put_calculate(&v);
             }
         })

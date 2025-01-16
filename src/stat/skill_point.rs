@@ -12,7 +12,7 @@ pub struct SkillPoints {
     pub original: Point,
 }
 impl SkillPoints {
-    #[allow(dead_code)]
+    #[deprecated]
     pub fn full_put_calculate<'a, const LEN: usize>(
         items: &'a [&'a Apparel; LEN],
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
@@ -65,7 +65,7 @@ impl SkillPoints {
             best_permutation,
         )
     }
-    #[allow(dead_code)]
+    #[deprecated]
     pub fn prune_put_calculate<'a, const LEN: usize>(
         items: &'a [&'a Apparel; LEN],
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
@@ -262,6 +262,7 @@ mod tests {
 
     #[test]
     #[ignore]
+    #[allow(deprecated)]
     fn full_put_calculate_works() {
         let apparels = gen_test_apparels();
         for v in apparels {
@@ -272,6 +273,7 @@ mod tests {
     }
     #[test]
     #[ignore]
+    #[allow(deprecated)]
     fn prune_put_calculate_works() {
         let apparels = gen_test_apparels();
         for v in apparels {
