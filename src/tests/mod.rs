@@ -13,6 +13,8 @@ pub fn gen_test_apparels() -> Vec<ApparelsTestCase> {
 pub struct ApparelsTestCase {
     #[serde(deserialize_with = "deserialize_apparels")]
     pub apparels: [Apparel; 8],
+    #[serde(deserialize_with = "deserialize_weapon")]
+    pub weapon: Weapon,
     pub skill_point: SkillPoints,
     pub skill_point_gap: Point,
     pub common_stat: CommonStat,
@@ -23,6 +25,13 @@ where
 {
     let array: [Item; 8] = Deserialize::deserialize(deserializer)?;
     Ok(array.map(|v| Apparel::try_from(&v).unwrap()))
+}
+fn deserialize_weapon<'de, D>(deserializer: D) -> Result<Weapon, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let item: Item = Deserialize::deserialize(deserializer)?;
+    Ok(Weapon::try_from(&item).unwrap())
 }
 
 #[cfg(test)]

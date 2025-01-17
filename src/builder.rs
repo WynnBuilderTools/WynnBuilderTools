@@ -412,12 +412,11 @@ fn calculate_stats(
         .only_negative()
         .sum()
         .abs()
-        < -config.player.available_point
+        > config.player.available_point
     {
         return Err(String::new());
     }
-    let (mut skill_point, _) = SkillPoints::scc_put_calculate(combination);
-    skill_point.add_weapon(weapon);
+    let (mut skill_point, _) = SkillPoints::scc_put_calculate(combination, weapon);
 
     if let Some(threshold) = &config.point_threshold() {
         skill_point.assign(threshold);

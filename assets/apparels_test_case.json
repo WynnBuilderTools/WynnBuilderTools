@@ -163,6 +163,16 @@
                 "id": 2263
             }
         ],
+        "weapon": {
+            "id": 3561,
+            "name": "Cracked Oak Wand",
+            "tier": "Common",
+            "type": "wand",
+            "lvl": 1,
+            "slots": 1,
+            "nDam": "1-2",
+            "atkSpd": "NORMAL"
+        },
         "skill_point": {
             "assign": {
                 "e": 30,
@@ -332,6 +342,16 @@
                 "spd": 12
             }
         ],
+        "weapon": {
+            "id": 3561,
+            "name": "Cracked Oak Wand",
+            "tier": "Common",
+            "type": "wand",
+            "lvl": 1,
+            "slots": 1,
+            "nDam": "1-2",
+            "atkSpd": "NORMAL"
+        },
         "skill_point": {
             "assign": {
                 "e": 48,
@@ -506,6 +526,16 @@
                 "spd": 12
             }
         ],
+        "weapon": {
+            "id": 3561,
+            "name": "Cracked Oak Wand",
+            "tier": "Common",
+            "type": "wand",
+            "lvl": 1,
+            "slots": 1,
+            "nDam": "1-2",
+            "atkSpd": "NORMAL"
+        },
         "skill_point": {
             "assign": {
                 "e": 46,
@@ -538,6 +568,223 @@
             "spd": 67,
             "sd_raw": 356,
             "sd_pct": 107
+        }
+    },
+    {
+        "apparels": [
+            {
+                "id": 2445,
+                "name": "Morph-Stardust",
+                "tier": "Set",
+                "type": "helmet",
+                "lvl": 100,
+                "slots": 3,
+                "hp": 3250,
+                "aDef": 60,
+                "fDef": 60,
+                "tDef": 60,
+                "eDef": 60,
+                "wDef": 60,
+                "defReq": 45,
+                "strReq": 45,
+                "intReq": 45,
+                "agiReq": 45,
+                "dexReq": 45,
+                "def": 2,
+                "str": 2,
+                "int": 2,
+                "agi": 2,
+                "dex": 2,
+                "hprRaw": 260,
+                "mr": 8,
+                "spd": 20,
+                "sdRaw": 182
+            },
+            {
+                "id": 1022,
+                "name": "Far Cosmos",
+                "tier": "Rare",
+                "type": "chestplate",
+                "lvl": 100,
+                "slots": 5,
+                "hp": 3500,
+                "defReq": 30,
+                "strReq": 30,
+                "intReq": 30,
+                "agiReq": 30,
+                "dexReq": 30,
+                "def": 8,
+                "str": 8,
+                "int": 8,
+                "agi": 8,
+                "dex": 8
+            },
+            {
+                "id": 3629,
+                "name": "Anxiolytic",
+                "tier": "Legendary",
+                "type": "leggings",
+                "lvl": 101,
+                "slots": 4,
+                "hp": 3880,
+                "aDef": 150,
+                "fDef": -125,
+                "tDef": 125,
+                "eDef": -175,
+                "wDef": 150,
+                "defReq": 35,
+                "strReq": 35,
+                "intReq": 50,
+                "agiReq": 50,
+                "dexReq": 40,
+                "int": 10,
+                "agi": 12,
+                "dex": 15,
+                "mr": 31
+            },
+            {
+                "id": 3755,
+                "name": "Violet-Shift",
+                "tier": "Fabled",
+                "type": "boots",
+                "lvl": 77,
+                "slots": 2,
+                "fDef": -50,
+                "mr": 14,
+                "ls": 303
+            },
+            {
+                "id": 1019,
+                "name": "Facile",
+                "tier": "Rare",
+                "type": "ring",
+                "lvl": 99,
+                "defReq": 10,
+                "strReq": 10,
+                "intReq": 10,
+                "agiReq": 10,
+                "dexReq": 10,
+                "def": 2,
+                "str": 2,
+                "int": 2,
+                "agi": 2,
+                "dex": 2,
+                "hprPct": -6,
+                "sdPct": -4
+            },
+            {
+                "id": 1019,
+                "name": "Facile",
+                "tier": "Rare",
+                "type": "ring",
+                "lvl": 99,
+                "defReq": 10,
+                "strReq": 10,
+                "intReq": 10,
+                "agiReq": 10,
+                "dexReq": 10,
+                "def": 2,
+                "str": 2,
+                "int": 2,
+                "agi": 2,
+                "dex": 2,
+                "hprPct": -6,
+                "sdPct": -4
+            },
+            {
+                "id": 2089,
+                "name": "Pandemonium",
+                "tier": "Legendary",
+                "type": "bracelet",
+                "lvl": 99,
+                "hp": -300,
+                "hpBonus": -700,
+                "aDef": -200,
+                "fDef": -200,
+                "tDef": -200,
+                "eDef": -200,
+                "wDef": -200,
+                "defReq": 45,
+                "strReq": 45,
+                "intReq": 45,
+                "agiReq": 45,
+                "dexReq": 45,
+                "ls": -42,
+                "spd": 9,
+                "sdRaw": 72,
+                "sdPct": 21
+            },
+            {
+                "id": 1553,
+                "name": "Diamond Fusion Necklace",
+                "tier": "Legendary",
+                "type": "necklace",
+                "lvl": 95,
+                "fixID": true,
+                "aDef": 15,
+                "fDef": 15,
+                "tDef": 15,
+                "eDef": 15,
+                "wDef": 15,
+                "defReq": 20,
+                "strReq": 20,
+                "intReq": 20,
+                "agiReq": 20,
+                "dexReq": 20,
+                "def": 4,
+                "str": 4,
+                "int": 4,
+                "agi": 4,
+                "dex": 4
+            }
+        ],
+        "weapon": {
+            "id": 1698,
+            "name": "Fatal",
+            "tier": "Mythic",
+            "type": "wand",
+            "lvl": 99,
+            "slots": 3,
+            "dexReq": 110,
+            "dex": 25,
+            "ms": 8,
+            "spd": 20,
+            "sdPct": 33,
+            "tDam": "1-340",
+            "atkSpd": "VERY_FAST"
+        },
+        "skill_point": {
+            "assign": {
+                "e": 29,
+                "t": 77,
+                "w": 32,
+                "f": 29,
+                "a": 32
+            },
+            "original": {
+                "e": 47,
+                "t": 135,
+                "w": 60,
+                "f": 47,
+                "a": 62
+            }
+        },
+        "skill_point_gap": {
+            "e": -27,
+            "t": -12,
+            "w": -22,
+            "f": -27,
+            "a": -20
+        },
+        "common_stat": {
+            "hpr_raw": 338,
+            "hpr_pct": -8,
+            "mr": 68,
+            "ls": 365,
+            "ms": 0,
+            "spd": 38,
+            "sd_raw": 331,
+            "sd_pct": 21
         }
     }
 ]

@@ -5,42 +5,43 @@ use wynn_build_tools::tests::*;
 use wynn_build_tools::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let apparels: Vec<[Apparel; 8]> = gen_test_apparels()
+    let apparels: Vec<([Apparel; 8], Weapon)> = gen_test_apparels()
         .into_iter()
-        .map(|v| v.apparels)
+        .map(|v| (v.apparels, v.weapon))
         .collect();
-    let apparels: Vec<[&Apparel; 8]> = apparels
+    let apparels_ref: Vec<([&Apparel; 8], &Weapon)> = apparels
         .iter()
-        .map(|array| std::array::from_fn(|i| &array[i]))
+        .map(|array| (std::array::from_fn(|i| &array.0[i]), &array.1))
         .collect();
+
     let mut group = c.benchmark_group("skill point");
     group.bench_function("full_put", |b| {
         b.iter(|| {
-            for v in apparels.clone() {
+            for v in apparels_ref.clone() {
                 #[allow(deprecated)]
-                SkillPoints::full_put_calculate(&v);
+                SkillPoints::full_put_calculate(&v.0);
             }
         })
     });
     group.bench_function("prune_put", |b| {
         b.iter(|| {
-            for v in apparels.clone() {
+            for v in apparels_ref.clone() {
                 #[allow(deprecated)]
-                SkillPoints::prune_put_calculate(&v);
+                SkillPoints::prune_put_calculate(&v.0);
             }
         })
     });
     group.bench_function("scc_put", |b| {
         b.iter(|| {
-            for v in apparels.clone() {
-                SkillPoints::scc_put_calculate(&v);
+            for v in apparels_ref.clone() {
+                SkillPoints::scc_put_calculate(&v.0, v.1);
             }
         })
     });
     group.bench_function("fast_gap", |b| {
         b.iter(|| {
-            for v in apparels.clone() {
-                let _ = SkillPoints::fast_gap(&v).only_negative().sum().abs();
+            for v in apparels_ref.clone() {
+                let _ = SkillPoints::fast_gap(&v.0).only_negative().sum().abs();
             }
         })
     });

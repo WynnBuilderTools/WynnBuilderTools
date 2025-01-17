@@ -122,6 +122,7 @@ impl SkillPoints {
     }
     pub fn scc_put_calculate<'a, const LEN: usize>(
         items: &'a [&'a Apparel; LEN],
+        weapon: &Weapon,
     ) -> (SkillPoints, [&'a Apparel; LEN]) {
         let mut depend_relation = [[false; LEN]; LEN];
         for i in 0..LEN {
@@ -183,6 +184,10 @@ impl SkillPoints {
             compute,
         )
         .into_iter()
+        .map(|mut v| {
+            v.0.add_weapon(weapon);
+            (v.0, v.1, v.2)
+        })
         .min_by(|a, b| a.0.assign.sum().cmp(&b.0.assign.sum()))
         .unwrap();
 
@@ -199,14 +204,20 @@ impl SkillPoints {
         let gap = add - req;
         gap
     }
-    pub fn add_weapon(&mut self, weapon: &Weapon) -> &Self {
+    fn add_weapon(&mut self, weapon: &Weapon) -> &Self {
         let zero = i16x8::splat(0);
 
-        let mask = self.original.inner.simd_lt(weapon.req.inner);
-        let gap = mask.select(weapon.req.inner - self.original.inner, zero);
+        let req_gap = weapon
+            .req
+            .inner
+            .simd_ne(zero) // ignore zero req point
+            .select(
+                (weapon.req.inner - self.original.inner).simd_max(zero),
+                zero,
+            );
 
-        self.assign.inner += gap;
-        self.original.inner += gap;
+        self.assign.inner += req_gap;
+        self.original.inner += req_gap;
         self.original.inner += weapon.add.inner;
 
         self
@@ -287,7 +298,7 @@ mod tests {
         let apparels = gen_test_apparels();
         for v in apparels {
             let apparels: [&Apparel; 8] = v.apparels.iter().collect::<Vec<_>>().try_into().unwrap();
-            let (req, _) = SkillPoints::scc_put_calculate(&apparels);
+            let (req, _) = SkillPoints::scc_put_calculate(&apparels, &v.weapon);
             assert_eq!(req, v.skill_point)
         }
     }
