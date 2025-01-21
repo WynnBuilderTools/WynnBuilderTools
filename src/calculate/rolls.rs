@@ -3,7 +3,36 @@ use std::simd::num::SimdFloat;
 use std::simd::num::SimdInt;
 use std::simd::{f32x8, i16x8};
 
-/// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/HEAD/js/build_utils.js#L187
+pub trait Roll {
+    fn min_roll(&self, fix_id: bool) -> Self;
+    fn max_roll(&self, fix_id: bool) -> Self;
+}
+
+impl Roll for i32 {
+    fn min_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            *self
+        } else {
+            min_rolls_i32(*self)
+        }
+    }
+
+    fn max_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            *self
+        } else {
+            max_rolls_i32(*self)
+        }
+    }
+}
+
+pub fn max_roll<T: Roll>(value: &T, fix_id: bool) -> T {
+    value.max_roll(fix_id)
+}
+pub fn min_roll<T: Roll>(value: &T, fix_id: bool) -> T {
+    value.min_roll(fix_id)
+}
+// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/befbc208ad760d455d5966cbec9c70ed65680f0e/js/build_utils.js#L202-L235
 pub fn max_rolls(stat: &i16x8) -> i16x8 {
     // positive is 1.3,negative is 0.7
     rolls(stat, 1.3, 0.7)

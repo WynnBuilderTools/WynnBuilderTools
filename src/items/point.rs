@@ -5,6 +5,9 @@ use std::{
     ops::{Add, AddAssign, Sub},
     simd::i16x8,
 };
+
+use crate::calculate::*;
+
 /// 0:e 1:t 2:w 3:f 4:a
 #[derive(Clone, Debug, PartialEq, Default, Hash)]
 pub struct Point {
@@ -54,6 +57,27 @@ impl Point {
         let mask = self.inner.simd_lt(zero);
         Point {
             inner: mask.select(self.inner, zero),
+        }
+    }
+}
+impl Roll for Point {
+    fn min_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: max_rolls(&self.inner),
+            }
+        }
+    }
+
+    fn max_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: max_rolls(&self.inner),
+            }
         }
     }
 }

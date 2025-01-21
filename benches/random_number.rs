@@ -3,7 +3,8 @@ extern crate wynn_build_tools;
 use std::sync::{atomic::AtomicUsize, Arc};
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use wynn_build_tools::*;
+
+use wynn_build_tools::util::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
     let max = 10000000000;

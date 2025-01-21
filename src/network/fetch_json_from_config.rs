@@ -1,6 +1,9 @@
 use std::{fs::File, io::Write, path::Path};
 
-use crate::{build_config::Api, config::build_config::Config, ApiItems, Items};
+use crate::{
+    config::*,
+    items::{ApiItems, Items},
+};
 
 pub async fn fetch_json_from_config<P>(path: P, config: &Config) -> Result<impl AsRef<Path>, &str>
 where

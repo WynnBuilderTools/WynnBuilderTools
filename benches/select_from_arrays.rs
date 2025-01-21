@@ -2,7 +2,8 @@
 extern crate wynn_build_tools;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use wynn_build_tools::*;
+
+use wynn_build_tools::util::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("select_from_arrays");

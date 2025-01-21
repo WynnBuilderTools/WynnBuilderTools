@@ -1,4 +1,4 @@
-use crate::*;
+use super::*;
 
 #[derive(Debug, Default, Clone)]
 pub struct Damages {

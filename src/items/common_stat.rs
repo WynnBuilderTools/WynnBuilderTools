@@ -3,7 +3,9 @@ use std::simd::cmp::SimdPartialEq;
 use std::simd::cmp::SimdPartialOrd;
 use std::{ops::Add, simd::i16x8};
 
-use crate::*;
+use crate::calculate::*;
+
+use super::*;
 
 /// 0:hpr_raw 1:hpr_pct 2:mr 3:ls 4:ms 5:spd 6:sd_raw 7:sd_pct
 #[derive(Clone, Debug, Default)]
@@ -72,6 +74,27 @@ impl CommonStat {
             total += item.common_stat_max.inner;
         }
         Self { inner: total }
+    }
+}
+impl Roll for CommonStat {
+    fn min_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: min_rolls(&self.inner),
+            }
+        }
+    }
+
+    fn max_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: max_rolls(&self.inner),
+            }
+        }
     }
 }
 impl PartialEq for CommonStat {
@@ -144,6 +167,8 @@ impl<'de> serde::Deserialize<'de> for CommonStat {
 }
 #[cfg(test)]
 mod tests {
+    use crate::tests::*;
+
     use super::*;
 
     #[test]

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::Path, str};
 use tokio::{fs::File, io::AsyncReadExt};
 
-use crate::{CommonStat, Dam, Point, SecStat};
+use crate::items::*;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Config {

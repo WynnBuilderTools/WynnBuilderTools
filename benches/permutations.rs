@@ -3,7 +3,8 @@ extern crate wynn_build_tools;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use itertools::Itertools;
-use wynn_build_tools::*;
+
+use wynn_build_tools::util::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("permutations");

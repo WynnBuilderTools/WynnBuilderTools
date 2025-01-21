@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::*;
+use crate::{calculate::*, items::*};
 use std::fs;
 
 pub fn gen_test_apparels() -> Vec<ApparelsTestCase> {

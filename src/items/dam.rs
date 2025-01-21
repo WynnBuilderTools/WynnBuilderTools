@@ -3,6 +3,8 @@ use std::{ops::AddAssign, simd::i16x8};
 
 use std::simd::cmp::SimdPartialOrd;
 
+use crate::calculate::*;
+
 #[derive(Clone, Debug, Default)]
 pub struct Dam {
     pub inner: i16x8,
@@ -33,6 +35,27 @@ impl Dam {
     }
     pub fn a(&self) -> i16 {
         self.inner[5]
+    }
+}
+impl Roll for Dam {
+    fn min_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: min_rolls(&self.inner),
+            }
+        }
+    }
+
+    fn max_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: max_rolls(&self.inner),
+            }
+        }
     }
 }
 impl AddAssign<&Dam> for Dam {

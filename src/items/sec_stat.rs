@@ -1,5 +1,7 @@
 use std::simd::{cmp::SimdPartialOrd, i16x8};
 
+use crate::calculate::*;
+
 use super::*;
 
 #[derive(Clone, Debug, Default)]
@@ -29,6 +31,27 @@ impl SecStat {
     }
     pub fn any_lt(&self, other: &Self) -> bool {
         self.inner.simd_lt(other.inner).any()
+    }
+}
+impl Roll for SecStat {
+    fn min_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: min_rolls(&self.inner),
+            }
+        }
+    }
+
+    fn max_roll(&self, fix_id: bool) -> Self {
+        if fix_id {
+            self.clone()
+        } else {
+            Self {
+                inner: max_rolls(&self.inner),
+            }
+        }
     }
 }
 

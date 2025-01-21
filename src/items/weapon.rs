@@ -1,6 +1,8 @@
 use std::str::FromStr;
 
-use crate::*;
+use crate::calculate::*;
+
+use super::*;
 
 #[derive(Clone, Debug, Default)]
 pub struct Weapon {

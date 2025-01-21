@@ -1,4 +1,6 @@
-use crate::*;
+use crate::items::*;
+
+use super::*;
 
 pub fn sum_hp_max(items: &[&Apparel], weapon: &Weapon) -> i32 {
     let mut hp = weapon.hp_bonus_max;

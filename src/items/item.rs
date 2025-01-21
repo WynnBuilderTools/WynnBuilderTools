@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::*;
+use super::*;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -181,120 +181,6 @@ impl Item {
     }
     pub fn as_fix_id(&self) -> bool {
         self.fix_id.map_or(false, |v| v)
-    }
-}
-pub fn max_roll<T: Roll>(value: &T, fix_id: bool) -> T {
-    value.max_roll(fix_id)
-}
-pub fn min_roll<T: Roll>(value: &T, fix_id: bool) -> T {
-    value.min_roll(fix_id)
-}
-
-pub trait Roll {
-    fn min_roll(&self, fix_id: bool) -> Self;
-    fn max_roll(&self, fix_id: bool) -> Self;
-}
-
-impl Roll for i32 {
-    fn min_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            *self
-        } else {
-            min_rolls_i32(*self)
-        }
-    }
-
-    fn max_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            *self
-        } else {
-            max_rolls_i32(*self)
-        }
-    }
-}
-
-impl Roll for Point {
-    fn min_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
-    }
-
-    fn max_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
-    }
-}
-impl Roll for Dam {
-    fn min_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: min_rolls(&self.inner),
-            }
-        }
-    }
-
-    fn max_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
-    }
-}
-impl Roll for CommonStat {
-    fn min_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: min_rolls(&self.inner),
-            }
-        }
-    }
-
-    fn max_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
-    }
-}
-impl Roll for SecStat {
-    fn min_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: min_rolls(&self.inner),
-            }
-        }
-    }
-
-    fn max_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
     }
 }
 

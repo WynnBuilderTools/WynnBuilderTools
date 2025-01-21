@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use crate::*;
+use crate::items::*;
 
 /// return (common_stat, dam_raw, dam_pct, dam_add, spells)
 /// https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/50ed4620bd0a4e3af7dd5646971c6dcd78e8b783/js/builder/atree.js#L441
@@ -120,6 +120,7 @@ pub fn merge_ability(active_abilities: &Vec<&ATreeNodeData>) -> BTreeMap<i32, AT
 
 #[cfg(test)]
 mod tests {
+    use crate::calculate::decode_atree;
     use std::{fs::File, io::BufReader};
 
     use super::*;

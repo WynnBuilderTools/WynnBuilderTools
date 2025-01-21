@@ -1,1 +1,3 @@
-pub mod build_config;
+mod build_config;
+
+pub use build_config::*;

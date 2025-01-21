@@ -4,7 +4,8 @@ use std::{fmt, simd::i16x8};
 use std::simd::cmp::{SimdOrd, SimdPartialEq, SimdPartialOrd};
 use std::simd::num::SimdInt;
 
-use crate::*;
+use crate::items::*;
+use crate::util::*;
 
 #[derive(Debug, Default, serde::Deserialize, Clone)]
 pub struct SkillPoints {
@@ -269,6 +270,8 @@ fn depend_check(b: &Apparel, a: &Apparel) -> bool {
 
 #[cfg(test)]
 mod tests {
+    use crate::tests::*;
+
     use super::*;
 
     #[test]

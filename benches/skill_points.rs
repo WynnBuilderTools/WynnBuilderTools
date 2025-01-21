@@ -1,8 +1,10 @@
 // cargo bench --bench=skill_points
 extern crate wynn_build_tools;
 use criterion::{criterion_group, criterion_main, Criterion};
+
+use wynn_build_tools::calculate::*;
+use wynn_build_tools::items::*;
 use wynn_build_tools::tests::*;
-use wynn_build_tools::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
     let apparels: Vec<([Apparel; 8], Weapon)> = gen_test_apparels()

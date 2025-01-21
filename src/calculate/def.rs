@@ -1,6 +1,6 @@
 use std::simd::{i16x8, num::SimdInt};
 
-use crate::*;
+use crate::items::*;
 
 // https://github.com/hppeng-wynn/hppeng-wynn.github.io/blob/f01c29a099ee21ed57bed9054b4651a311ee40cd/js/builder/builder_graph.js#L541
 pub fn sum_def_max(value: &[&Apparel], weapon: &Weapon) -> Point {
