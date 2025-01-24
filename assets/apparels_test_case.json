@@ -2,176 +2,340 @@
     {
         "apparels": [
             {
-                "name": "Neuron",
-                "tier": "Unique",
-                "type": "helmet",
-                "armorType": "Diamond",
-                "category": "armor",
-                "slots": 1,
-                "color": "160,101,64",
-                "drop": "NORMAL",
-                "hp": 2150,
-                "wDef": 100,
-                "tDef": -150,
-                "lvl": 95,
-                "dexReq": 50,
-                "intReq": 20,
-                "mr": 12,
-                "sdPct": 20,
-                "dex": 7,
-                "wDamPct": 11,
-                "tDamPct": 11,
-                "id": 2011
+                "internalName": "Neuron",
+                "type": "armour",
+                "armourType": "helmet",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 95,
+                    "dexterity": 50,
+                    "intelligence": 20
+                },
+                "powderSlots": 1,
+                "identifications": {
+                    "rawDexterity": 7,
+                    "spellDamage": {
+                        "min": 6,
+                        "raw": 20,
+                        "max": 26
+                    },
+                    "manaRegen": {
+                        "min": 4,
+                        "raw": 12,
+                        "max": 16
+                    },
+                    "thunderDamage": {
+                        "min": 3,
+                        "raw": 11,
+                        "max": 14
+                    },
+                    "waterDamage": {
+                        "min": 3,
+                        "raw": 11,
+                        "max": 14
+                    }
+                },
+                "base": {
+                    "baseHealth": 2150,
+                    "baseThunderDefence": -150,
+                    "baseWaterDefence": 100
+                },
+                "rarity": "unique"
             },
             {
-                "name": "Ornamental Plate",
-                "tier": "Rare",
-                "type": "chestplate",
-                "armorType": "Diamond",
-                "category": "armor",
-                "slots": 3,
-                "color": "160,101,64",
-                "drop": "never",
-                "hp": 2250,
-                "wDef": 100,
-                "lvl": 91,
-                "intReq": 50,
-                "mr": 12,
-                "sdPct": 12,
-                "xpb": 15,
-                "int": 5,
-                "sdRaw": 190,
-                "fixID": true,
-                "id": 2814
+                "internalName": "Ornamental Plate",
+                "type": "armour",
+                "armourType": "chestplate",
+                "armourMaterial": "diamond",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 91,
+                    "intelligence": 50
+                },
+                "powderSlots": 3,
+                "dropMeta": {
+                    "name": "Rodoroc",
+                    "type": "merchant",
+                    "coordinates": [
+                        1122,
+                        13,
+                        -5189
+                    ]
+                },
+                "identifications": {
+                    "rawIntelligence": 5,
+                    "spellDamage": 12,
+                    "rawSpellDamage": 190,
+                    "manaRegen": 12,
+                    "xpBonus": 15
+                },
+                "base": {
+                    "baseHealth": 2250,
+                    "baseWaterDefence": 100
+                },
+                "rarity": "rare"
             },
             {
-                "name": "Ehoole Drakeskin",
-                "tier": "Rare",
-                "type": "leggings",
-                "armorType": "Diamond",
-                "quest": "From The Bottom",
-                "category": "armor",
-                "slots": 3,
-                "color": "160,101,64",
-                "drop": "never",
-                "hp": 1750,
-                "fDef": -140,
-                "wDef": 90,
-                "aDef": 80,
-                "lvl": 82,
-                "intReq": 30,
-                "agiReq": 45,
-                "mr": 12,
-                "sdPct": 8,
-                "mdPct": -16,
-                "ref": 12,
-                "spd": 16,
-                "sdRaw": 210,
-                "fDamPct": -16,
-                "aDamPct": 12,
-                "fixID": true,
-                "id": 2856
+                "internalName": "Ehoole Drakeskin",
+                "type": "armour",
+                "armourType": "leggings",
+                "armourMaterial": "diamond",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 82,
+                    "quest": "From The Bottom",
+                    "intelligence": 30,
+                    "agility": 45
+                },
+                "powderSlots": 3,
+                "dropMeta": {
+                    "name": "Thanos",
+                    "type": "merchant",
+                    "coordinates": [
+                        167,
+                        10,
+                        -5241
+                    ]
+                },
+                "identifications": {
+                    "mainAttackDamage": -16,
+                    "spellDamage": 8,
+                    "rawSpellDamage": 210,
+                    "manaRegen": 12,
+                    "reflection": 12,
+                    "walkSpeed": 16,
+                    "fireDamage": -16,
+                    "airDamage": 12
+                },
+                "base": {
+                    "baseHealth": 1750,
+                    "baseWaterDefence": 90,
+                    "baseFireDefence": -140,
+                    "baseAirDefence": 80
+                },
+                "rarity": "rare"
             },
             {
-                "name": "Pro Tempore",
-                "tier": "Unique",
-                "type": "boots",
-                "armorType": "Diamond",
-                "category": "armor",
-                "slots": 4,
-                "color": "160,101,64",
-                "drop": "NORMAL",
-                "hp": 2350,
-                "wDef": -50,
-                "tDef": -50,
-                "lvl": 88,
-                "dexReq": 40,
-                "intReq": 50,
-                "mr": 12,
-                "sdPct": 20,
-                "ls": 165,
-                "ms": -12,
-                "int": 10,
-                "sdRaw": 104,
-                "id": 3577
+                "internalName": "Pro Tempore",
+                "type": "armour",
+                "armourType": "boots",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 88,
+                    "dexterity": 40,
+                    "intelligence": 50
+                },
+                "powderSlots": 4,
+                "identifications": {
+                    "rawIntelligence": 10,
+                    "spellDamage": {
+                        "min": 6,
+                        "raw": 20,
+                        "max": 26
+                    },
+                    "rawSpellDamage": {
+                        "min": 31,
+                        "raw": 104,
+                        "max": 135
+                    },
+                    "lifeSteal": {
+                        "min": 50,
+                        "raw": 165,
+                        "max": 215
+                    },
+                    "manaRegen": {
+                        "min": 4,
+                        "raw": 12,
+                        "max": 16
+                    },
+                    "manaSteal": {
+                        "min": -16,
+                        "raw": -12,
+                        "max": -8
+                    }
+                },
+                "base": {
+                    "baseHealth": 2350,
+                    "baseThunderDefence": -50,
+                    "baseWaterDefence": -50
+                },
+                "rarity": "unique"
             },
             {
-                "name": "Mind Cracker",
-                "tier": "Unique",
-                "material": "259:11",
-                "category": "accessory",
-                "drop": "lootchest",
-                "lvl": 8,
-                "sdPct": 3,
-                "int": 1,
-                "type": "ring",
-                "id": 1790
+                "internalName": "Mind Cracker",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "lootchest",
+                "requirements": {
+                    "level": 8
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "154",
+                        "name": "ring.water1"
+                    }
+                },
+                "identifications": {
+                    "rawIntelligence": 1,
+                    "spellDamage": {
+                        "min": 1,
+                        "raw": 3,
+                        "max": 4
+                    }
+                },
+                "rarity": "unique"
             },
             {
-                "name": "Ein",
-                "tier": "Unique",
-                "material": "259:2",
-                "category": "accessory",
-                "drop": "lootchest",
-                "hp": 1,
-                "lvl": 1,
-                "sdPct": 1,
-                "mdPct": 1,
-                "sdRaw": 1,
-                "mdRaw": 1,
-                "type": "ring",
-                "id": 973
+                "internalName": "Ein",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "lootchest",
+                "requirements": {
+                    "level": 1
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "142",
+                        "name": "ring.basicGold"
+                    }
+                },
+                "identifications": {
+                    "mainAttackDamage": 1,
+                    "rawMainAttackDamage": 1,
+                    "spellDamage": 1,
+                    "rawSpellDamage": 1
+                },
+                "base": {
+                    "baseHealth": 1
+                },
+                "rarity": "unique"
             },
             {
-                "name": "Succession",
-                "tier": "Fabled",
-                "material": "259:48",
-                "category": "accessory",
-                "lore": "\"I pray that those who have heeded the wise one’s warning have survived. The canyon must not meet this fate.\"",
-                "drop": "never",
-                "lvl": 100,
-                "strReq": 30,
-                "dexReq": 30,
-                "intReq": 60,
-                "agiReq": 30,
-                "defReq": 30,
-                "mr": 10,
-                "mdPct": 11,
-                "hprRaw": 100,
-                "sdRaw": 65,
-                "type": "bracelet",
-                "sprintReg": 12,
-                "id": 3780
+                "internalName": "Succession",
+                "type": "accessory",
+                "accessoryType": "bracelet",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 100,
+                    "strength": 30,
+                    "dexterity": 30,
+                    "intelligence": 60,
+                    "defence": 30,
+                    "agility": 30
+                },
+                "identifications": {
+                    "mainAttackDamage": {
+                        "min": 3,
+                        "raw": 11,
+                        "max": 14
+                    },
+                    "rawSpellDamage": {
+                        "min": 17,
+                        "raw": 55,
+                        "max": 72
+                    },
+                    "healthRegenRaw": {
+                        "min": 24,
+                        "raw": 80,
+                        "max": 104
+                    },
+                    "manaRegen": {
+                        "min": 3,
+                        "raw": 10,
+                        "max": 13
+                    },
+                    "sprintRegen": {
+                        "min": 4,
+                        "raw": 12,
+                        "max": 16
+                    }
+                },
+                "rarity": "fabled"
             },
             {
-                "name": "Ensa's Faith",
-                "tier": "Legendary",
-                "material": "259:32",
-                "category": "accessory",
+                "internalName": "Ensa's Faith",
+                "type": "accessory",
+                "accessoryType": "necklace",
+                "dropRestriction": "dungeon",
+                "requirements": {
+                    "level": 73,
+                    "intelligence": 25
+                },
                 "lore": "The scholar-priest Ensa created this pendant as a personal prayer while his home was under siege. It is rumored to hold the key to enlightenment, but it is unknown as to how.",
-                "drop": "DUNGEON",
-                "fDef": -30,
-                "wDef": 60,
-                "lvl": 73,
-                "intReq": 25,
-                "hprPct": 23,
-                "mr": 6,
-                "xpb": 10,
-                "ref": 10,
-                "spRegen": 15,
-                "type": "necklace",
-                "id": 2263
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "174",
+                        "name": "necklace.basicCross"
+                    }
+                },
+                "identifications": {
+                    "healthRegen": {
+                        "min": 7,
+                        "raw": 23,
+                        "max": 30
+                    },
+                    "manaRegen": {
+                        "min": 2,
+                        "raw": 6,
+                        "max": 8
+                    },
+                    "reflection": {
+                        "min": 3,
+                        "raw": 10,
+                        "max": 13
+                    },
+                    "xpBonus": {
+                        "min": 3,
+                        "raw": 10,
+                        "max": 13
+                    }
+                },
+                "base": {
+                    "baseWaterDefence": 60,
+                    "baseFireDefence": -30
+                },
+                "rarity": "legendary"
             }
         ],
         "weapon": {
-            "id": 3561,
-            "name": "Cracked Oak Wand",
-            "tier": "Common",
-            "type": "wand",
-            "lvl": 1,
-            "slots": 1,
-            "nDam": "1-2",
-            "atkSpd": "NORMAL"
+            "internalName": "Cracked Oak Wand",
+            "type": "weapon",
+            "weaponType": "wand",
+            "attackSpeed": "normal",
+            "averageDps": 3,
+            "restrictions": "untradable",
+            "dropRestriction": "never",
+            "requirements": {
+                "level": 1,
+                "classRequirement": "mage"
+            },
+            "powderSlots": 1,
+            "icon": {
+                "format": "attribute",
+                "value": {
+                    "id": "minecraft:iron_horse_armor",
+                    "customModelData": "323",
+                    "name": "wand.basicWood"
+                }
+            },
+            "base": {
+                "baseDamage": {
+                    "min": 1,
+                    "raw": 1,
+                    "max": 2
+                }
+            },
+            "rarity": "common"
         },
         "skill_point": {
             "assign": {
@@ -197,160 +361,399 @@
             "a": -45
         },
         "common_stat": {
-            "hpr_raw": 130,
+            "hpr_raw": 104,
             "hpr_pct": 30,
             "mr": 77,
-            "ls": 214,
+            "ls": 215,
             "ms": -8,
             "spd": 16,
-            "sd_raw": 621,
+            "sd_raw": 608,
             "sd_pct": 77
         }
     },
     {
         "apparels": [
             {
-                "id": 1917,
-                "name": "Ornate Shadow Cowl",
-                "tier": "Fabled",
-                "type": "helmet",
-                "lvl": 103,
-                "fixID": true,
-                "slots": 3,
-                "hp": 4500,
-                "tDef": 100,
-                "eDef": 100,
-                "hprPct": -15,
-                "spd": 15,
-                "sdRaw": 190,
-                "sdPct": 20
+                "internalName": "Ornate Shadow Cowl",
+                "type": "armour",
+                "armourType": "helmet",
+                "armourColor": "rgb(160,101,64)",
+                "armourMaterial": "leather",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 103
+                },
+                "powderSlots": 3,
+                "identifications": {
+                    "mainAttackDamage": 20,
+                    "rawMainAttackDamage": 250,
+                    "spellDamage": 20,
+                    "rawSpellDamage": 190,
+                    "healthRegen": -15,
+                    "walkSpeed": 15
+                },
+                "base": {
+                    "baseHealth": 4500,
+                    "baseEarthDefence": 100,
+                    "baseThunderDefence": 100
+                },
+                "rarity": "fabled"
             },
             {
-                "id": 728,
-                "name": "Discharge",
-                "tier": "Rare",
-                "type": "chestplate",
-                "lvl": 91,
-                "fixID": true,
-                "hp": 2800,
-                "tDef": -50,
-                "eDef": -150,
-                "wDef": -100,
-                "dexReq": 80,
-                "dex": 10,
-                "tDamPct": 70,
-                "wDamPct": 10
+                "internalName": "Discharge",
+                "type": "armour",
+                "armourType": "chestplate",
+                "armourMaterial": "diamond",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 91,
+                    "dexterity": 80
+                },
+                "dropMeta": {
+                    "name": "Fallen Factory",
+                    "type": "dungeonMerchant",
+                    "coordinates": [
+                        -1682,
+                        79,
+                        -2605
+                    ]
+                },
+                "identifications": {
+                    "rawDexterity": 10,
+                    "rawMainAttackDamage": 155,
+                    "thorns": 15,
+                    "thunderDamage": 70,
+                    "waterDamage": 10
+                },
+                "base": {
+                    "baseHealth": 2800,
+                    "baseEarthDefence": -150,
+                    "baseThunderDefence": -50,
+                    "baseWaterDefence": -100
+                },
+                "rarity": "rare"
             },
             {
-                "id": 3,
-                "name": "Tera",
-                "tier": "Legendary",
-                "type": "leggings",
-                "lvl": 90,
-                "slots": 3,
-                "hp": 3225,
-                "aDef": -200,
-                "tDef": 100,
-                "eDef": 100,
-                "strReq": 50,
-                "dexReq": 50,
-                "str": 10,
-                "dex": 10,
-                "eDamPct": 47,
-                "tDamPct": 47,
-                "xpb": 13,
-                "lootBonus": 26
+                "internalName": "Tera",
+                "type": "armour",
+                "armourType": "leggings",
+                "armourMaterial": "diamond",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 90,
+                    "strength": 50,
+                    "dexterity": 50
+                },
+                "powderSlots": 3,
+                "dropMeta": {
+                    "name": "Geyser Pit",
+                    "type": "altar",
+                    "coordinates": [
+                        -1573,
+                        27,
+                        -3204
+                    ]
+                },
+                "identifications": {
+                    "rawStrength": 10,
+                    "rawDexterity": 10,
+                    "xpBonus": {
+                        "min": 3,
+                        "raw": 10,
+                        "max": 13
+                    },
+                    "lootBonus": {
+                        "min": 6,
+                        "raw": 20,
+                        "max": 26
+                    },
+                    "earthDamage": {
+                        "min": 11,
+                        "raw": 36,
+                        "max": 47
+                    },
+                    "thunderDamage": {
+                        "min": 11,
+                        "raw": 36,
+                        "max": 47
+                    }
+                },
+                "base": {
+                    "baseHealth": 3225,
+                    "baseEarthDefence": 100,
+                    "baseThunderDefence": 100,
+                    "baseAirDefence": -200
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 1011,
-                "name": "Ex Nihilo",
-                "tier": "Legendary",
-                "type": "boots",
-                "lvl": 98,
-                "slots": 2,
-                "hp": 4000,
-                "fDef": -100,
-                "wDef": -100,
-                "strReq": 50,
-                "agiReq": 50,
-                "def": -15,
-                "int": 15,
-                "ls": 364,
-                "spd": 20,
-                "sdPct": 33,
-                "fDamPct": -28
+                "internalName": "Ex Nihilo",
+                "type": "armour",
+                "armourType": "boots",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 98,
+                    "strength": 50,
+                    "agility": 50
+                },
+                "powderSlots": 2,
+                "identifications": {
+                    "rawIntelligence": 15,
+                    "rawDefence": -15,
+                    "rawMainAttackDamage": {
+                        "min": 71,
+                        "raw": 235,
+                        "max": 306
+                    },
+                    "spellDamage": {
+                        "min": 8,
+                        "raw": 25,
+                        "max": 33
+                    },
+                    "lifeSteal": {
+                        "min": 84,
+                        "raw": 280,
+                        "max": 364
+                    },
+                    "walkSpeed": {
+                        "min": 5,
+                        "raw": 15,
+                        "max": 20
+                    },
+                    "fireDamage": {
+                        "min": -52,
+                        "raw": -40,
+                        "max": -28
+                    }
+                },
+                "base": {
+                    "baseHealth": 4000,
+                    "baseWaterDefence": -100,
+                    "baseFireDefence": -100
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 3609,
-                "name": "Photon",
-                "tier": "Unique",
-                "type": "ring",
-                "lvl": 61,
-                "def": 1,
-                "str": 1,
-                "int": 1,
-                "agi": 1,
-                "dex": 1,
-                "mr": 8,
-                "spd": 10,
-                "tDamPct": 4,
-                "xpb": 10
+                "internalName": "Photon",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 61,
+                    "quest": "Realm of Light II - Taproot"
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "153",
+                        "name": "ring.thunder2"
+                    }
+                },
+                "identifications": {
+                    "rawStrength": 1,
+                    "rawDexterity": 1,
+                    "rawIntelligence": 1,
+                    "rawDefence": 1,
+                    "rawAgility": 1,
+                    "manaRegen": {
+                        "min": 2,
+                        "raw": 6,
+                        "max": 8
+                    },
+                    "reflection": {
+                        "min": 2,
+                        "raw": 8,
+                        "max": 10
+                    },
+                    "walkSpeed": {
+                        "min": 2,
+                        "raw": 8,
+                        "max": 10
+                    },
+                    "xpBonus": {
+                        "min": 2,
+                        "raw": 8,
+                        "max": 10
+                    },
+                    "thunderDamage": {
+                        "min": 1,
+                        "raw": 3,
+                        "max": 4
+                    }
+                },
+                "rarity": "unique"
             },
             {
-                "id": 3609,
-                "name": "Photon",
-                "tier": "Unique",
-                "type": "ring",
-                "lvl": 61,
-                "def": 1,
-                "str": 1,
-                "int": 1,
-                "agi": 1,
-                "dex": 1,
-                "mr": 8,
-                "spd": 10,
-                "tDamPct": 4,
-                "xpb": 10
+                "internalName": "Photon",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 61,
+                    "quest": "Realm of Light II - Taproot"
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "153",
+                        "name": "ring.thunder2"
+                    }
+                },
+                "identifications": {
+                    "rawStrength": 1,
+                    "rawDexterity": 1,
+                    "rawIntelligence": 1,
+                    "rawDefence": 1,
+                    "rawAgility": 1,
+                    "manaRegen": {
+                        "min": 2,
+                        "raw": 6,
+                        "max": 8
+                    },
+                    "reflection": {
+                        "min": 2,
+                        "raw": 8,
+                        "max": 10
+                    },
+                    "walkSpeed": {
+                        "min": 2,
+                        "raw": 8,
+                        "max": 10
+                    },
+                    "xpBonus": {
+                        "min": 2,
+                        "raw": 8,
+                        "max": 10
+                    },
+                    "thunderDamage": {
+                        "min": 1,
+                        "raw": 3,
+                        "max": 4
+                    }
+                },
+                "rarity": "unique"
             },
             {
-                "id": 1559,
-                "name": "Diamond Static Bracelet",
-                "tier": "Legendary",
-                "type": "bracelet",
-                "lvl": 95,
-                "fixID": true,
-                "hp": -450,
-                "tDef": 100,
-                "dexReq": 100,
-                "dex": 6,
-                "tDefPct": 10,
-                "sdRaw": 60,
-                "sdPct": 8,
-                "tDamPct": 16
+                "internalName": "Diamond Static Bracelet",
+                "type": "accessory",
+                "accessoryType": "bracelet",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 95,
+                    "dexterity": 100
+                },
+                "lore": "The heavy shocks coming from this perfected bracelet would be lethal under normal circumstances, but the only thing its wearer senses is the enhancement of power.",
+                "dropMeta": {
+                    "name": "Legendary Island",
+                    "type": "challenge",
+                    "coordinates": [
+                        -1113,
+                        65,
+                        -2426
+                    ]
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "167",
+                        "name": "bracelet.thunder2"
+                    }
+                },
+                "identifications": {
+                    "rawDexterity": 6,
+                    "spellDamage": 8,
+                    "rawSpellDamage": 60,
+                    "thunderDamage": 16,
+                    "thunderDefence": 10
+                },
+                "base": {
+                    "baseHealth": -450,
+                    "baseThunderDefence": 100
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 1260,
-                "name": "Contrast",
-                "tier": "Legendary",
-                "type": "necklace",
-                "lvl": 100,
-                "fixID": true,
-                "hp": 725,
-                "hprRaw": 115,
-                "mr": 12,
-                "ls": 170,
-                "spd": 12
+                "internalName": "Contrast",
+                "type": "accessory",
+                "accessoryType": "necklace",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 100,
+                    "quest": "The Qira Hive"
+                },
+                "lore": "The runes carved onto the gold beads strung along this simple necklace translate into various words meaning variance. It provides many abilities though unexplainable means.",
+                "dropMeta": {
+                    "name": "The Qira Hive",
+                    "type": "quest",
+                    "coordinates": [
+                        373,
+                        64,
+                        -5497
+                    ]
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "173",
+                        "name": "necklace.basicGold"
+                    }
+                },
+                "identifications": {
+                    "healthRegenRaw": 115,
+                    "poison": 2150,
+                    "lifeSteal": 170,
+                    "manaRegen": 12,
+                    "walkSpeed": 12
+                },
+                "base": {
+                    "baseHealth": 725
+                },
+                "rarity": "legendary"
             }
         ],
         "weapon": {
-            "id": 3561,
-            "name": "Cracked Oak Wand",
-            "tier": "Common",
-            "type": "wand",
-            "lvl": 1,
-            "slots": 1,
-            "nDam": "1-2",
-            "atkSpd": "NORMAL"
+            "internalName": "Cracked Oak Wand",
+            "type": "weapon",
+            "weaponType": "wand",
+            "attackSpeed": "normal",
+            "averageDps": 3,
+            "restrictions": "untradable",
+            "dropRestriction": "never",
+            "requirements": {
+                "level": 1,
+                "classRequirement": "mage"
+            },
+            "powderSlots": 1,
+            "icon": {
+                "format": "attribute",
+                "value": {
+                    "id": "minecraft:iron_horse_armor",
+                    "customModelData": "323",
+                    "name": "wand.basicWood"
+                }
+            },
+            "base": {
+                "baseDamage": {
+                    "min": 1,
+                    "raw": 1,
+                    "max": 2
+                }
+            },
+            "rarity": "common"
         },
         "skill_point": {
             "assign": {
@@ -378,163 +781,446 @@
         "common_stat": {
             "hpr_raw": 115,
             "hpr_pct": -15,
-            "mr": 32,
-            "ls": 643,
+            "mr": 28,
+            "ls": 534,
             "ms": 0,
-            "spd": 79,
+            "spd": 67,
             "sd_raw": 250,
-            "sd_pct": 71
+            "sd_pct": 61
         }
     },
     {
         "apparels": [
             {
-                "id": 135,
-                "name": "Aquamarine",
-                "tier": "Unique",
-                "type": "helmet",
-                "lvl": 100,
-                "slots": 2,
-                "hp": 2900,
-                "eDef": 60,
-                "wDef": 60,
-                "strReq": 40,
-                "intReq": 40,
-                "str": 7,
-                "int": 7,
-                "hprRaw": 195,
-                "mr": 16,
-                "sdRaw": 137,
-                "fDamPct": -17
+                "internalName": "Aquamarine",
+                "type": "armour",
+                "armourType": "helmet",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 100,
+                    "strength": 40,
+                    "intelligence": 40
+                },
+                "powderSlots": 2,
+                "identifications": {
+                    "rawStrength": 7,
+                    "rawIntelligence": 7,
+                    "rawMainAttackDamage": {
+                        "min": 32,
+                        "raw": 105,
+                        "max": 137
+                    },
+                    "rawSpellDamage": {
+                        "min": 32,
+                        "raw": 105,
+                        "max": 137
+                    },
+                    "healthRegenRaw": {
+                        "min": 45,
+                        "raw": 150,
+                        "max": 195
+                    },
+                    "manaRegen": {
+                        "min": 4,
+                        "raw": 12,
+                        "max": 16
+                    },
+                    "reflection": {
+                        "min": 5,
+                        "raw": 18,
+                        "max": 23
+                    },
+                    "stealing": {
+                        "min": 2,
+                        "raw": 6,
+                        "max": 8
+                    },
+                    "fireDamage": {
+                        "min": -32,
+                        "raw": -25,
+                        "max": -17
+                    }
+                },
+                "base": {
+                    "baseHealth": 2900,
+                    "baseEarthDefence": 60,
+                    "baseWaterDefence": 60
+                },
+                "rarity": "unique"
             },
             {
-                "id": 1269,
-                "name": "Gale's Freedom",
-                "tier": "Rare",
-                "type": "chestplate",
-                "lvl": 87,
-                "fixID": true,
-                "slots": 3,
-                "hp": 2225,
-                "aDef": 120,
-                "tDef": 120,
-                "agiReq": 30,
-                "dexReq": 30,
-                "int": 12,
-                "agi": 7,
-                "dex": 7,
-                "spd": 20,
-                "sdPct": 20,
-                "xpb": 20
+                "internalName": "Gale's Freedom",
+                "type": "armour",
+                "armourType": "chestplate",
+                "armourMaterial": "diamond",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 87,
+                    "dexterity": 30,
+                    "agility": 30
+                },
+                "powderSlots": 3,
+                "dropMeta": {
+                    "name": "The Qira Hive",
+                    "type": "quest",
+                    "coordinates": [
+                        373,
+                        64,
+                        -5497
+                    ]
+                },
+                "identifications": {
+                    "rawDexterity": 7,
+                    "rawIntelligence": 12,
+                    "rawAgility": 7,
+                    "spellDamage": 20,
+                    "reflection": 20,
+                    "walkSpeed": 20,
+                    "xpBonus": 20
+                },
+                "base": {
+                    "baseHealth": 2225,
+                    "baseThunderDefence": 120,
+                    "baseAirDefence": 120
+                },
+                "rarity": "rare"
             },
             {
-                "id": 3397,
-                "name": "Vaward",
-                "tier": "Legendary",
-                "type": "leggings",
-                "lvl": 99,
-                "slots": 3,
-                "hp": 3900,
-                "def": 5,
-                "str": 5,
-                "int": 5,
-                "agi": 5,
-                "dex": 5,
-                "hprPct": 20,
-                "sdPct": 20
+                "internalName": "Vaward",
+                "type": "armour",
+                "armourType": "leggings",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 99
+                },
+                "powderSlots": 3,
+                "lore": "A once-great hero left behind these sturdy, reliable greaves, trusting those after her to be able to use their power to protect others, should they don them. Her courage fuels their wearers.",
+                "identifications": {
+                    "rawStrength": 5,
+                    "rawDexterity": 5,
+                    "rawIntelligence": 5,
+                    "rawDefence": 5,
+                    "rawAgility": 5,
+                    "mainAttackDamage": {
+                        "min": 5,
+                        "raw": 15,
+                        "max": 20
+                    },
+                    "spellDamage": {
+                        "min": 5,
+                        "raw": 15,
+                        "max": 20
+                    },
+                    "healthRegen": {
+                        "min": 5,
+                        "raw": 15,
+                        "max": 20
+                    }
+                },
+                "base": {
+                    "baseHealth": 3900
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 3147,
-                "name": "Steamjet Walkers",
-                "tier": "Legendary",
-                "type": "boots",
-                "lvl": 86,
-                "slots": 2,
-                "hp": 2100,
-                "tDef": -80,
-                "intReq": 30,
-                "agiReq": 40,
-                "dexReq": 30,
-                "agi": 15,
-                "spd": 27,
-                "sdPct": 31,
-                "tDamPct": 27,
-                "wDamPct": 27,
-                "aDamPct": 31
+                "internalName": "Steamjet Walkers",
+                "type": "armour",
+                "armourType": "boots",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 86,
+                    "dexterity": 30,
+                    "intelligence": 30,
+                    "agility": 40
+                },
+                "majorIds": {
+                    "Lightweight": "<span class='font-ascii' style='color:#55FFFF'>+Lightweight: <span class='font-ascii' style='color:#00AAAA'>You no longer take fall damage</span></span>"
+                },
+                "powderSlots": 2,
+                "lore": "A rogue inventor stole the plans for a steam jet booster from Corkus and reverse engineered them onto a set of boots. While effective, they are dangerous, prone to catastrophic failure.",
+                "identifications": {
+                    "rawAgility": 15,
+                    "spellDamage": {
+                        "min": 7,
+                        "raw": 24,
+                        "max": 31
+                    },
+                    "raw2ndSpellCost": {
+                        "min": -1,
+                        "raw": -4,
+                        "max": -5
+                    },
+                    "walkSpeed": {
+                        "min": 6,
+                        "raw": 21,
+                        "max": 27
+                    },
+                    "thunderDamage": {
+                        "min": 6,
+                        "raw": 21,
+                        "max": 27
+                    },
+                    "waterDamage": {
+                        "min": 6,
+                        "raw": 21,
+                        "max": 27
+                    },
+                    "airDamage": {
+                        "min": 7,
+                        "raw": 24,
+                        "max": 31
+                    }
+                },
+                "base": {
+                    "baseHealth": 2100,
+                    "baseThunderDefence": -80
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 3666,
-                "name": "Ingress",
-                "tier": "Fabled",
-                "type": "ring",
-                "lvl": 105,
-                "aDef": 55,
-                "eDef": 55,
-                "strReq": 55,
-                "agiReq": 55,
-                "def": 3,
-                "int": 2,
-                "dex": 3,
-                "sdRaw": 52,
-                "eDamPct": 9,
-                "aDamPct": 9
+                "internalName": "Ingress",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 105,
+                    "strength": 55,
+                    "agility": 55
+                },
+                "lore": "An anomaly of invasion, for the explorers who seek purpose outside of reality.",
+                "dropMeta": {
+                    "name": "The Nameless Anomaly",
+                    "type": "raid",
+                    "coordinates": [
+                        1193,
+                        64,
+                        -947
+                    ]
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "157",
+                        "name": "ring.multi2"
+                    }
+                },
+                "identifications": {
+                    "rawDexterity": 3,
+                    "rawIntelligence": 2,
+                    "rawDefence": 3,
+                    "rawSpellDamage": {
+                        "min": 12,
+                        "raw": 40,
+                        "max": 52
+                    },
+                    "earthDamage": {
+                        "min": 2,
+                        "raw": 7,
+                        "max": 9
+                    },
+                    "airDamage": {
+                        "min": 2,
+                        "raw": 7,
+                        "max": 9
+                    }
+                },
+                "base": {
+                    "baseEarthDefence": 55,
+                    "baseAirDefence": 55
+                },
+                "rarity": "fabled"
             },
             {
-                "id": 3665,
-                "name": "Forbearance",
-                "tier": "Fabled",
-                "type": "ring",
-                "lvl": 105,
-                "intReq": 60,
-                "dexReq": 60,
-                "int": 4,
-                "dex": 4,
-                "mr": 5,
-                "ls": 156,
-                "tDamPct": -8,
-                "wDamPct": -8
+                "internalName": "Forbearance",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 105,
+                    "dexterity": 60,
+                    "intelligence": 60
+                },
+                "lore": "An anomaly of restriction, for the protectors who seek purpose outside of reality.",
+                "dropMeta": {
+                    "name": "The Nameless Anomaly",
+                    "type": "raid",
+                    "coordinates": [
+                        1193,
+                        64,
+                        -947
+                    ]
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "153",
+                        "name": "ring.thunder2"
+                    }
+                },
+                "identifications": {
+                    "rawDexterity": 4,
+                    "rawIntelligence": 4,
+                    "lifeSteal": {
+                        "min": 36,
+                        "raw": 120,
+                        "max": 156
+                    },
+                    "manaRegen": {
+                        "min": 1,
+                        "raw": 4,
+                        "max": 5
+                    },
+                    "thunderDamage": {
+                        "min": -16,
+                        "raw": -12,
+                        "max": -8
+                    },
+                    "waterDamage": {
+                        "min": -16,
+                        "raw": -12,
+                        "max": -8
+                    }
+                },
+                "rarity": "fabled"
             },
             {
-                "id": 3667,
-                "name": "Breakthrough",
-                "tier": "Fabled",
-                "type": "bracelet",
-                "lvl": 105,
-                "fDef": -30,
-                "tDef": -45,
-                "eDef": -45,
-                "intReq": 45,
-                "agiReq": 45,
-                "def": -5,
-                "str": -3,
-                "dex": -3,
-                "ms": 5,
-                "sdRaw": 85,
-                "sdPct": 16
+                "internalName": "Breakthrough",
+                "type": "accessory",
+                "accessoryType": "bracelet",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 105,
+                    "intelligence": 45,
+                    "agility": 45
+                },
+                "lore": "An anomaly of destruction, for the conquerors who seek purpose outside of reality.",
+                "dropMeta": {
+                    "name": "The Nameless Anomaly",
+                    "type": "raid",
+                    "coordinates": [
+                        1193,
+                        64,
+                        -947
+                    ]
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "169",
+                        "name": "bracelet.water2"
+                    }
+                },
+                "identifications": {
+                    "rawStrength": -3,
+                    "rawDexterity": -3,
+                    "rawDefence": -5,
+                    "spellDamage": {
+                        "min": 4,
+                        "raw": 12,
+                        "max": 16
+                    },
+                    "rawSpellDamage": {
+                        "min": 20,
+                        "raw": 65,
+                        "max": 85
+                    },
+                    "manaSteal": {
+                        "min": 1,
+                        "raw": 4,
+                        "max": 5
+                    },
+                    "raw2ndSpellCost": {
+                        "min": -1,
+                        "raw": -4,
+                        "max": -5
+                    }
+                },
+                "base": {
+                    "baseEarthDefence": -45,
+                    "baseThunderDefence": -45,
+                    "baseFireDefence": -30
+                },
+                "rarity": "fabled"
             },
             {
-                "id": 1260,
-                "name": "Contrast",
-                "tier": "Legendary",
-                "type": "necklace",
-                "lvl": 100,
-                "fixID": true,
-                "hp": 725,
-                "hprRaw": 115,
-                "mr": 12,
-                "ls": 170,
-                "spd": 12
+                "internalName": "Contrast",
+                "type": "accessory",
+                "accessoryType": "necklace",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 100,
+                    "quest": "The Qira Hive"
+                },
+                "lore": "The runes carved onto the gold beads strung along this simple necklace translate into various words meaning variance. It provides many abilities though unexplainable means.",
+                "dropMeta": {
+                    "name": "The Qira Hive",
+                    "type": "quest",
+                    "coordinates": [
+                        373,
+                        64,
+                        -5497
+                    ]
+                },
+                "icon": {
+                    "format": "attribute",
+                    "value": {
+                        "id": "minecraft:iron_horse_armor",
+                        "customModelData": "173",
+                        "name": "necklace.basicGold"
+                    }
+                },
+                "identifications": {
+                    "healthRegenRaw": 115,
+                    "poison": 2150,
+                    "lifeSteal": 170,
+                    "manaRegen": 12,
+                    "walkSpeed": 12
+                },
+                "base": {
+                    "baseHealth": 725
+                },
+                "rarity": "legendary"
             }
         ],
         "weapon": {
-            "id": 3561,
-            "name": "Cracked Oak Wand",
-            "tier": "Common",
-            "type": "wand",
-            "lvl": 1,
-            "slots": 1,
-            "nDam": "1-2",
-            "atkSpd": "NORMAL"
+            "internalName": "Cracked Oak Wand",
+            "type": "weapon",
+            "weaponType": "wand",
+            "attackSpeed": "normal",
+            "averageDps": 3,
+            "restrictions": "untradable",
+            "dropRestriction": "never",
+            "requirements": {
+                "level": 1,
+                "classRequirement": "mage"
+            },
+            "powderSlots": 1,
+            "icon": {
+                "format": "attribute",
+                "value": {
+                    "id": "minecraft:iron_horse_armor",
+                    "customModelData": "323",
+                    "name": "wand.basicWood"
+                }
+            },
+            "base": {
+                "baseDamage": {
+                    "min": 1,
+                    "raw": 1,
+                    "max": 2
+                }
+            },
+            "rarity": "common"
         },
         "skill_point": {
             "assign": {
@@ -560,198 +1246,430 @@
             "a": -28
         },
         "common_stat": {
-            "hpr_raw": 368,
-            "hpr_pct": 26,
-            "mr": 40,
-            "ls": 373,
-            "ms": 7,
-            "spd": 67,
-            "sd_raw": 356,
-            "sd_pct": 107
+            "hpr_raw": 310,
+            "hpr_pct": 20,
+            "mr": 33,
+            "ls": 326,
+            "ms": 5,
+            "spd": 59,
+            "sd_raw": 274,
+            "sd_pct": 87
         }
     },
     {
         "apparels": [
             {
-                "id": 2445,
-                "name": "Morph-Stardust",
-                "tier": "Set",
-                "type": "helmet",
-                "lvl": 100,
-                "slots": 3,
-                "hp": 3250,
-                "aDef": 60,
-                "fDef": 60,
-                "tDef": 60,
-                "eDef": 60,
-                "wDef": 60,
-                "defReq": 45,
-                "strReq": 45,
-                "intReq": 45,
-                "agiReq": 45,
-                "dexReq": 45,
-                "def": 2,
-                "str": 2,
-                "int": 2,
-                "agi": 2,
-                "dex": 2,
-                "hprRaw": 260,
-                "mr": 8,
-                "spd": 20,
-                "sdRaw": 182
+                "internalName": "Morph-Stardust",
+                "type": "armour",
+                "armourType": "helmet",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 100,
+                    "strength": 45,
+                    "dexterity": 45,
+                    "intelligence": 45,
+                    "defence": 45,
+                    "agility": 45
+                },
+                "powderSlots": 3,
+                "identifications": {
+                    "rawStrength": 2,
+                    "rawDexterity": 2,
+                    "rawIntelligence": 2,
+                    "rawDefence": 2,
+                    "rawAgility": 2,
+                    "rawMainAttackDamage": {
+                        "min": 41,
+                        "raw": 135,
+                        "max": 176
+                    },
+                    "rawSpellDamage": {
+                        "min": 42,
+                        "raw": 140,
+                        "max": 182
+                    },
+                    "healthRegenRaw": {
+                        "min": 60,
+                        "raw": 200,
+                        "max": 260
+                    },
+                    "manaRegen": {
+                        "min": 2,
+                        "raw": 6,
+                        "max": 8
+                    },
+                    "walkSpeed": {
+                        "min": 5,
+                        "raw": 15,
+                        "max": 20
+                    }
+                },
+                "base": {
+                    "baseHealth": 3250,
+                    "baseEarthDefence": 60,
+                    "baseThunderDefence": 60,
+                    "baseWaterDefence": 60,
+                    "baseFireDefence": 60,
+                    "baseAirDefence": 60
+                },
+                "rarity": "set"
             },
             {
-                "id": 1022,
-                "name": "Far Cosmos",
-                "tier": "Rare",
-                "type": "chestplate",
-                "lvl": 100,
-                "slots": 5,
-                "hp": 3500,
-                "defReq": 30,
-                "strReq": 30,
-                "intReq": 30,
-                "agiReq": 30,
-                "dexReq": 30,
-                "def": 8,
-                "str": 8,
-                "int": 8,
-                "agi": 8,
-                "dex": 8
+                "internalName": "Far Cosmos",
+                "type": "armour",
+                "armourType": "chestplate",
+                "armourMaterial": "diamond",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 100,
+                    "strength": 30,
+                    "dexterity": 30,
+                    "intelligence": 30,
+                    "defence": 30,
+                    "agility": 30
+                },
+                "powderSlots": 5,
+                "identifications": {
+                    "rawStrength": 8,
+                    "rawDexterity": 8,
+                    "rawIntelligence": 8,
+                    "rawDefence": 8,
+                    "rawAgility": 8,
+                    "2ndSpellCost": {
+                        "min": -2,
+                        "raw": -6,
+                        "max": -8
+                    }
+                },
+                "base": {
+                    "baseHealth": 3500
+                },
+                "rarity": "rare"
             },
             {
-                "id": 3629,
-                "name": "Anxiolytic",
-                "tier": "Legendary",
-                "type": "leggings",
-                "lvl": 101,
-                "slots": 4,
-                "hp": 3880,
-                "aDef": 150,
-                "fDef": -125,
-                "tDef": 125,
-                "eDef": -175,
-                "wDef": 150,
-                "defReq": 35,
-                "strReq": 35,
-                "intReq": 50,
-                "agiReq": 50,
-                "dexReq": 40,
-                "int": 10,
-                "agi": 12,
-                "dex": 15,
-                "mr": 31
+                "internalName": "Anxiolytic",
+                "type": "armour",
+                "armourType": "leggings",
+                "armourMaterial": "diamond",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "requirements": {
+                    "level": 101,
+                    "strength": 35,
+                    "dexterity": 40,
+                    "intelligence": 50,
+                    "defence": 35,
+                    "agility": 50
+                },
+                "powderSlots": 4,
+                "dropMeta": {
+                    "name": "Bottomless Pit",
+                    "type": "altar",
+                    "coordinates": [
+                        1332,
+                        11,
+                        -516
+                    ]
+                },
+                "identifications": {
+                    "rawDexterity": 15,
+                    "rawIntelligence": 10,
+                    "rawAgility": 12,
+                    "manaRegen": {
+                        "min": 7,
+                        "raw": 24,
+                        "max": 31
+                    },
+                    "raw1stSpellCost": {
+                        "min": 5,
+                        "raw": 4,
+                        "max": 3
+                    },
+                    "raw3rdSpellCost": {
+                        "min": 5,
+                        "raw": 4,
+                        "max": 3
+                    },
+                    "raw4thSpellCost": {
+                        "min": 5,
+                        "raw": 4,
+                        "max": 3
+                    },
+                    "sprintRegen": {
+                        "min": 4,
+                        "raw": 13,
+                        "max": 17
+                    }
+                },
+                "base": {
+                    "baseHealth": 3880,
+                    "baseEarthDefence": -175,
+                    "baseThunderDefence": 125,
+                    "baseWaterDefence": 150,
+                    "baseFireDefence": -125,
+                    "baseAirDefence": 150
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 3755,
-                "name": "Violet-Shift",
-                "tier": "Fabled",
-                "type": "boots",
-                "lvl": 77,
-                "slots": 2,
-                "fDef": -50,
-                "mr": 14,
-                "ls": 303
+                "internalName": "Violet-Shift",
+                "type": "armour",
+                "armourType": "boots",
+                "armourMaterial": "iron",
+                "dropRestriction": "normal",
+                "requirements": {
+                    "level": 77
+                },
+                "powderSlots": 2,
+                "identifications": {
+                    "elementalSpellDamage": {
+                        "min": 9,
+                        "raw": 29,
+                        "max": 38
+                    },
+                    "rawNeutralSpellDamage": {
+                        "min": 53,
+                        "raw": 178,
+                        "max": 231
+                    },
+                    "lifeSteal": {
+                        "min": 70,
+                        "raw": 233,
+                        "max": 303
+                    },
+                    "manaRegen": {
+                        "min": 3,
+                        "raw": 11,
+                        "max": 14
+                    },
+                    "exploding": {
+                        "min": 5,
+                        "raw": 17,
+                        "max": 22
+                    }
+                },
+                "base": {
+                    "baseFireDefence": -50
+                },
+                "rarity": "fabled"
             },
             {
-                "id": 1019,
-                "name": "Facile",
-                "tier": "Rare",
-                "type": "ring",
-                "lvl": 99,
-                "defReq": 10,
-                "strReq": 10,
-                "intReq": 10,
-                "agiReq": 10,
-                "dexReq": 10,
-                "def": 2,
-                "str": 2,
-                "int": 2,
-                "agi": 2,
-                "dex": 2,
-                "hprPct": -6,
-                "sdPct": -4
+                "internalName": "Facile",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "lootchest",
+                "requirements": {
+                    "level": 99,
+                    "strength": 10,
+                    "dexterity": 10,
+                    "intelligence": 10,
+                    "defence": 10,
+                    "agility": 10
+                },
+                "identifications": {
+                    "rawStrength": 2,
+                    "rawDexterity": 2,
+                    "rawIntelligence": 2,
+                    "rawDefence": 2,
+                    "rawAgility": 2,
+                    "mainAttackDamage": {
+                        "min": -8,
+                        "raw": -6,
+                        "max": -4
+                    },
+                    "spellDamage": {
+                        "min": -8,
+                        "raw": -6,
+                        "max": -4
+                    },
+                    "healthRegen": {
+                        "min": -10,
+                        "raw": -8,
+                        "max": -6
+                    }
+                },
+                "rarity": "rare"
             },
             {
-                "id": 1019,
-                "name": "Facile",
-                "tier": "Rare",
-                "type": "ring",
-                "lvl": 99,
-                "defReq": 10,
-                "strReq": 10,
-                "intReq": 10,
-                "agiReq": 10,
-                "dexReq": 10,
-                "def": 2,
-                "str": 2,
-                "int": 2,
-                "agi": 2,
-                "dex": 2,
-                "hprPct": -6,
-                "sdPct": -4
+                "internalName": "Facile",
+                "type": "accessory",
+                "accessoryType": "ring",
+                "dropRestriction": "lootchest",
+                "requirements": {
+                    "level": 99,
+                    "strength": 10,
+                    "dexterity": 10,
+                    "intelligence": 10,
+                    "defence": 10,
+                    "agility": 10
+                },
+                "identifications": {
+                    "rawStrength": 2,
+                    "rawDexterity": 2,
+                    "rawIntelligence": 2,
+                    "rawDefence": 2,
+                    "rawAgility": 2,
+                    "mainAttackDamage": {
+                        "min": -8,
+                        "raw": -6,
+                        "max": -4
+                    },
+                    "spellDamage": {
+                        "min": -8,
+                        "raw": -6,
+                        "max": -4
+                    },
+                    "healthRegen": {
+                        "min": -10,
+                        "raw": -8,
+                        "max": -6
+                    }
+                },
+                "rarity": "rare"
             },
             {
-                "id": 2089,
-                "name": "Pandemonium",
-                "tier": "Legendary",
-                "type": "bracelet",
-                "lvl": 99,
-                "hp": -300,
-                "hpBonus": -700,
-                "aDef": -200,
-                "fDef": -200,
-                "tDef": -200,
-                "eDef": -200,
-                "wDef": -200,
-                "defReq": 45,
-                "strReq": 45,
-                "intReq": 45,
-                "agiReq": 45,
-                "dexReq": 45,
-                "ls": -42,
-                "spd": 9,
-                "sdRaw": 72,
-                "sdPct": 21
+                "internalName": "Pandemonium",
+                "type": "accessory",
+                "accessoryType": "bracelet",
+                "dropRestriction": "lootchest",
+                "requirements": {
+                    "level": 99,
+                    "quest": "???֎",
+                    "strength": 45,
+                    "dexterity": 45,
+                    "intelligence": 45,
+                    "defence": 45,
+                    "agility": 45
+                },
+                "identifications": {
+                    "mainAttackDamage": {
+                        "min": 5,
+                        "raw": 16,
+                        "max": 21
+                    },
+                    "rawMainAttackDamage": {
+                        "min": 11,
+                        "raw": 35,
+                        "max": 46
+                    },
+                    "spellDamage": {
+                        "min": 5,
+                        "raw": 16,
+                        "max": 21
+                    },
+                    "rawSpellDamage": {
+                        "min": 17,
+                        "raw": 55,
+                        "max": 72
+                    },
+                    "rawHealth": {
+                        "min": -1300,
+                        "raw": -1000,
+                        "max": -700
+                    },
+                    "lifeSteal": {
+                        "min": -78,
+                        "raw": -60,
+                        "max": -42
+                    },
+                    "walkSpeed": {
+                        "min": 2,
+                        "raw": 7,
+                        "max": 9
+                    }
+                },
+                "base": {
+                    "baseHealth": -300,
+                    "baseEarthDefence": -200,
+                    "baseThunderDefence": -200,
+                    "baseWaterDefence": -200,
+                    "baseFireDefence": -200,
+                    "baseAirDefence": -200
+                },
+                "rarity": "legendary"
             },
             {
-                "id": 1553,
-                "name": "Diamond Fusion Necklace",
-                "tier": "Legendary",
-                "type": "necklace",
-                "lvl": 95,
-                "fixID": true,
-                "aDef": 15,
-                "fDef": 15,
-                "tDef": 15,
-                "eDef": 15,
-                "wDef": 15,
-                "defReq": 20,
-                "strReq": 20,
-                "intReq": 20,
-                "agiReq": 20,
-                "dexReq": 20,
-                "def": 4,
-                "str": 4,
-                "int": 4,
-                "agi": 4,
-                "dex": 4
+                "internalName": "Diamond Fusion Necklace",
+                "type": "accessory",
+                "accessoryType": "necklace",
+                "restrictions": "untradable",
+                "dropRestriction": "never",
+                "identified": true,
+                "requirements": {
+                    "level": 95,
+                    "strength": 20,
+                    "dexterity": 20,
+                    "intelligence": 20,
+                    "defence": 20,
+                    "agility": 20
+                },
+                "identifications": {
+                    "rawStrength": 4,
+                    "rawDexterity": 4,
+                    "rawIntelligence": 4,
+                    "rawDefence": 4,
+                    "rawAgility": 4
+                },
+                "base": {
+                    "baseEarthDefence": 15,
+                    "baseThunderDefence": 15,
+                    "baseWaterDefence": 15,
+                    "baseFireDefence": 15,
+                    "baseAirDefence": 15
+                },
+                "rarity": "legendary"
             }
         ],
         "weapon": {
-            "id": 1698,
-            "name": "Fatal",
-            "tier": "Mythic",
-            "type": "wand",
-            "lvl": 99,
-            "slots": 3,
-            "dexReq": 110,
-            "dex": 25,
-            "ms": 8,
-            "spd": 20,
-            "sdPct": 33,
-            "tDam": "1-340",
-            "atkSpd": "VERY_FAST"
+            "internalName": "Fatal",
+            "type": "weapon",
+            "weaponType": "wand",
+            "attackSpeed": "very_fast",
+            "averageDps": 529,
+            "dropRestriction": "normal",
+            "requirements": {
+                "level": 99,
+                "classRequirement": "mage",
+                "dexterity": 110
+            },
+            "powderSlots": 3,
+            "identifications": {
+                "rawDexterity": 25,
+                "spellDamage": {
+                    "min": 8,
+                    "raw": 25,
+                    "max": 33
+                },
+                "manaSteal": {
+                    "min": 2,
+                    "raw": 6,
+                    "max": 8
+                },
+                "1stSpellCost": {
+                    "min": 36,
+                    "raw": 28,
+                    "max": 20
+                },
+                "2ndSpellCost": {
+                    "min": -15,
+                    "raw": -49,
+                    "max": -64
+                },
+                "walkSpeed": {
+                    "min": 5,
+                    "raw": 15,
+                    "max": 20
+                }
+            },
+            "base": {
+                "baseThunderDamage": {
+                    "min": 1,
+                    "raw": 1,
+                    "max": 340
+                }
+            },
+            "rarity": "mythic"
         },
         "skill_point": {
             "assign": {
@@ -777,14 +1695,14 @@
             "a": -20
         },
         "common_stat": {
-            "hpr_raw": 338,
-            "hpr_pct": -8,
-            "mr": 68,
-            "ls": 365,
+            "hpr_raw": 260,
+            "hpr_pct": -12,
+            "mr": 53,
+            "ls": 261,
             "ms": 0,
-            "spd": 38,
-            "sd_raw": 331,
-            "sd_pct": 21
+            "spd": 29,
+            "sd_raw": 254,
+            "sd_pct": 13
         }
     }
 ]

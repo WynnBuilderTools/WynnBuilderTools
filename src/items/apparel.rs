@@ -1,10 +1,7 @@
-use crate::calculate::*;
-
 use super::*;
 
 #[derive(Clone, Debug, Default)]
 pub struct Apparel {
-    pub id: i32,
     pub name: String,
     pub tier: String,
     pub r#type: String,
@@ -37,41 +34,31 @@ impl AsRef<Apparel> for Apparel {
     }
 }
 
-impl TryFrom<&Item> for Apparel {
+impl TryFrom<&WApiItem> for Apparel {
     type Error = String;
 
-    fn try_from(value: &Item) -> Result<Self, Self::Error> {
-        let req = value.as_req();
-        let add = value.as_add();
-        let common_stat = value.as_common_stat();
-        let sec_stat = value.as_sec_stat();
-        let def_pct = value.as_def_pct();
-        let def = value.as_def();
-        let fix_id = value.as_fix_id();
-        let dam_pct = value.as_dam_pct();
-
+    fn try_from(value: &WApiItem) -> Result<Self, Self::Error> {
         Ok(Apparel {
-            id: value.id,
-            name: value.name.clone(),
-            tier: value.tier.clone(),
-            r#type: value.r#type.clone(),
-            lvl: value.lvl,
-            slots: value.slots.unwrap_or(0),
-            hp: value.hp.unwrap_or(0),
-            hp_bonus_max: max_roll(&value.hp_bonus.unwrap_or(0), fix_id),
-            hp_bonus_min: min_roll(&value.hp_bonus.unwrap_or(0), fix_id),
-            def,
-            req,
-            add,
-            def_pct_max: max_roll(&def_pct, fix_id),
-            def_pct_min: min_roll(&def_pct, fix_id),
-            dam_pct_max: max_roll(&dam_pct, fix_id),
-            dam_pct_min: min_roll(&dam_pct, fix_id),
-            common_stat_max: max_roll(&common_stat, fix_id),
-            common_stat_min: min_roll(&common_stat, fix_id),
-            sec_stat_max: max_roll(&sec_stat, fix_id),
-            sec_stat_min: min_roll(&sec_stat, fix_id),
-            fix_id,
+            name: value.internal_name.clone(),
+            tier: value.rarity.clone().unwrap().to_string(),
+            r#type: value.item_type().unwrap(),
+            lvl: value.requirements.level,
+            slots: value.powder_slots.unwrap_or(0),
+            hp: value.base.and_then(|base| base.base_health).unwrap_or(0),
+            hp_bonus_max: value.hp_bonus_max(),
+            hp_bonus_min: value.hp_bonus_min(),
+            req: value.req(),
+            add: value.add().unwrap(),
+            def: value.def(),
+            def_pct_max: value.def_pct_max(),
+            def_pct_min: value.def_pct_min(),
+            dam_pct_max: value.dam_pct_max(),
+            dam_pct_min: value.dam_pct_min(),
+            common_stat_max: value.common_stat_max(),
+            common_stat_min: value.common_stat_min(),
+            sec_stat_max: value.sec_stat_max(),
+            sec_stat_min: value.sec_stat_min(),
+            fix_id: value.identified.unwrap_or(false),
         })
     }
 }

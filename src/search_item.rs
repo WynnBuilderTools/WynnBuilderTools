@@ -11,7 +11,7 @@ async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
 
     let args = ItemSearchArgs::parse();
-    let (mut apparels, _) = match load_from_json(&config.hppeng.items_file) {
+    let (mut apparels, _) = match load_from_wapi(&config.hppeng.items_file) {
         Ok(v) => v,
         Err(_) => {
             let api_fetch_attempt =
@@ -22,7 +22,7 @@ async fn main() {
                 Err(e) => panic!("{}", e),
             };
 
-            let second_attempt = load_from_json(&new_path);
+            let second_attempt = load_from_wapi(&new_path);
 
             match second_attempt {
                 Ok(v) => v,

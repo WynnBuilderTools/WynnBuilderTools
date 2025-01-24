@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use super::*;
+
 #[derive(Clone, Debug, Default)]
 pub enum AtkSpd {
     #[default]
@@ -25,6 +27,21 @@ impl AtkSpd {
         }
     }
 }
+
+impl From<AttackSpeed> for AtkSpd {
+    fn from(value: AttackSpeed) -> Self {
+        match value {
+            AttackSpeed::Fast => AtkSpd::Fast,
+            AttackSpeed::Normal => AtkSpd::Normal,
+            AttackSpeed::Slow => AtkSpd::Slow,
+            AttackSpeed::SuperFast => AtkSpd::SuperFast,
+            AttackSpeed::SuperSlow => AtkSpd::SuperSlow,
+            AttackSpeed::VeryFast => AtkSpd::VeryFast,
+            AttackSpeed::VerySlow => AtkSpd::VerySlow,
+        }
+    }
+}
+
 impl FromStr for AtkSpd {
     type Err = String;
 

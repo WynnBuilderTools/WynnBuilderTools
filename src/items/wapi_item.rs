@@ -1,20 +1,15 @@
-extern crate schemafy;
+use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fmt::Display};
 
-use serde::{Deserialize, Serialize};
-use serde_with::formats::PreferOne;
-use serde_with::serde_as;
-use serde_with::OneOrMany;
+use super::*;
 
-pub type ApiItems = HashMap<String, ApiItem>;
+pub type WApiItems = HashMap<String, WApiItem>;
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum AccessoryType {
-    #[serde(rename = "bracelet")]
     Bracelet,
-    #[serde(rename = "necklace")]
     Necklace,
-    #[serde(rename = "ring")]
     Ring,
 }
 
@@ -88,29 +83,17 @@ impl Display for AttackSpeed {
 #[derive(Clone, Copy, PartialEq, Debug, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Base {
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_air_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_air_defence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_earth_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_earth_defence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_fire_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_fire_defence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_health: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_thunder_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_thunder_defence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_water_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base_water_defence: Option<i32>,
 }
 
@@ -127,6 +110,26 @@ pub enum StatOrInt {
     Stat(Stat),
     Int(i32),
 }
+impl StatOrInt {
+    pub fn max(&self) -> i32 {
+        match self {
+            StatOrInt::Stat(stat) => stat.max,
+            StatOrInt::Int(value) => *value,
+        }
+    }
+    pub fn min(&self) -> i32 {
+        match self {
+            StatOrInt::Stat(stat) => stat.min,
+            StatOrInt::Int(value) => *value,
+        }
+    }
+    pub fn must_int(&self) -> Result<i32, String> {
+        match self {
+            StatOrInt::Stat(_) => Err("StatOrInt must be int".to_string()),
+            StatOrInt::Int(value) => Ok(*value),
+        }
+    }
+}
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -138,16 +141,18 @@ pub enum ClassRequirement {
     Warrior,
 }
 
-#[serde_as]
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub struct DropMeta {
     pub coordinates: Vec<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub event: Option<Event>,
     pub name: String,
-    #[serde_as(as = "OneOrMany<_, PreferOne>")]
-    #[serde(rename = "type")]
-    pub type_field: Vec<DropMetaType>,
+    pub r#type: DropMetaTypeOrVec,
+}
+#[derive(Serialize, Clone, Deserialize, PartialEq, Debug)]
+#[serde(untagged)]
+pub enum DropMetaTypeOrVec {
+    Single(DropMetaType),
+    Multiple(Vec<DropMetaType>),
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -190,185 +195,99 @@ pub struct Icon {
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Identifications {
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub air_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub air_defence: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub air_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub air_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub earth_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub earth_defence: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub earth_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub earth_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub elemental_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub elemental_defence: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub elemental_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub elemental_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub exploding: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub fire_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub fire_defence: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub fire_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub fire_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "1stSpellCost")]
     pub first_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "4thSpellCost")]
     pub fourth_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub healing_efficiency: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub health_regen: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub health_regen_raw: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub jump_height: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub knockback: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub life_steal: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_bonus: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub mana_regen: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub mana_steal: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub neutral_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub neutral_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub poison: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "raw1stSpellCost")]
     pub raw_1st_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "raw2ndSpellCost")]
     pub raw_2nd_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "raw3rdSpellCost")]
     pub raw_3rd_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "raw4thSpellCost")]
     pub raw_4th_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub raw_agility: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    pub raw_agility: Option<StatOrInt>,
     pub raw_air_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_air_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_air_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_attack_speed: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub raw_defence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub raw_dexterity: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    pub raw_defence: Option<StatOrInt>,
+    pub raw_dexterity: Option<StatOrInt>,
     pub raw_earth_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_earth_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_earth_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_elemental_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_elemental_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_elemental_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_fire_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_fire_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_fire_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_health: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub raw_intelligence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    pub raw_intelligence: Option<StatOrInt>,
     pub raw_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_neutral_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_neutral_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_neutral_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub raw_strength: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    pub raw_strength: Option<StatOrInt>,
     pub raw_thunder_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_thunder_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_thunder_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_water_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_water_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub reflection: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "2ndSpellCost")]
     pub second_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub slow_enemy: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub sprint: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub sprint_regen: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub stealing: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "3rdSpellCost")]
     pub third_spell_cost: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub thorns: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub thunder_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub thunder_defence: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub thunder_main_attack_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub thunder_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub walk_speed: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub water_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub water_defence: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub water_spell_damage: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub weaken_enemy: Option<StatOrInt>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub xp_bonus: Option<StatOrInt>,
 }
 
@@ -382,6 +301,7 @@ pub enum DropMetaType {
     Lootrun,
     Merchant,
     Miniboss,
+    Guild,
     Quest,
     Raid,
     Event,
@@ -401,21 +321,14 @@ pub enum Rarity {
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub struct Requirements {
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub agility: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "classRequirement")]
     pub class_requirement: Option<ClassRequirement>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub defence: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub dexterity: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub intelligence: Option<i32>,
     pub level: i32,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub quest: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub strength: Option<i32>,
 }
 
@@ -470,79 +383,237 @@ pub enum ItemType {
     Accessory,
     Armour,
     Weapon,
+    Material,
+    Tool,
+    Ingredient,
+    Charm,
+    Tome,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ApiItem {
-    #[serde(skip_serializing_if = "Option::is_none")]
+pub struct WApiItem {
     pub accessory_type: Option<AccessoryType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_craftsman: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub armour_color: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub armour_material: Option<ArmourMaterial>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub armour_type: Option<ArmourType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub attack_speed: Option<AttackSpeed>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub average_dps: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub base: Option<Base>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub drop_meta: Option<DropMeta>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub drop_restriction: Option<DropRestriction>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<Icon>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub identifications: Option<Identifications>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub identified: Option<bool>,
     pub internal_name: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub lore: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub major_ids: Option<::std::collections::BTreeMap<String, String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub powder_slots: Option<i32>,
-    pub rarity: Rarity,
+    pub rarity: Option<Rarity>,
     pub requirements: Requirements,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub restrictions: Option<Restrictions>,
-    #[serde(rename = "type")]
-    pub type_field: ItemType,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    pub r#type: Option<ItemType>,
     pub weapon_type: Option<WeaponType>,
 }
-
-impl Stat {
-    pub fn min(&self) -> i32 {
-        self.min
+impl WApiItem {
+    pub fn item_type(&self) -> Result<String, String> {
+        let item_type = if let Some(armour_type) = &self.armour_type {
+            armour_type.to_string()
+        } else if let Some(accessory_type) = &self.accessory_type {
+            accessory_type.to_string()
+        } else if let Some(weapon_type) = &self.weapon_type {
+            weapon_type.to_string()
+        } else {
+            return Err("Invalid value for wapi item type".to_string());
+        };
+        Ok(item_type)
     }
-
-    pub fn raw(&self) -> i32 {
-        self.raw
+    pub fn hp_bonus_max(&self) -> i32 {
+        self.identifications
+            .as_ref()
+            .and_then(|ids| ids.raw_health)
+            .map(|raw_health| raw_health.max())
+            .unwrap_or(0)
     }
-
-    pub fn max(&self) -> i32 {
-        self.max
+    pub fn hp_bonus_min(&self) -> i32 {
+        self.identifications
+            .as_ref()
+            .and_then(|ids| ids.raw_health)
+            .map(|raw_health| raw_health.max())
+            .unwrap_or(0)
     }
+    pub fn add(&self) -> Result<Point, String> {
+        fn extract_value<F>(identifications: &Identifications, extractor: F) -> Result<i16, String>
+        where
+            F: Fn(&Identifications) -> Option<StatOrInt>,
+        {
+            match extractor(identifications).map(|v| v.must_int()) {
+                Some(v) => v
+                    .map(|v| v as i16)
+                    .or_else(|_| Err("item add point is range".to_string())),
+                None => Ok(0),
+            }
+        }
 
-    pub fn new(min: i32, raw: i32, max: i32) -> Self {
-        Stat { min, raw, max }
+        let Some(ids) = self.identifications.as_ref() else {
+            return Ok(Point::default());
+        };
+        Ok(Point::new(
+            extract_value(&ids, |v| v.raw_strength)?,
+            extract_value(&ids, |v| v.raw_dexterity)?,
+            extract_value(&ids, |v| v.raw_intelligence)?,
+            extract_value(&ids, |v| v.raw_defence)?,
+            extract_value(&ids, |v| v.raw_agility)?,
+        ))
     }
-
-    pub fn zero() -> Self {
-        Stat::new(0, 0, 0)
+    pub fn req(&self) -> Point {
+        self.requirements.clone().into()
     }
-}
-
-impl Default for Stat {
-    fn default() -> Self {
-        Stat::zero()
+    pub fn def(&self) -> Point {
+        let Some(base) = self.base.as_ref() else {
+            return Point::default();
+        };
+        Point::new(
+            base.base_earth_defence.unwrap_or(0) as i16,
+            base.base_thunder_defence.unwrap_or(0) as i16,
+            base.base_water_defence.unwrap_or(0) as i16,
+            base.base_fire_defence.unwrap_or(0) as i16,
+            base.base_air_defence.unwrap_or(0) as i16,
+        )
+    }
+    pub fn def_pct_max(&self) -> Point {
+        let Some(ids) = self.identifications.as_ref() else {
+            return Point::default();
+        };
+        Point::new(
+            ids.earth_defence.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.thunder_defence.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.water_defence.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.fire_defence.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.air_defence.map(|v| v.max()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn def_pct_min(&self) -> Point {
+        let Some(ids) = self.identifications.as_ref() else {
+            return Point::default();
+        };
+        Point::new(
+            ids.earth_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.thunder_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.water_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.fire_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.air_damage.map(|v| v.min()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn dam_pct_max(&self) -> Dam {
+        let Some(ids) = self.identifications.as_ref() else {
+            return Dam::default();
+        };
+        Dam::new(
+            ids.neutral_damage.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.earth_damage.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.thunder_damage.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.water_damage.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.fire_damage.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.air_damage.map(|v| v.max()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn dam_pct_min(&self) -> Dam {
+        let Some(ids) = self.identifications.as_ref() else {
+            return Dam::default();
+        };
+        Dam::new(
+            ids.neutral_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.earth_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.thunder_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.water_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.fire_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.air_damage.map(|v| v.min()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn common_stat_max(&self) -> CommonStat {
+        let Some(ids) = self.identifications.as_ref() else {
+            return CommonStat::default();
+        };
+        CommonStat::new(
+            ids.health_regen_raw.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.health_regen.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.mana_regen.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.life_steal.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.mana_steal.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.walk_speed.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.raw_spell_damage.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.spell_damage.map(|v| v.max()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn common_stat_min(&self) -> CommonStat {
+        let Some(ids) = self.identifications.as_ref() else {
+            return CommonStat::default();
+        };
+        CommonStat::new(
+            ids.health_regen_raw.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.health_regen.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.mana_regen.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.life_steal.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.mana_steal.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.walk_speed.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.raw_spell_damage.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.spell_damage.map(|v| v.min()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn sec_stat_max(&self) -> SecStat {
+        let Some(ids) = self.identifications.as_ref() else {
+            return SecStat::default();
+        };
+        SecStat::new(
+            ids.xp_bonus.map(|v| v.max()).unwrap_or(0) as i16,
+            ids.loot_bonus.map(|v| v.max()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn sec_stat_min(&self) -> SecStat {
+        let Some(ids) = self.identifications.as_ref() else {
+            return SecStat::default();
+        };
+        SecStat::new(
+            ids.xp_bonus.map(|v| v.min()).unwrap_or(0) as i16,
+            ids.loot_bonus.map(|v| v.min()).unwrap_or(0) as i16,
+        )
+    }
+    pub fn damages(&self) -> Damages {
+        let Some(base) = self.base.as_ref() else {
+            return Damages::default();
+        };
+        Damages::new(
+            base.base_damage.map(|v| v.min()).unwrap_or(0) as f64,
+            base.base_earth_damage.map(|v| v.min()).unwrap_or(0) as f64,
+            base.base_thunder_damage.map(|v| v.min()).unwrap_or(0) as f64,
+            base.base_water_damage.map(|v| v.min()).unwrap_or(0) as f64,
+            base.base_fire_damage.map(|v| v.min()).unwrap_or(0) as f64,
+            base.base_air_damage.map(|v| v.min()).unwrap_or(0) as f64,
+            base.base_damage.map(|v| v.max()).unwrap_or(0) as f64,
+            base.base_earth_damage.map(|v| v.max()).unwrap_or(0) as f64,
+            base.base_thunder_damage.map(|v| v.max()).unwrap_or(0) as f64,
+            base.base_water_damage.map(|v| v.max()).unwrap_or(0) as f64,
+            base.base_fire_damage.map(|v| v.max()).unwrap_or(0) as f64,
+            base.base_air_damage.map(|v| v.max()).unwrap_or(0) as f64,
+        )
+    }
+    pub fn damage_present(&self) -> Mask {
+        let Some(base) = self.base.as_ref() else {
+            return Mask::default();
+        };
+        Mask::from_slice([
+            base.base_damage.is_some(),
+            base.base_earth_damage.is_some(),
+            base.base_thunder_damage.is_some(),
+            base.base_water_damage.is_some(),
+            base.base_fire_damage.is_some(),
+            base.base_air_damage.is_some(),
+        ])
+    }
+    pub fn attack_speed(&self) -> Option<AtkSpd> {
+        self.attack_speed.clone().map(|v| v.into())
     }
 }
 
@@ -566,6 +637,11 @@ impl Display for ItemType {
             ItemType::Accessory => write!(f, "Accessory"),
             ItemType::Armour => write!(f, "Armour"),
             ItemType::Weapon => write!(f, "Weapon"),
+            ItemType::Material => write!(f, "Material"),
+            ItemType::Tool => write!(f, "Tool"),
+            ItemType::Ingredient => write!(f, "Ingredient"),
+            ItemType::Charm => write!(f, "Charm"),
+            ItemType::Tome => write!(f, "Tome"),
         }
     }
 }

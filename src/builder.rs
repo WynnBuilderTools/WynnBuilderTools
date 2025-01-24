@@ -13,6 +13,7 @@ use std::{
     time::Duration,
 };
 
+use itertools::Itertools;
 use tokio::{runtime::Runtime, spawn, time::sleep};
 
 use wynn_build_tools::calculate::*;
@@ -27,8 +28,9 @@ const SPLIT_STR: &str = ".";
 async fn main() {
     let config = load_config("config/config.toml").await.unwrap();
     let hppeng_codes: HppengCodes = HppengCodes::split_hppeng_url(&config.hppeng.template_url);
+    let hppeng_id_map = load_hppeng_id_map();
 
-    let (apparels, weapons) = match load_from_json(&config.hppeng.items_file) {
+    let (apparels, weapons) = match load_from_wapi(&config.hppeng.items_file) {
         Ok(v) => v,
         Err(_) => {
             let api_fetch_attempt =
@@ -39,7 +41,7 @@ async fn main() {
                 Err(e) => panic!("{}", e),
             };
 
-            let second_attempt = load_from_json(&new_path);
+            let second_attempt = load_from_wapi(&new_path);
 
             match second_attempt {
                 Ok(v) => v,
@@ -118,15 +120,15 @@ async fn main() {
                     let url = hppeng_codes.generate_url(
                         Some("9"),
                         Some([
-                            combination[2].id,
-                            combination[3].id,
-                            combination[4].id,
-                            combination[5].id,
-                            combination[0].id,
-                            combination[1].id,
-                            combination[6].id,
-                            combination[7].id,
-                            weapon.id,
+                            *hppeng_id_map.get(&combination[2].name).unwrap(),
+                            *hppeng_id_map.get(&combination[3].name).unwrap(),
+                            *hppeng_id_map.get(&combination[4].name).unwrap(),
+                            *hppeng_id_map.get(&combination[5].name).unwrap(),
+                            *hppeng_id_map.get(&combination[0].name).unwrap(),
+                            *hppeng_id_map.get(&combination[1].name).unwrap(),
+                            *hppeng_id_map.get(&combination[6].name).unwrap(),
+                            *hppeng_id_map.get(&combination[7].name).unwrap(),
+                            *hppeng_id_map.get(&weapon.name).unwrap(),
                         ]),
                         Some([
                             stat.skill_point.original.e() as i32,
@@ -267,10 +269,7 @@ fn retain_spells(spells: &mut Vec<Spell>, config: &Config) {
     });
 }
 
-fn find<'a>(
-    apparels: &'a [Apparel],
-    names: &'a [String],
-) -> Result<Vec<&'a Apparel>, Vec<&'a String>> {
+fn find<'a>(apparels: &'a [Apparel], names: &'a [String]) -> Result<Vec<&'a Apparel>, String> {
     let mut results = Vec::with_capacity(names.len());
     let mut errors = Vec::new();
 
@@ -284,7 +283,7 @@ fn find<'a>(
     if errors.is_empty() {
         Ok(results)
     } else {
-        Err(errors)
+        Err("can not find apparel: ".to_owned() + &errors.iter().join(", "))
     }
 }
 pub struct SpellDamage {

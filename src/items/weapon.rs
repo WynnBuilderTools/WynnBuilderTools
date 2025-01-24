@@ -1,12 +1,9 @@
 use std::str::FromStr;
 
-use crate::calculate::*;
-
 use super::*;
 
 #[derive(Clone, Debug, Default)]
 pub struct Weapon {
-    pub id: i32,
     pub name: String,
     pub r#type: WeaponTypes,
 
@@ -37,58 +34,29 @@ pub struct Weapon {
     pub fix_id: bool,
 }
 
-impl TryFrom<&Item> for Weapon {
+impl TryFrom<&WApiItem> for Weapon {
     type Error = String;
 
-    fn try_from(value: &Item) -> Result<Self, Self::Error> {
-        let req = value.as_req();
-        let add = value.as_add();
-        let common_stat = value.as_common_stat();
-        let sec_stat = value.as_sec_stat();
-        let def_pct = value.as_def_pct();
-        let dam_pct = value.as_dam_pct();
-        let fix_id = value.as_fix_id();
-
+    fn try_from(value: &WApiItem) -> Result<Self, Self::Error> {
         Ok(Self {
-            id: value.id,
-            name: value.name.clone(),
-            req,
-            add,
-            fix_id,
-            hp_bonus_max: max_roll(&value.hp_bonus.unwrap_or(0), fix_id),
-            hp_bonus_min: min_roll(&value.hp_bonus.unwrap_or(0), fix_id),
-            common_stat_max: max_roll(&common_stat, false),
-            common_stat_min: min_roll(&common_stat, false),
-            sec_stat_max: max_roll(&sec_stat, false),
-            sec_stat_min: min_roll(&sec_stat, false),
-            def_pct_max: max_roll(&def_pct, fix_id),
-            def_pct_min: min_roll(&def_pct, fix_id),
-            dam_pct_max: max_roll(&dam_pct, fix_id),
-            dam_pct_min: min_roll(&dam_pct, fix_id),
-            damage: Damages::from_slice([
-                Range::from_str(value.n_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-                Range::from_str(value.e_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-                Range::from_str(value.t_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-                Range::from_str(value.w_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-                Range::from_str(value.f_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-                Range::from_str(value.a_dam.as_ref().map_or("0-0", |v| v.as_str()))?,
-            ]),
-            damage_present: Mask::from_slice([
-                value.n_dam.is_some(),
-                value.e_dam.is_some(),
-                value.t_dam.is_some(),
-                value.w_dam.is_some(),
-                value.f_dam.is_some(),
-                value.a_dam.is_some(),
-            ]),
-            r#type: WeaponTypes::from_str(value.r#type.as_str())?,
-            atk_spd: AtkSpd::from_str(
-                value
-                    .atk_spd
-                    .as_ref()
-                    .ok_or("atkSpd is missing".to_string())?
-                    .as_str(),
-            )?,
+            name: value.internal_name.clone(),
+            r#type: WeaponTypes::from_str(&value.item_type().unwrap())?,
+            hp_bonus_max: value.hp_bonus_max(),
+            hp_bonus_min: value.hp_bonus_min(),
+            damage: value.damages(),
+            atk_spd: value.attack_speed().unwrap(),
+            req: value.req(),
+            add: value.add()?,
+            common_stat_max: value.common_stat_max(),
+            common_stat_min: value.common_stat_min(),
+            sec_stat_max: value.sec_stat_max(),
+            sec_stat_min: value.sec_stat_min(),
+            def_pct_max: value.def_pct_max(),
+            def_pct_min: value.def_pct_min(),
+            dam_pct_max: value.dam_pct_max(),
+            dam_pct_min: value.dam_pct_min(),
+            damage_present: value.damage_present(),
+            fix_id: value.identified.unwrap_or(false),
         })
     }
 }

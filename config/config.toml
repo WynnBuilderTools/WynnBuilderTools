@@ -15,7 +15,7 @@ base_hp = 500         # Base health points; typically 500
 template_url = "https://hppeng-wynn.github.io/builder?v=11#9_0cD0F+0uj0wh0Fx0Fx0Wf0OH0QY0l270y0l0+1g000000z0z0+0+0+0+0h1TzZddqwtn2"
 db_path = "db/data.db"                                                                                                              # Database path
 migrations_path = "migrations"                                                                                                      # Database migration path
-items_file = "config/items.json"                                                                                                    # Database migration path
+items_file = "config/wapi_items.json"                                                                                               # Database migration path
 log_builds = true                                                                                                                   # Whether to log builds to the console; useful for debugging
 log_db_errors = true                                                                                                                # Whether to log database errors to the console; useful for debugging
 db_retry_count = 3                                                                                                                  # Number of retries for database operations

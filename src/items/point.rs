@@ -6,7 +6,7 @@ use std::{
     simd::i16x8,
 };
 
-use crate::calculate::*;
+use super::*;
 
 /// 0:e 1:t 2:w 3:f 4:a
 #[derive(Clone, Debug, PartialEq, Default, Hash)]
@@ -60,27 +60,6 @@ impl Point {
         }
     }
 }
-impl Roll for Point {
-    fn min_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
-    }
-
-    fn max_roll(&self, fix_id: bool) -> Self {
-        if fix_id {
-            self.clone()
-        } else {
-            Self {
-                inner: max_rolls(&self.inner),
-            }
-        }
-    }
-}
 impl AddAssign<&Point> for Point {
     fn add_assign(&mut self, rhs: &Point) {
         self.inner += rhs.inner;
@@ -120,6 +99,17 @@ impl std::fmt::Display for Point {
 impl From<i16x8> for Point {
     fn from(value: i16x8) -> Self {
         Self { inner: value }
+    }
+}
+impl From<Requirements> for Point {
+    fn from(value: Requirements) -> Self {
+        Self::new(
+            value.strength.unwrap_or(0) as i16,
+            value.dexterity.unwrap_or(0) as i16,
+            value.intelligence.unwrap_or(0) as i16,
+            value.defence.unwrap_or(0) as i16,
+            value.agility.unwrap_or(0) as i16,
+        )
     }
 }
 #[derive(serde::Deserialize)]

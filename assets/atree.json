@@ -4448,7 +4448,54 @@
 			"properties": {
 				"health_cost": 0.4
 			},
-			"effects": [],
+			"effects": [
+				{
+					"type": "raw_stat",
+					"toggle": "Activate Blood Pact",
+					"bonuses": [
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:1.Single Hit",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:2.Flying Kick",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:2.Flyby Jab",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:3.Uppercut",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:3.Fireworks",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:3.Comet",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:4.War Scream",
+							"value": 15
+						},
+						{
+							"type": "stat",
+							"name": "damMult.BloodPact:4.Air Shout",
+							"value": 15
+						}
+					]
+				}
+			],
 			"id": 31
 		},
 		{
@@ -5861,7 +5908,7 @@
 					"behavior": "modify",
 					"output": {
 						"type": "stat",
-						"name": "damMult.Bloodlust:3.Annihilation"
+						"name": "damMult.Bloodlust:10.Annihilation"
 					},
 					"scaling": [
 						5
@@ -9759,7 +9806,8 @@
 					"behavior": "modify",
 					"target_part": "Total Damage",
 					"hits": {
-						"Per Bomb": 2
+						"Per Bomb": 2,
+						"Single Bomb": 2
 					}
 				},
 				{
@@ -9767,6 +9815,20 @@
 					"base_spell": 4,
 					"behavior": "modify",
 					"target_part": "Per Tick",
+					"multipliers": [
+						-10,
+						0,
+						0,
+						0,
+						0,
+						0
+					]
+				},
+				{
+					"type": "add_spell_prop",
+					"base_spell": 4,
+					"behavior": "modify",
+					"target_part": "Single Bomb",
 					"multipliers": [
 						-10,
 						0,
@@ -13067,7 +13129,7 @@
 		},
 		{
 			"display_name": "Lashing Lance",
-			"desc": "Flaming Tounge gets +1 hit, and now inflicts enemies with Bleeding for +1.5s per hit. Haunting Memory will instead inflict +3s of Bleeding. Bleeding enemies take damage every 0.5s. (Maximum 6s)",
+			"desc": "Flaming Tongue gets +1 hit, and now inflicts enemies with Bleeding for +1.5s per hit. Haunting Memory will instead inflict +3s of Bleeding. Bleeding enemies take damage every 0.5s. (Maximum 6s)",
 			"base_abil": 7,
 			"archetype": "Acolyte",
 			"archetype_req": "4",
@@ -14507,7 +14569,7 @@
 						{
 							"name": "Beam Tick Damage",
 							"multipliers": [
-								100,
+								125,
 								0,
 								0,
 								20,

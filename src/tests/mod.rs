@@ -23,14 +23,14 @@ fn deserialize_apparels<'de, D>(deserializer: D) -> Result<[Apparel; 8], D::Erro
 where
     D: serde::Deserializer<'de>,
 {
-    let array: [Item; 8] = Deserialize::deserialize(deserializer)?;
+    let array: [WApiItem; 8] = Deserialize::deserialize(deserializer)?;
     Ok(array.map(|v| Apparel::try_from(&v).unwrap()))
 }
 fn deserialize_weapon<'de, D>(deserializer: D) -> Result<Weapon, D::Error>
 where
     D: serde::Deserializer<'de>,
 {
-    let item: Item = Deserialize::deserialize(deserializer)?;
+    let item: WApiItem = Deserialize::deserialize(deserializer)?;
     Ok(Weapon::try_from(&item).unwrap())
 }
 

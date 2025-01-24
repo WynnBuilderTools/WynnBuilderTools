@@ -1,7 +1,7 @@
 /.git
 /target
 /db
-/config/items.json
+/config/wapi_items.json
 /perf.data
 /perf.data.old
 /flamegraph
