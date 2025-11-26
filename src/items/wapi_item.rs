@@ -24,14 +24,20 @@ impl Display for AccessoryType {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "snake_case")]
 pub enum ArmourMaterial {
-    Chain,
     Diamond,
-    Golden,
+    PaleDiamond,
     Gold,
     Iron,
-    Leather,
+    PaleLeather,
+    PaleIron,
+    Chainmail,
+    PaleChainmail,
+    PaleGold,
+    Creeper,
+    Pumpkin,
+    Zombie,
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -55,7 +61,7 @@ impl Display for ArmourType {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "camelCase")]
 pub enum AttackSpeed {
     Fast,
     Normal,

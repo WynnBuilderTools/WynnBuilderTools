@@ -125,7 +125,7 @@ where
     TR: 'a + AsRef<T>,
     ATR: 'a + AsRef<[TR]>,
 {
-    let mut result: [MaybeUninit<&'a T>; LEN] = MaybeUninit::uninit_array();
+    let mut result: [MaybeUninit<&'a T>; LEN] = [const { MaybeUninit::uninit() }; LEN];
     for i in 0..LEN {
         result[i].write(arrays[i].as_ref()[*indexes.get_unchecked(i)].as_ref());
     }
